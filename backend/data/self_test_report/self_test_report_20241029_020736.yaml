@@ -1,0 +1,28 @@
+calibration_status:
+  display: PASS
+  probe: PASS
+components_tested:
+  imaging_modes:
+    2D: FAIL
+    Doppler: PASS
+    M-Mode: PASS
+  network_connectivity:
+    network_status: Disconnected
+    signal_strength: -58 dBm
+  power_supply:
+    battery_level: 86%
+    current: 1.3A
+    voltage: 23.7V
+  probe_check:
+    connection_status: Disconnected
+    frequency_response: 7.5 MHz
+    probe_id: C78901
+    type: Linear
+  temperature_check: "37\xB0C"
+error_logs: []
+firmware_version: 5.3.2
+recommendations: Recalibrate probe
+system_status: PASS
+test_duration: 2 minutes
+test_id: ST-63834
+timestamp: '2024-10-29T02:07:36.697164Z'

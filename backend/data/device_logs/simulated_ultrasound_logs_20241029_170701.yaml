@@ -1,0 +1,271 @@
+- details:
+    firmware_version: 5.3.2
+    message: System booted successfully
+  event: SYSTEM
+  timestamp: '2024-10-29T17:07:01Z'
+- details:
+    depth: 11cm
+    gain: 79%
+    mode: Power Doppler
+  event: SESSION
+  session_id: 84038
+  timestamp: '2024-10-29T17:13:01Z'
+- details:
+    firmware_version: 5.3.2
+    message: System shutdown initiated
+  event: SYSTEM
+  timestamp: '2024-10-29T17:17:01Z'
+- details:
+    probe_id: L12345
+    result: within tolerance
+  event: CALIBRATION
+  timestamp: '2024-10-29T17:22:01Z'
+- details:
+    firmware_version: 5.3.2
+    message: System booted successfully
+  event: SYSTEM
+  timestamp: '2024-10-29T17:37:01Z'
+- details:
+    depth: 12cm
+    gain: 79%
+    mode: Color Doppler
+  event: SESSION
+  session_id: 70823
+  timestamp: '2024-10-29T17:38:01Z'
+- details:
+    probe_id: C78901
+    result: within tolerance
+  event: CALIBRATION
+  timestamp: '2024-10-29T17:39:01Z'
+- details:
+    firmware_version: 5.3.2
+    message: System booted successfully
+  event: SYSTEM
+  timestamp: '2024-10-29T17:44:01Z'
+- details:
+    frequency: 3.5 MHz
+    probe_id: C78901
+    type: Convex
+  event: PROBE
+  timestamp: '2024-10-29T17:47:01Z'
+- details:
+    firmware_version: 5.3.2
+    message: System booted successfully
+  event: SYSTEM
+  timestamp: '2024-10-29T17:56:01Z'
+- details:
+    firmware_version: 5.3.2
+    message: System shutdown initiated
+  event: SYSTEM
+  timestamp: '2024-10-29T17:57:01Z'
+- details:
+    probe_id: L12345
+    result: within tolerance
+  event: CALIBRATION
+  timestamp: '2024-10-29T17:58:01Z'
+- details:
+    probe_id: L12345
+    result: within tolerance
+  event: CALIBRATION
+  timestamp: '2024-10-29T18:02:01Z'
+- details:
+    frequency: 3.5 MHz
+    probe_id: C78901
+    type: Convex
+  event: PROBE
+  timestamp: '2024-10-29T18:16:01Z'
+- details:
+    probe_id: L12345
+    result: within tolerance
+  event: CALIBRATION
+  timestamp: '2024-10-29T18:24:01Z'
+- details:
+    firmware_version: 5.3.2
+    message: System shutdown initiated
+  event: SYSTEM
+  timestamp: '2024-10-29T18:39:01Z'
+- details:
+    depth: 7cm
+    gain: 50%
+    mode: Color Doppler
+  event: SESSION
+  session_id: 79016
+  timestamp: '2024-10-29T18:54:01Z'
+- details:
+    message: Probe disconnected unexpectedly
+  event: ERROR
+  timestamp: '2024-10-29T19:00:01Z'
+- details:
+    probe_id: C78901
+    result: within tolerance
+  event: CALIBRATION
+  timestamp: '2024-10-29T19:07:01Z'
+- details:
+    firmware_version: 5.3.2
+    message: System booted successfully
+  event: SYSTEM
+  timestamp: '2024-10-29T19:18:01Z'
+- details:
+    probe_id: L12345
+    result: within tolerance
+  event: CALIBRATION
+  timestamp: '2024-10-29T19:25:01Z'
+- details:
+    probe_id: C78901
+    result: within tolerance
+  event: CALIBRATION
+  timestamp: '2024-10-29T19:26:01Z'
+- details:
+    depth: 15cm
+    gain: 70%
+    mode: Power Doppler
+  event: SESSION
+  session_id: 53721
+  timestamp: '2024-10-29T19:28:01Z'
+- details:
+    depth: 11cm
+    gain: 78%
+    mode: 2D
+  event: SESSION
+  session_id: 99072
+  timestamp: '2024-10-29T19:34:01Z'
+- details:
+    probe_id: L12345
+    result: within tolerance
+  event: CALIBRATION
+  timestamp: '2024-10-29T19:36:01Z'
+- details:
+    message: Network connection lost
+  event: ERROR
+  timestamp: '2024-10-29T19:48:01Z'
+- details:
+    message: Probe disconnected unexpectedly
+  event: ERROR
+  timestamp: '2024-10-29T20:00:01Z'
+- details:
+    message: Probe disconnected unexpectedly
+  event: ERROR
+  timestamp: '2024-10-29T20:15:01Z'
+- details:
+    depth: 17cm
+    gain: 79%
+    mode: 2D
+  event: SESSION
+  session_id: 90166
+  timestamp: '2024-10-29T20:22:01Z'
+- details:
+    frequency: 7.5 MHz
+    probe_id: L12345
+    type: Linear
+  event: PROBE
+  timestamp: '2024-10-29T20:24:01Z'
+- details:
+    frequency: 3.5 MHz
+    probe_id: C78901
+    type: Convex
+  event: PROBE
+  timestamp: '2024-10-29T20:36:01Z'
+- details:
+    message: Probe disconnected unexpectedly
+  event: ERROR
+  timestamp: '2024-10-29T20:42:01Z'
+- details:
+    frequency: 3.5 MHz
+    probe_id: C78901
+    type: Convex
+  event: PROBE
+  timestamp: '2024-10-29T20:55:01Z'
+- details:
+    frequency: 3.5 MHz
+    probe_id: C78901
+    type: Convex
+  event: PROBE
+  timestamp: '2024-10-29T21:02:01Z'
+- details:
+    probe_id: L12345
+    result: within tolerance
+  event: CALIBRATION
+  timestamp: '2024-10-29T21:06:01Z'
+- details:
+    probe_id: C78901
+    result: within tolerance
+  event: CALIBRATION
+  timestamp: '2024-10-29T21:18:01Z'
+- details:
+    firmware_version: 5.3.2
+    message: System shutdown initiated
+  event: SYSTEM
+  timestamp: '2024-10-29T21:26:01Z'
+- details:
+    message: Probe disconnected unexpectedly
+  event: ERROR
+  timestamp: '2024-10-29T21:33:01Z'
+- details:
+    firmware_version: 5.3.2
+    message: System shutdown initiated
+  event: SYSTEM
+  timestamp: '2024-10-29T21:37:01Z'
+- details:
+    depth: 17cm
+    gain: 63%
+    mode: Power Doppler
+  event: SESSION
+  session_id: 15226
+  timestamp: '2024-10-29T21:47:01Z'
+- details:
+    depth: 18cm
+    gain: 64%
+    mode: 3D
+  event: SESSION
+  session_id: 50727
+  timestamp: '2024-10-29T21:59:01Z'
+- details:
+    depth: 20cm
+    gain: 61%
+    mode: Color Doppler
+  event: SESSION
+  session_id: 46857
+  timestamp: '2024-10-29T22:08:01Z'
+- details:
+    frequency: 7.5 MHz
+    probe_id: L12345
+    type: Linear
+  event: PROBE
+  timestamp: '2024-10-29T22:15:01Z'
+- details:
+    probe_id: C78901
+    result: within tolerance
+  event: CALIBRATION
+  timestamp: '2024-10-29T22:25:01Z'
+- details:
+    probe_id: C78901
+    result: within tolerance
+  event: CALIBRATION
+  timestamp: '2024-10-29T22:33:01Z'
+- details:
+    frequency: 3.5 MHz
+    probe_id: C78901
+    type: Convex
+  event: PROBE
+  timestamp: '2024-10-29T22:48:01Z'
+- details:
+    firmware_version: 5.3.2
+    message: System shutdown initiated
+  event: SYSTEM
+  timestamp: '2024-10-29T23:03:01Z'
+- details:
+    frequency: 3.5 MHz
+    probe_id: C78901
+    type: Convex
+  event: PROBE
+  timestamp: '2024-10-29T23:16:01Z'
+- details:
+    firmware_version: 5.3.2
+    message: System booted successfully
+  event: SYSTEM
+  timestamp: '2024-10-29T23:17:01Z'
+- details:
+    firmware_version: 5.3.2
+    message: System shutdown initiated
+  event: SYSTEM
+  timestamp: '2024-10-29T23:28:01Z'

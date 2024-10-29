@@ -1,0 +1,264 @@
+/* LogsPage.css */
+
+/* Main container */
+.logs-page {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    font-family: sans-serif,Helvetica, sans-serif;
+    width: 100%;
+}
+
+.logs-page .overlap-wrapper {
+    background-color: #ffffff;
+    width: 100%;
+}
+
+.logs-page .overlap {
+    background-color: #f5f5f5;
+    background-size: 100% 100%;
+    min-height: 100vh;
+    height: 100%;
+    position: relative;
+}
+
+/* Header (Navigation Bar) */
+.logs-page .overlap-group {
+    background-color: #d9d9d9;
+    box-shadow: 0px 4px 4px #00000040;
+    height: 90px; /* Adjusted height */
+    position: relative;
+    width: 97.5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px; /* Adjusted padding */
+}
+
+.logs-page .image {
+    height: 95px; /* Adjust the height as needed */
+}
+
+.logs-page .tabs {
+    display: flex;
+    gap: 20px;
+}
+
+.logs-page .tab {
+    background-color: rgb(6, 103, 200);
+    color: white;
+    font-size: 16px;
+    padding: 20px 20px;
+    border: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none; /* Remove underline */
+}
+
+.logs-page .tab:hover {
+    background-color: #027fa3;
+}
+
+/* Main Section: Retrieve Device Logs */
+.logs-page .grid-container {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr; /* Left grid is equal to right grid */
+    gap: 5%;
+    margin: 30px auto;
+    width: 90%;
+    margin-right: 6.5%;
+     /* Constrain the maximum width */
+}
+
+.logs-page .left-grid {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Prevent content overflow */
+}
+
+.logs-page .main-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.logs-page .main-heading {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 40px;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    text-align: center; /* Ensure text is centered */
+    width: 100%; /* Ensure it takes full width of the container */
+    height: 5%; /* Ensure it takes full height of the container */
+}
+
+.logs-page .new-logs {
+    font-size: 25px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+/* Search and Logs List */
+.logs-page .search-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    width: 92%;
+}
+
+.logs-page .search-input {
+    width: 95%;
+    padding: 10px;
+    /* border: 1px solid #ccc; */
+    border-radius: 7px;
+    font-size: 16px;
+}
+
+.logs-page .retrieve-button {
+    background-color: #029dcc;
+    color: white;
+    font-size: 16px;
+    padding: 13px 10px;
+    margin-left: 4%;
+
+    border: none;
+    border-radius: 7px;
+    /* place botton to the right*/
+    align-self: flex-start;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.logs-page .retrieve-button:hover {
+    background-color: #027fa3;
+}
+
+.logs-page .logs-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fff;
+    width: 90%;
+}
+
+.logs-page .log-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.logs-page .log-name {
+    font-size: 16px;
+    color: #333;
+}
+
+.logs-page .log-date {
+    font-size: 14px;
+    color: #666;
+}
+
+.logs-page .download-button {
+    background-color: green;
+    color: white;
+    font-size: 14px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.logs-page .download-button:hover {
+    background-color: #027fa3;
+}
+
+.logs-page .download-icon {
+    margin-right: 8px;
+}
+
+/* Info Section */
+.logs-page .right-grid {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Prevent content overflow */
+}
+
+.logs-page .chart-section {
+    margin-top: 20px;
+}
+
+.logs-page .catalog-section {
+    margin-bottom: 20px;
+}
+
+.logs-page .device-heading {
+    font-size: 25px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.logs-page .catalog-list {
+    list-style-type: none;  
+    margin-bottom: 40px;
+    font-weight: 400;
+    width: 95%;
+    padding: 0;
+}
+
+.logs-page .catalog-item {
+    font-size: 16px;
+    font-family: 'arial';
+    margin-bottom: 10px;
+    font-weight: 400; /* Changed to a very lighter font weight */
+    background-color: #fff5f5;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logs-page .catalog-key {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000000;
+    margin-bottom: 5px;
+}
+
+.logs-page .catalog-value {
+    font-size: 14px;
+    font-weight: 400;
+    color: #333;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .logs-page .grid-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .logs-page .left-grid, .logs-page .right-grid {
+        width: 90%;
+    }
+}
