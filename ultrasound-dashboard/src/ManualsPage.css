@@ -127,8 +127,8 @@
 }
 
 .manuals-page .download-button {
-    background-color: #038f3b;
-    color: white;
+    background-color: #f5f5f5;
+    color: #5b5858;
     font-size: 14px;
     padding: 5px 10px;
     border: none;
@@ -141,9 +141,14 @@
 
 .manuals-page .download-button:hover {
     background-color: #027fa3;
+    color: white;
 }
 
 .manuals-page .download-icon {
     margin-right: 8px;
     font-size: 14px;
+}
+
+.manuals-list .manual-item a {
+    text-decoration: none;
 }

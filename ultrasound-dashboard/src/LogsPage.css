@@ -253,6 +253,10 @@
     background-color: #fff;
 }
 
+.logs-list .log-item a {
+    text-decoration: none;
+}
+
 /* Responsive design */
 @media screen and (max-width: 768px) {
     .logs-page .grid-container {
