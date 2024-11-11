@@ -10,6 +10,7 @@ const UploadPage = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]); // State to store the list of uploaded files
   const [isDragging, setIsDragging] = useState(false); // State to manage drag-and-drop indication
   const [documentType, setDocumentType] = useState(''); // State to store the selected document type
+  const [isLoading, setIsLoading] = useState(false); // State to manage loading indication
 
   // Handle file selection
   const handleFileChange = (event) => {
@@ -60,6 +61,8 @@ const UploadPage = () => {
     });
     formData.append('documentType', documentType); // Append the document type to the formData
 
+    setIsLoading(true); // Set loading state to true
+
     try {
       const response = await axios.post('http://127.0.0.1:5000/api/upload', formData, {
         headers: {
@@ -74,6 +77,8 @@ const UploadPage = () => {
     } catch (error) {
       console.error('Error uploading files:', error);
       setUploadStatus('Error uploading files.');
+    } finally {
+      setIsLoading(false); // Set loading state to false
     }
   };
 
@@ -157,6 +162,9 @@ const UploadPage = () => {
                 
               {/* Upload Status */}
               {uploadStatus && <p className="upload-status">{uploadStatus}</p>}
+
+              {/* Loading Bar */}
+              {isLoading && <div className="loading-bar">Uploading...</div>}
             </div>
 
             {/* Right Grid: Uploaded Files Section */}
