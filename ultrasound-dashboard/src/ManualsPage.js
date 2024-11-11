@@ -3,15 +3,14 @@ import './ManualsPage.css'; // Linking your CSS
 import { FaDownload } from 'react-icons/fa'; // Importing icons
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
-
 const ManualsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All');
   const [manuals, setManuals] = useState([]);
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const fetchManuals = async () => {
-    setloading(true);
+    setLoading(true);
     const file_types = ["user", "service", "regulatory"];
     const manualList = [];
 
@@ -22,10 +21,10 @@ const ManualsPage = () => {
     }
 
     setManuals(manualList);
-    setloading(false);
+    setLoading(false);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchManuals();
   }, []);
 
@@ -37,9 +36,7 @@ const ManualsPage = () => {
     setSelectedType(event.target.value);
   };
 
-
   const filteredManuals = manuals.filter(manual => {
-    
     return (
       (selectedType === 'All' || selectedType.toLowerCase().includes(manual.type)) &&
       manual["file"].toLowerCase().includes(searchTerm.toLowerCase())
@@ -61,7 +58,7 @@ const ManualsPage = () => {
             <div className="tabs">
               <Link to="/manuals" className="tab">Access Manuals</Link>
               <Link to="/logs" className="tab">Retrieve Device Logs</Link>
-              <Link to="/upload" className="tab">Upload</Link>
+              <Link to="/upload" className="tab">Upload Manuals</Link>
             </div>
           </div>
 
@@ -84,17 +81,14 @@ const ManualsPage = () => {
               </select>
             </div>
             <div className="manuals-list">
-
-              {filteredManuals.map((manual,index) => (
+              {filteredManuals.map((manual, index) => (
                 <div key={index} className="manual-item">
                   <span className="manual-name">{manual.file}</span>
-                   <a href={`http://127.0.0.1:5000/api/files/download/${manual.file}?type=${manual.type}`} download={manual.file} className="download-button">
+                  <a href={`http://127.0.0.1:5000/api/files/download/${manual.file}?type=${manual.type}`} download={manual.file} className="download-button">
                     <FaDownload className="download-icon" /> Download
                   </a>
                 </div>
               ))}
-
-
             </div>
           </div>
 

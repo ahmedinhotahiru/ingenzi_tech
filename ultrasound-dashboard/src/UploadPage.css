@@ -2,88 +2,103 @@
 
 /* Main container */
 .upload-page {
-    background-color: #f9f9f9;
-    min-height: 100vh;
-    padding: 40px;
+    background-color: #ffffff;
     display: flex;
+    flex-direction: row;
     justify-content: center;
-    align-items: center;
     font-family: "Poppins", sans-serif;
+    width: 100%;
 }
 
-/* Grid container */
+.upload-page .overlap-wrapper {
+    background-color: #ffffff;
+    width: 100%;
+}
+
+.upload-page .overlap {
+    background-color: #f5f5f5;
+    background-size: 100% 100%;
+    min-height: 100vh;
+    height: 100%;
+    position: relative;
+}
+
+/* Header (Navigation Bar) */
+.upload-page .overlap-group {
+    background-color: #d9d9d9;
+    box-shadow: 0px 4px 4px #00000040;
+    height: 90px; /* Adjusted height */
+    position: relative;
+    width: 97.5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px; /* Adjusted padding */
+}
+
+.upload-page .image {
+    height: 95px; /* Adjust the height as needed */
+}
+
+.upload-page .tabs {
+    display: flex;
+    gap: 20px;
+}
+
+.upload-page .tab {
+    background-color: rgb(6, 103, 200);
+    color: white;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none; /* Remove underline */
+}
+
+.upload-page .tab:hover {
+    background-color: #027fa3;
+}
+
+/* Main Section: Upload Manual */
 .upload-page .grid-container {
     display: grid;
-    grid-template-columns: 2fr 1fr; /* Left grid is larger than right grid */
-    gap: 20px;
-    width: 100%;
-    max-width: 1200px;
+    grid-template-columns: 1.5fr 1fr; /* Left grid is equal to right grid */
+    gap: 5%;
+    margin: 30px auto;
+    width: 90%;
+    margin-right: 6.5%;
 }
 
-/* Home icon */
-.upload-page .home-icon {
-    align-self: flex-start;
-    font-size: 24px;
-    color: #029dcc;
-    text-decoration: none;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.upload-page .home-icon:hover {
-    color: #027fa3;
-}
-
-.upload-page .home-text {
-    font-size: 12px;
-    color: #029dcc;
-    margin-top: 4px;
-}
-
-.upload-page .home-icon:hover .home-text {
-    color: #027fa3;
-}
-
-/* Left grid */
 .upload-page .left-grid {
     background-color: #fff;
-    padding: 30px;
-    border-radius: 12px;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Prevent content overflow */
+}
+
+.upload-page .main-heading {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 40px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: background-color 0.3s ease;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    text-align: center; /* Ensure text is centered */
+    width: 100%; /* Ensure it takes full width of the container */
+    height: 5%; /* Ensure it takes full height of the container */
 }
 
-.upload-page .left-grid.dragging {
-    background-color: #e0f7fa; /* Light blue background when dragging */
-}
-
-/* Right grid */
-.upload-page .right-grid {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.upload-page .right-grid h3 {
-    font: 30px "Bold", Helvetica, sans-serif;
-}
-
-/* Header section */
 .upload-page .header-section {
     text-align: center;
     margin-bottom: 10px;
 }
 
 .upload-page .header-section h2 {
-    /* add margin top */
     margin-top: 5px;
-    
     font: 40px "Inter-Bold", Helvetica, sans-serif;
     color: #333;
 }
@@ -100,16 +115,40 @@
     margin-top: 10px;
 }
 
+/* Document Type Selection */
+.upload-page .document-type-section {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.upload-page .document-type-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
 /* Drag-and-Drop Frame */
 .upload-page .drag-drop-frame {
     border: 2px dashed #029dcc;
     border-radius: 12px;
     padding: 40px;
+    width: 40%;
+    margin-top: 40px;
+    margin-left: 25%;
     text-align: center;
     margin-bottom: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upload-page .drag-drop-frame.dragging {
+    background-color: #e0f7fa;
 }
 
 .upload-page .upload-icon {
@@ -182,7 +221,38 @@
 }
 
 .upload-page .uploaded-file-item {
-    font-size: 20px;
+    font-size: 16px;
     color: #333;
     margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+/* Right grid */
+.upload-page .right-grid {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Prevent content overflow */
+}
+
+.upload-page .right-grid h4 {
+    font: 24px "Bold", Helvetica, sans-serif;
+    margin-bottom: 20px;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .upload-page .grid-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .upload-page .left-grid, .upload-page .right-grid {
+        width: 90%;
+    }
 }
