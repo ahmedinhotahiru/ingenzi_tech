@@ -1,0 +1,28 @@
+calibration_status:
+  display: FAIL
+  probe: PASS
+components_tested:
+  imaging_modes:
+    2D: PASS
+    Doppler: PASS
+    M-Mode: PASS
+  network_connectivity:
+    network_status: Disconnected
+    signal_strength: -77 dBm
+  power_supply:
+    battery_level: 75%
+    current: 1.6A
+    voltage: 25.0V
+  probe_check:
+    connection_status: Disconnected
+    frequency_response: 7.5 MHz
+    probe_id: L12345
+    type: Convex
+  temperature_check: "35\xB0C"
+error_logs: []
+firmware_version: 5.3.2
+recommendations: None
+system_status: FAIL
+test_duration: 4 minutes
+test_id: ST-92684
+timestamp: '2024-11-05T16:22:57.874647Z'

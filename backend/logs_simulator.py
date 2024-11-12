@@ -2,85 +2,85 @@ import random
 import yaml
 from datetime import datetime, timedelta
 
-# Define sample entries
-probes = [
-    {"id": "L12345", "type": "Linear", "frequency": "7.5 MHz"},
-    {"id": "C78901", "type": "Convex", "frequency": "3.5 MHz"}
-]
-modes = ["2D", "3D", "Color Doppler", "Power Doppler"]
+# # Define sample entries
+# probes = [
+#     {"id": "L12345", "type": "Linear", "frequency": "7.5 MHz"},
+#     {"id": "C78901", "type": "Convex", "frequency": "3.5 MHz"}
+# ]
+# modes = ["2D", "3D", "Color Doppler", "Power Doppler"]
 
-# Generate simulated logs in YAML format
-def generate_yaml_logs(num_entries=50)-> str:
-    """
-    Generate simulated logs in YAML format
+# # Generate simulated logs in YAML format
+# def generate_yaml_logs(num_entries=50)-> str:
+#     """
+#     Generate simulated logs in YAML format
     
-    returns the generated YAML file name
-    """	
-    logs = []
-    current_time = datetime.now().replace(microsecond=0)
+#     returns the generated YAML file name
+#     """	
+#     logs = []
+#     current_time = datetime.now().replace(microsecond=0)
     
-    for i in range(num_entries):
-        entry_type = random.choice(["SYSTEM", "SESSION", "ERROR", "PROBE", "CALIBRATION"])
-        log_entry = {
-            "timestamp": current_time.isoformat() + "Z",
-            "event": ""
-        }
+#     for i in range(num_entries):
+#         entry_type = random.choice(["SYSTEM", "SESSION", "ERROR", "PROBE", "CALIBRATION"])
+#         log_entry = {
+#             "timestamp": current_time.isoformat() + "Z",
+#             "event": ""
+#         }
         
-        if entry_type == "SYSTEM":
-            log_entry["event"] = "SYSTEM"
-            log_entry["details"] = {
-                "message": "System booted successfully" if random.choice([True, False]) else "System shutdown initiated",
-                "firmware_version": "5.3.2"
-            }
+#         if entry_type == "SYSTEM":
+#             log_entry["event"] = "SYSTEM"
+#             log_entry["details"] = {
+#                 "message": "System booted successfully" if random.choice([True, False]) else "System shutdown initiated",
+#                 "firmware_version": "5.3.2"
+#             }
 
-        elif entry_type == "PROBE":
-            probe = random.choice(probes)
-            log_entry["event"] = "PROBE"
-            log_entry["details"] = {
-                "probe_id": probe["id"],
-                "type": probe["type"],
-                "frequency": probe["frequency"]
-            }
+#         elif entry_type == "PROBE":
+#             probe = random.choice(probes)
+#             log_entry["event"] = "PROBE"
+#             log_entry["details"] = {
+#                 "probe_id": probe["id"],
+#                 "type": probe["type"],
+#                 "frequency": probe["frequency"]
+#             }
 
-        elif entry_type == "SESSION":
-            session_id = random.randint(10000, 99999)
-            mode = random.choice(modes)
-            depth = random.randint(5, 20)
-            gain = random.randint(50, 80)
-            log_entry["event"] = "SESSION"
-            log_entry["session_id"] = session_id
-            log_entry["details"] = {
-                "mode": mode,
-                "depth": f"{depth}cm",
-                "gain": f"{gain}%"
-            }
+#         elif entry_type == "SESSION":
+#             session_id = random.randint(10000, 99999)
+#             mode = random.choice(modes)
+#             depth = random.randint(5, 20)
+#             gain = random.randint(50, 80)
+#             log_entry["event"] = "SESSION"
+#             log_entry["session_id"] = session_id
+#             log_entry["details"] = {
+#                 "mode": mode,
+#                 "depth": f"{depth}cm",
+#                 "gain": f"{gain}%"
+#             }
 
-        elif entry_type == "ERROR":
-            log_entry["event"] = "ERROR"
-            log_entry["details"] = {
-                "message": "Probe disconnected unexpectedly" if random.choice([True, False]) else "Network connection lost"
-            }
+#         elif entry_type == "ERROR":
+#             log_entry["event"] = "ERROR"
+#             log_entry["details"] = {
+#                 "message": "Probe disconnected unexpectedly" if random.choice([True, False]) else "Network connection lost"
+#             }
         
-        elif entry_type == "CALIBRATION":
-            probe = random.choice(probes)
-            log_entry["event"] = "CALIBRATION"
-            log_entry["details"] = {
-                "probe_id": probe["id"],
-                "result": "within tolerance"
-            }
+#         elif entry_type == "CALIBRATION":
+#             probe = random.choice(probes)
+#             log_entry["event"] = "CALIBRATION"
+#             log_entry["details"] = {
+#                 "probe_id": probe["id"],
+#                 "result": "within tolerance"
+#             }
 
-        # Append log entry to the list
-        logs.append(log_entry)
-        current_time += timedelta(minutes=random.randint(1, 15))  # Increment time for the next log
+#         # Append log entry to the list
+#         logs.append(log_entry)
+#         current_time += timedelta(minutes=random.randint(1, 15))  # Increment time for the next log
 
-    # Save logs to a YAML file
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f".\data\device_logs\simulated_ultrasound_logs_{timestamp}.yaml"
+#     # Save logs to a YAML file
+#     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+#     filename = f".\data\device_logs\simulated_ultrasound_logs_{timestamp}.yaml"
     
-    with open(filename, "w") as file:
-        yaml.dump(logs, file, default_flow_style=False)
+#     with open(filename, "w") as file:
+#         yaml.dump(logs, file, default_flow_style=False)
     
-    return filename
+#     return filename
 
 
 
@@ -143,6 +143,96 @@ def generate_self_test_report():
 
     print(f"Self-test report saved to {filename}")
     return filename
+
+
+
+# ==================================================================================================
+
+import random
+import yaml
+from datetime import datetime, timedelta
+
+# Sample data for probes, image quality, and firmware status
+probes = [
+    {"id": "L12345", "type": "Linear", "frequency": "7.5 MHz"},
+    {"id": "C78901", "type": "Convex", "frequency": "3.5 MHz"}
+]
+statuses = ["PASS", "FAIL"]
+firmware_statuses = ["up-to-date", "outdated"]
+
+# Generate simulated logs in YAML format with SYSTEM and additional metrics
+def generate_yaml_logs(num_entries=50):
+    logs = []
+    current_time = datetime.now().replace(microsecond=0)
+    
+    # Add a single SYSTEM event at the beginning of the log file
+    system_event = {
+        "timestamp": current_time.isoformat() + "Z",
+        "event": "SYSTEM",
+        "details": {
+            "startup_status": "System booted successfully" if random.choice([True, False]) else "System boot failed",
+            "shutdown_status": "System shutdown successfully" if random.choice([True, False]) else "Unexpected shutdown",
+            "firmware_status": random.choice(firmware_statuses)
+        }
+    }
+    logs.append(system_event)
+    
+    # Increment time for each entry
+    for i in range(num_entries):
+        # Create a log entry with random data
+        entry_type = random.choice(["SESSION", "CALIBRATION"])
+        log_entry = {
+            "timestamp": (current_time + timedelta(minutes=random.randint(1, 5))).isoformat() + "Z",
+            "event": entry_type,
+            "details": {}
+        }
+        
+        # Populate details based on entry type
+        if entry_type == "SESSION":
+            session_id = random.randint(10000, 99999)
+            image_quality = random.randint(1, 10)  # Image quality score out of 10
+            battery_status = random.randint(50, 100)  # Battery health in percentage
+            log_entry["details"] = {
+                "session_id": session_id,
+                "image_quality": f"{image_quality}/10",
+                "battery_health": f"{battery_status}%",
+                "depth": f"{random.randint(5, 20)}cm",
+                "gain": f"{random.randint(50, 80)}%"
+            }
+        
+        elif entry_type == "CALIBRATION":
+            probe = random.choice(probes)
+            calibration_result = random.choice(statuses)
+            log_entry["details"] = {
+                "probe_id": probe["id"],
+                "calibration_result": calibration_result
+            }
+
+        logs.append(log_entry)
+        
+        # Increment the current time for the next log entry
+        current_time += timedelta(minutes=random.randint(5, 15))
+        
+    # Save logs to a YAML file
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f".\data\device_logs\simulated_ultrasound_logs_{timestamp}.yaml"
+    
+    with open(filename, "w") as file:
+        yaml.dump(logs, file, default_flow_style=False)
+    
+    return filename
+
+    # # Generate a timestamped filename
+    # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # filename = f"simulated_ultrasound_logs_{timestamp}.yaml"
+
+    # # Save the logs to a YAML file
+    # with open(filename, "w") as file:
+    #     yaml.dump(logs, file, default_flow_style=False)
+
+    # print(f"Logs generated and saved to {filename}")
+
+# Run the function to generate logs
 
 
 

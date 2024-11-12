@@ -3,17 +3,15 @@ import './Home.css'; // Linking your CSS
 import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { format } from 'date-fns'; // For formatting the date
+import { format, differenceInDays } from 'date-fns'; // For formatting the date and calculating the difference in days
 import { FaComments } from 'react-icons/fa'; // Importing chat icon
 import { FaTools, FaBell } from 'react-icons/fa'; // Import maintenance icon
 
+import { gapi } from 'gapi-script'; // Import Google API client
 
-const errorCodeDescriptions = {
-  '0001': 'A software failure (new assertion) has occurred. There is no known hardware fault that could cause this.',
-  '0002': 'FEC alert message - The front end has stopped scanning because of some power monitor problem. This could be a hardware problem with the scanhead, the channel boards, the AIM, or the power supplies, but this also could be a system software problem. In reviewing the previous error messages, from the FEC, the board errorID should indicate if there is a specific problem with hardware.',
-  '0003': 'Hardware configuration was incorrect for the board specified in the error message. Most likely this is a board configuration problem - either the hard coded bits or the Eeprom is bad. This could also be a communications or software problem.'
-  // Add more error codes and descriptions as needed
-};
+const CLIENT_ID = '919850537874-1jaq60mqr0pqem55j566cbdf80jq03ub.apps.googleusercontent.com';
+const API_KEY = 'AIzaSyBtxsEtyhDQiJsMjKlXbBKe4B9ysE-xSog';
+const SCOPES = 'https://www.googleapis.com/auth/calendar';
 
 const Home = () => {
   const navigate = useNavigate(); // Hook to navigate programmatically
@@ -21,27 +19,116 @@ const Home = () => {
   const [nextServiceDate, setNextServiceDate] = useState(new Date('2025-10-15')); // Initial date for "Next service"
   const [lastServiceDate, setLastServiceDate] = useState(new Date('2024-10-15')); // Initial date for "Last service"
   const [showModal, setShowModal] = useState(false); // To toggle the modal
+  const [showConfirmation, setShowConfirmation] = useState(false); // To toggle the confirmation modal
   const [errorCode, setErrorCode] = useState(''); // State for the error code input
   const [errorCodeDisplay, setErrorCodeDisplay] = useState(''); // State for the displayed error code
   const [errorDescription, setErrorDescription] = useState(''); // State for the error code description
   const modalRef = useRef(null); // Reference for the modal
+  const [reminder, setReminder] = useState(''); // State for the reminder message
+  const [selectedDate, setSelectedDate] = useState(new Date()); // State for the selected date and time
+
+  useEffect(() => {
+    const storedNextServiceDate = localStorage.getItem('nextServiceDate');
+    if (storedNextServiceDate) {
+      const date = new Date(storedNextServiceDate);
+      setNextServiceDate(date);
+
+      const daysUntilService = differenceInDays(date, new Date());
+      if (daysUntilService <= 7) {
+        setReminder(`Reminder: Your next service is scheduled for ${format(date, 'dd MMM yyyy')}`);
+      }
+    }
+
+    // Load Google API client
+    function start() {
+      gapi.client.init({
+        apiKey: API_KEY,
+        clientId: CLIENT_ID,
+        scope: SCOPES,
+        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"]
+      }).then(() => {
+        if (!gapi.auth2.getAuthInstance()) {
+          gapi.auth2.init({
+            client_id: CLIENT_ID,
+          });
+        }
+      }).catch((error) => {
+        console.error('Error initializing Google API client:', error);
+      });
+    }
+    gapi.load('client:auth2', start);
+  }, []);
 
   // Function to handle date selection
   const handleDateChange = (date) => {
-    setLastServiceDate(nextServiceDate); // Update the "Last service" date to the current "Next service" date
-    setNextServiceDate(date); // Update the "Next service" date
-    setShowModal(false); // Close the modal after selection
+    setSelectedDate(date);
+  };
+
+  // Function to handle submit
+  const handleSubmit = () => {
+    const userConfirmed = window.confirm(`Would you like to add the selected date (${format(selectedDate, 'dd MMM yyyy HH:mm')}) to your calendar?`);
+    if (userConfirmed) {
+      setLastServiceDate(nextServiceDate); // Update the "Last service" date to the current "Next service" date
+      setNextServiceDate(selectedDate); // Update the "Next service" date
+      setShowModal(false); // Close the modal after selection
+      localStorage.setItem('nextServiceDate', selectedDate.toISOString()); // Store the date in local storage
+      addEventToGoogleCalendar(selectedDate); // Add event to Google Calendar
+    }
+  };
+
+  // Function to add event to Google Calendar
+  const addEventToGoogleCalendar = (date) => {
+    const event = {
+      summary: 'Scheduled Maintenance',
+      description: 'Scheduled maintenance for the device.',
+      start: {
+        dateTime: date.toISOString(),
+        timeZone: 'GMT+2',
+      },
+      end: {
+        dateTime: new Date(date.getTime() + 60 * 60 * 1000).toISOString(), // 1 hour later
+        timeZone: 'GMT+2',
+      },
+    };
+
+    console.log('Event to be added:', event); // Log the event details
+
+    const authInstance = gapi.auth2.getAuthInstance();
+    if (authInstance) {
+      authInstance.signIn().then(() => {
+        if (gapi.client.calendar) {
+          gapi.client.calendar.events.insert({
+            calendarId: 'primary',
+            resource: event,
+          }).then((response) => {
+            console.log('Event created: ', response);
+            setShowConfirmation(true); // Show confirmation modal
+          }).catch((error) => {
+            console.error('Error creating event:', error);
+          });
+        } else {
+          console.error('Google Calendar API not loaded');
+        }
+      }).catch((error) => {
+        console.error('Error signing in:', error);
+      });
+    } else {
+      console.error('Auth instance not available');
+    }
   };
 
   // Function to handle error code search
   const handleSearch = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/api/lookup-code?code=${errorCode}`);
+      const data = await response.json();
+      console.log(data);
 
-    const response = await fetch(`http://127.0.0.1:5000/api/lookup-code?code=${errorCode}`);
-    const data = await response.json();
-    console.log(data);
-
-    setErrorCodeDisplay(errorCode); // Update the displayed error code
-    setErrorDescription(data['Description']); // Update the error code description
+      setErrorCodeDisplay(errorCode); // Update the displayed error code
+      setErrorDescription(data['Description']); // Update the error code description
+    } catch (error) {
+      console.error('Error fetching error code description:', error);
+    }
   };
 
   // Effect to handle clicks outside the modal and Escape key press
@@ -89,6 +176,13 @@ const Home = () => {
             <h1 className="main-heading">LLM Ultrasound Troubleshooting Tool</h1>
             <p className="p">Fix Faster, Diagnose Smarter!</p>
           </div>
+
+          {/* Reminder Section */}
+          {reminder && (
+            <div className="reminder">
+              <p>{reminder}</p>
+            </div>
+          )}
 
           {/* Error Code Search, Recent Logs, and AI Assistant Sections */}
           <div className="grid-container">
@@ -169,13 +263,31 @@ const Home = () => {
             <div className="modal">
               <div className="modal-content">
                 <span className="close-button" onClick={() => setShowModal(false)}>&times;</span>
-                <h3>Select a Maintenance Date</h3>
+                <h3>Select a Maintenance Date and Time</h3>
                 <DatePicker
-                  selected={nextServiceDate}
+                  selected={selectedDate}
                   onChange={handleDateChange}
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  timeCaption="time"
+                  dateFormat="MMMM d, yyyy h:mm aa"
                   minDate={new Date()} // Prevent selecting past dates
                   inline
                 />
+                <button className="submit-button" onClick={handleSubmit}>Submit</button>
+              </div>
+            </div>
+          )}
+
+          {/* Confirmation Modal */}
+          {showConfirmation && (
+            <div className="confirmation-modal">
+              <div className="modal-content">
+                <span className="close-button" onClick={() => setShowConfirmation(false)}>&times;</span>
+                <h3>Event Added</h3>
+                <p>Your event has been added to the calendar successfully.</p>
+                <button className="ok-button" onClick={() => setShowConfirmation(false)}>OK</button>
               </div>
             </div>
           )}
