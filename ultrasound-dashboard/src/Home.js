@@ -7,9 +7,9 @@ import { format, differenceInDays } from 'date-fns'; // For formatting the date 
 import { FaComments } from 'react-icons/fa'; // Importing chat icon
 import { gapi } from 'gapi-script'; // Import Google API client
 
-const CLIENT_ID = '735228709539-1q4cqdt56ji75e4mg2lihaqh0s07lq3k.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyC3f_Mz4zUMAseqIqfErkTY9vqFeKnxHac';
-const SCOPES = 'openid email profile https://www.googleapis.com/auth/calendar';
+const CLIENT_ID = '919850537874-1jaq60mqr0pqem55j566cbdf80jq03ub.apps.googleusercontent.com';
+const API_KEY = 'AIzaSyBtxsEtyhDQiJsMjKlXbBKe4B9ysE-xSog';
+const SCOPES = 'https://www.googleapis.com/auth/calendar';
 
 const Home = () => {
   const navigate = useNavigate(); // Hook to navigate programmatically
@@ -17,10 +17,12 @@ const Home = () => {
   const [nextServiceDate, setNextServiceDate] = useState(new Date('2024-10-15')); // Initial date for "Next service"
   const [lastServiceDate, setLastServiceDate] = useState(new Date('2023-10-15')); // Initial date for "Last service"
   const [showModal, setShowModal] = useState(false); // To toggle the modal
+  const [showConfirmation, setShowConfirmation] = useState(false); // To toggle the confirmation modal
   const [errorCode, setErrorCode] = useState(''); // State for the error code input
   const [errorCodeDisplay, setErrorCodeDisplay] = useState(''); // State for the displayed error code
   const [errorDescription, setErrorDescription] = useState(''); // State for the error code description
   const [reminder, setReminder] = useState(''); // State for the reminder message
+  const [selectedDate, setSelectedDate] = useState(new Date()); // State for the selected date and time
 
   useEffect(() => {
     const storedNextServiceDate = localStorage.getItem('nextServiceDate');
@@ -40,10 +42,13 @@ const Home = () => {
         apiKey: API_KEY,
         clientId: CLIENT_ID,
         scope: SCOPES,
+        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"]
       }).then(() => {
-        gapi.auth2.init({
-          client_id: CLIENT_ID,
-        });
+        if (!gapi.auth2.getAuthInstance()) {
+          gapi.auth2.init({
+            client_id: CLIENT_ID,
+          });
+        }
       }).catch((error) => {
         console.error('Error initializing Google API client:', error);
       });
@@ -53,13 +58,18 @@ const Home = () => {
 
   // Function to handle date selection
   const handleDateChange = (date) => {
-    const userConfirmed = window.confirm(`Would you like to add the selected date (${format(date, 'dd MMM yyyy')}) to your calendar?`);
+    setSelectedDate(date);
+  };
+
+  // Function to handle submit
+  const handleSubmit = () => {
+    const userConfirmed = window.confirm(`Would you like to add the selected date (${format(selectedDate, 'dd MMM yyyy HH:mm')}) to your calendar?`);
     if (userConfirmed) {
       setLastServiceDate(nextServiceDate); // Update the "Last service" date to the current "Next service" date
-      setNextServiceDate(date); // Update the "Next service" date
+      setNextServiceDate(selectedDate); // Update the "Next service" date
       setShowModal(false); // Close the modal after selection
-      localStorage.setItem('nextServiceDate', date.toISOString()); // Store the date in local storage
-      addEventToGoogleCalendar(date); // Add event to Google Calendar
+      localStorage.setItem('nextServiceDate', selectedDate.toISOString()); // Store the date in local storage
+      addEventToGoogleCalendar(selectedDate); // Add event to Google Calendar
     }
   };
 
@@ -70,11 +80,11 @@ const Home = () => {
       description: 'Scheduled maintenance for the device.',
       start: {
         dateTime: date.toISOString(),
-        timeZone: 'America/Los_Angeles',
+        timeZone: 'GMT+2',
       },
       end: {
         dateTime: new Date(date.getTime() + 60 * 60 * 1000).toISOString(), // 1 hour later
-        timeZone: 'America/Los_Angeles',
+        timeZone: 'GMT+2',
       },
     };
 
@@ -83,14 +93,19 @@ const Home = () => {
     const authInstance = gapi.auth2.getAuthInstance();
     if (authInstance) {
       authInstance.signIn().then(() => {
-        gapi.client.calendar.events.insert({
-          calendarId: 'primary',
-          resource: event,
-        }).then((response) => {
-          console.log('Event created: ', response);
-        }).catch((error) => {
-          console.error('Error creating event:', error);
-        });
+        if (gapi.client.calendar) {
+          gapi.client.calendar.events.insert({
+            calendarId: 'primary',
+            resource: event,
+          }).then((response) => {
+            console.log('Event created: ', response);
+            setShowConfirmation(true); // Show confirmation modal
+          }).catch((error) => {
+            console.error('Error creating event:', error);
+          });
+        } else {
+          console.error('Google Calendar API not loaded');
+        }
       }).catch((error) => {
         console.error('Error signing in:', error);
       });
@@ -183,8 +198,8 @@ const Home = () => {
                 <div className="text-wrapper-3">Upcoming Maintenance</div>
                 <div className="overlap-2">                   
                   {/* Display the selected "Next service" date */}
-                  <p className="p">Next service: {format(nextServiceDate, 'dd MMM yyyy')}</p>
-                  <p className="p">Last serviced: {format(lastServiceDate, 'dd MMM yyyy')}</p>
+                  <p className="p">Next service: {format(nextServiceDate, 'dd MMM yyyy HH:mm')}</p>
+                  <p className="p">Last serviced: {format(lastServiceDate, 'dd MMM yyyy HH:mm')}</p>
                 </div>
 
                 {/* Button to open the modal */}
@@ -202,13 +217,31 @@ const Home = () => {
             <div className="modal">
               <div className="modal-content">
                 <span className="close-button" onClick={() => setShowModal(false)}>&times;</span>
-                <h3>Select a Maintenance Date</h3>
+                <h3>Select a Maintenance Date and Time</h3>
                 <DatePicker
-                  selected={nextServiceDate}
+                  selected={selectedDate}
                   onChange={handleDateChange}
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  timeCaption="time"
+                  dateFormat="MMMM d, yyyy h:mm aa"
                   minDate={new Date()} // Prevent selecting past dates
                   inline
                 />
+                <button className="submit-button" onClick={handleSubmit}>Submit</button>
+              </div>
+            </div>
+          )}
+
+          {/* Confirmation Modal */}
+          {showConfirmation && (
+            <div className="confirmation-modal">
+              <div className="modal-content">
+                <span className="close-button" onClick={() => setShowConfirmation(false)}>&times;</span>
+                <h3>Event Added</h3>
+                <p>Your event has been added to the calendar successfully.</p>
+                <button className="ok-button" onClick={() => setShowConfirmation(false)}>OK</button>
               </div>
             </div>
           )}

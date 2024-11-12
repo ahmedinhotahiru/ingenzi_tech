@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './UploadPage.css'; // Import the custom CSS for styling
-import { FaFileUpload, FaHome } from 'react-icons/fa'; // Import file upload and home icons
+import { FaFileUpload } from 'react-icons/fa'; // Import file upload and home icons
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 const UploadPage = () => {
