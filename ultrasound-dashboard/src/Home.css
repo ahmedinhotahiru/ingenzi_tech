@@ -160,6 +160,28 @@
     background-color: rgb(3,101,202);
 }
 
+/* Reminder Section */
+/* .home-page .reminder {
+    background-color: #ffeb3b;
+    color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin: 20px auto;
+    width: 87%;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+} */
+/* Reminder Section */
+.home-page .reminder {
+    background-color: #ffeb3b;
+    color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin: 20px auto;
+    width: 90%;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
 .home-page .div-wrapper {
     display: flex;
     align-items: center;
