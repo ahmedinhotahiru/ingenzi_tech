@@ -1,0 +1,454 @@
+[
+    {
+        "Error Code": "0001",
+        "Module Name": "PiLogErr.c",
+        "Text Message": "A software failure (new assertion) has occurred. There is no known hardware fault that could cause this."
+    },
+    {
+        "Error Code": "0002",
+        "Module Name": "bCommonFormat.c",
+        "Text Message": "FEC alert message - The front end has stopped scanning because of some power monitor problem. This could be a hardware problem with the scanhead, the channel boards, the AIM, or the power supplies, but this also could be a system software problem. In reviewing the previous error messages, from the FEC, the board errorID should indicate if there is a specific problem with hardware."
+    },
+    {
+        "Error Code": "0003",
+        "Module Name": "bCommon.c",
+        "Text Message": "Hardware configuration was incorrect for the board specified in the error message. Most likely this is a board configuration problem - either the hard coded bits or the Eeprom is bad. This could also be a communications or software problem."
+    },
+    {
+        "Error Code": "0004",
+        "Module Name": "CmoduleLoader.c",
+        "Text Message": "This prevents the user from using the machine after flash files were reloaded - it only requires a system reboot."
+    },
+    {
+        "Error Code": "0005",
+        "Module Name": "CmoduleLoader.c",
+        "Text Message": "Could not determine which flash to load. Look at the previous error messages and they will indicate which board and file it had trouble evaluating. It could be the board itself, or an incorrect modprog.sys file was copied on an install/upgrade."
+    },
+    {
+        "Error Code": "0006",
+        "Module Name": "CmoduleLoader.c",
+        "Text Message": "Could not load the flash specified. Look at the previous error messages and they will indicate which board and file it had trouble loading. It could be the board itself, or the flash file was corrupt on the hard disk, or an install/upgrade process did not copy the correct file."
+    },
+    {
+        "Error Code": "0007",
+        "Module Name": "bUtil.c",
+        "Text Message": "Could not determine which center plane was installed. The hardware configuration could not be read from the center plane. This can be a fault of the center plane config resistors for older boards or the configuration Eeprom for newer boards. It also could be a fault of the CPU's ability to read these devices."
+    },
+    {
+        "Error Code": "0008",
+        "Module Name": "VDiags_Init.c",
+        "Text Message": "The installed hardware and software did not match the expected values. Verify the installed hardware and software differences are correct (typically this occurs on an install or upgrade) and replace any that are invalid. For any differences that are acceptable, save Installed as Expected in the config menu. If this occurs after saving installed as expected and then rebooting, there probably is a software problem."
+    },
+    {
+        "Error Code": "0009",
+        "Module Name": "VMachOptsMgr.cc",
+        "Text Message": "Machine Options could not be set. Typically this is a problem with the machopts.dat file. Either it could not be read or it had an invalid password. It could also be a software problem."
+    },
+    {
+        "Error Code": "0010",
+        "Module Name": "CMachFeature.c",
+        "Text Message": "The list of PCM's in the machine feature software did not contain the installed board. Probably an invalid PCM was installed for this machine. This error was not detected by the configuration software as the installed configuration was incorrectly saved as the expected."
+    },
+    {
+        "Error Code": "0011",
+        "Module Name": "CMachFeature.c",
+        "Text Message": "The list of ChannelBoards (CB) in the machine feature software did not contain the installed board. Probably an invalid CB was installed for this machine. This error was not detected by the configuration software as the installed configuration was incorrectly saved as the expected."
+    },
+    {
+        "Error Code": "0012",
+        "Module Name": "CMachFeature.c",
+        "Text Message": "The list of AIFOM's in the machine feature software did not contain the installed board. Probably an invalid AIFOM for this machine was installed. This error was not detected by the configuration software as the installed configuration was incorrectly saved as the expected."
+    },
+    {
+        "Error Code": "0013",
+        "Module Name": "CMachFeature.c",
+        "Text Message": "The list of AIM's in the machine feature software did not contain the installed board. Probably an invalid AIM was installed for this machine. This error was not detected by the configuration software as the installed configuration was incorrectly saved as the expected."
+    },
+    {
+        "Error Code": "0014",
+        "Module Name": "CMachFeature.c",
+        "Text Message": "The list of DDEA's in machine feature software did not contain the installed board. Probably an invalid DDEA was installed for this machine. It was not detected by configuration software as installed was saved as expected."
+    },
+    {
+        "Error Code": "0015",
+        "Module Name": "CMachFeature.c",
+        "Text Message": "The list of DOPACQ's in the machine feature software did not contain the installed board. Probably an invalid DOPACQ was installed for this machine. This error was not detected by the configuration software as the installed configuration was incorrectly saved as the expected."
+    },
+    {
+        "Error Code": "0016",
+        "Module Name": "CDiagsMachine.c",
+        "Text Message": "A board failed its bootup test. An error message describing which board failed should precede this error. If not, run the PCB's Bootup Status util and it will display which board failed. This is usually an actual board failure."
+    },
+    {
+        "Error Code": "0017",
+        "Module Name": "bUtilStatus.c",
+        "Text Message": "Slot configuration error on bootup. Review the previous error messages and the suspected slot and board will be identified. Either the configuration was read incorrectly which would be a board failure or the board was not seated correctly. Another possibility is that the data files that describe how the center plane is configured (brdList.xml, ctrP96.xml, sltP96.xml) are invalid or corrupt."
+    },
+    {
+        "Error Code": "0018",
+        "Module Name": "VDiagsSoftware.c",
+        "Text Message": "This is only a test message. It occurs when VDiagsSftw_PriorityAlert is executed to verify a banner can be generated."
+    },
+    {
+        "Error Code": "0019",
+        "Module Name": "VPMPowerMonitor.c",
+        "Text Message": "The main task was suspended or crashed at the time the standby switch was set to off. No recommendations."
+    },
+    {
+        "Error Code": "0020",
+        "Module Name": "VPMClockMonitor.c",
+        "Text Message": "Monitor task crash. No recommendations."
+    },
+    {
+        "Error Code": "0021",
+        "Module Name": "VPMClockMonitor.c",
+        "Text Message": "Task crash. No recommendations."
+    },
+    {
+        "Error Code": "0022",
+        "Module Name": "mainVxworks.c",
+        "Text Message": "Chkdsk failed with errors that it could not fix. The most likely cause is a failed hard drive."
+    },
+    {
+        "Error Code": "0023",
+        "Module Name": "mainVxworks.c",
+        "Text Message": "NVRAM was corrupt. Either the battery or the device itself is bad. This also can be caused by turning the power off from the back or pulling the plug."
+    },
+    {
+        "Error Code": "0024",
+        "Module Name": "bTransport.c",
+        "Text Message": "Write communications to the PCM through the ATL socket failed. This is most likely a software failure, but it could also be a board failure of the PCM or the CPU. The PCM resets if its memory overflows because of resource memory leaks, and this reset will close this socket."
+    },
+    {
+        "Error Code": "0025",
+        "Module Name": "bTransport.c",
+        "Text Message": "Read communications from the PCM through the ATL socket failed. This is most likely a software failure, but it could be a board failure of the PCM or the CPU. The PCM resets, if its memory overflows because of resource memory leaks, and this reset will close this socket."
+    },
+    {
+        "Error Code": "0026",
+        "Module Name": "SscbTask.c",
+        "Text Message": "Scip block transfer failed. The board address will be in the error message. This could be the board, but most likely is a communications fault and a retry usually fixes it. This also could be a corrupt file that is being transferred."
+    },
+    {
+        "Error Code": "0027",
+        "Module Name": "uModXKbdMap.c",
+        "Text Message": "The user interface key-symbol file could not be found. Either it is corrupt, or missing."
+    },
+    {
+        "Error Code": "0028",
+        "Module Name": "vCalcOb.c",
+        "Text Message": "Attempt to get an equation from a weight table failed. Could be a corrupted file or software error."
+    },
+    {
+        "Error Code": "0029",
+        "Module Name": "vCalcOb.c",
+        "Text Message": "Error with equations in weight table failed. Could be a corrupted file or software error."
+    },
+    {
+        "Error Code": "0030",
+        "Module Name": "vCalcOb.c",
+        "Text Message": "Attempt to get an equation from the age table file failed. Could be a corrupted file or software error."
+    },
+    {
+        "Error Code": "0031",
+        "Module Name": "vCalcOb.c",
+        "Text Message": "Error with equations in age table failed. Could be a corrupted file or software error."
+    },
+    {
+        "Error Code": "0032",
+        "Module Name": "vCalcOb.c",
+        "Text Message": "Attempt to get a table from the age table failed. Could be a corrupted file or software error."
+    },
+    {
+        "Error Code": "0033",
+        "Module Name": "vCalcOb.c",
+        "Text Message": "Attempt to get data from the percentile table failed. Could be a corrupted file or software error."
+    },
+    {
+        "Error Code": "0034",
+        "Module Name": "vCalcOb.c",
+        "Text Message": "Could not determine current table for a measurement. Could be a corrupted file or software error."
+    },
+    {
+        "Error Code": "0035",
+        "Module Name": "Unknown",
+        "Text Message": "Attempt to open an AP&I file for a scanhead failed. Either the file is corrupted or missing."
+    },
+    {
+        "Error Code": "0036",
+        "Module Name": "Unknown",
+        "Text Message": "Attempt to open a Raima data base AP&I record failed. Either the Raima data base is corrupt, or there was a software error."
+    },
+    {
+        "Error Code": "0037",
+        "Module Name": "vsScanhead.c",
+        "Text Message": "The MPTEE has exceeded its temperature. No recommendations."
+    },
+    {
+        "Error Code": "0038",
+        "Module Name": "vsScanhead.c",
+        "Text Message": "The BPTEE has exceeded its temperature. No recommendations."
+    },
+    {
+        "Error Code": "0039",
+        "Module Name": "vdRtda.c",
+        "Text Message": "The Doppler display and Physio display are out of sync. This primarily indicates a software problem, but it also is an indication that the signal path failed to restart after a stop. Thus it could be any of the signal path boards."
+    },
+    {
+        "Error Code": "0040",
+        "Module Name": "vdtScanSequence.c",
+        "Text Message": "The Pulse CW Doppler duty cycle is out of range. This is a software problem. There is no hardware fix."
+    },
+    {
+        "Error Code": "0041",
+        "Module Name": "bAdaptrFormat.c",
+        "Text Message": "When trying to stop the data path to change modes, the ADAPTR would not stop. This could be a board problem, or a software problem. If the End to End and Machine Comprehensive Tests pass it is probably not the board."
+    },
+    {
+        "Error Code": "0042",
+        "Module Name": "bAifom1Format.c",
+        "Text Message": "When trying to stop the data path to change modes, the AIFOM would not stop. This could be a board problem, or a software problem. If the End to End and Machine Comprehensive Tests pass it is probably not the board."
+    },
+    {
+        "Error Code": "0043",
+        "Module Name": "bSpm1Format.c",
+        "Text Message": "When trying to stop the data path to change modes, the SPM would not stop. This could be a board problem, or a software problem. If the End to End and Machine Comprehensive Tests pass it is probably not the board."
+    },
+    {
+        "Error Code": "0044",
+        "Module Name": "bSpm1Format.c",
+        "Text Message": "When trying to start the data path to change modes, the SPM would not start. This could be a board problem, or a software problem. If the End to End and Machine Comprehensive Tests pass it is probably not the board."
+    },
+    {
+        "Error Code": "0045",
+        "Module Name": "bSsp1Format.c",
+        "Text Message": "When trying to stop the data path to change modes, the SSP would not stop. This could be a board problem, or a software problem. If the End to End and Machine Comprehensive Tests pass it is probably not the board."
+    },
+    {
+        "Error Code": "0046",
+        "Module Name": "cSpcs.c",
+        "Text Message": "Could not initialize the DDEA board. Replace the DDEA. This could also be a problem with communication to the DDEA."
+    },
+    {
+        "Error Code": "0047",
+        "Module Name": "cSpcsGspmColor.c",
+        "Text Message": "SSP is present, but no code compiled for the Color mode for the SSP. This is a system software problem."
+    },
+    {
+        "Error Code": "0048",
+        "Module Name": "cSpcsGspmColor.c",
+        "Text Message": "SPM is present, but no code compiled for the Color mode for the SPM. This is a system software problem."
+    },
+    {
+        "Error Code": "0049",
+        "Module Name": "cSpcsGspmDopp.c",
+        "Text Message": "SSP is present, but no code compiled for the Doppler mode for the SSP. This is a system software problem."
+    },
+    {
+        "Error Code": "0050",
+        "Module Name": "cSpcsGspmDopp.c",
+        "Text Message": "SPM is present, but no code compiled for the Doppler mode for the SPM. This is a system software problem."
+    },
+    {
+        "Error Code": "0051",
+        "Module Name": "cSpcsGspmMisc.c",
+        "Text Message": "SSP is present, but no code compiled for the Miscellaneous support for the SSP. This is a system software problem."
+    },
+    {
+        "Error Code": "0052",
+        "Module Name": "cSpcsGspmMisc.c",
+        "Text Message": "SPM is present, but no code compiled for the Miscellaneous support for the SPM. This is a system software problem."
+    },
+    {
+        "Error Code": "0053",
+        "Module Name": "cSpcsGspmMode.c",
+        "Text Message": "SSP is present, but no code compiled for the Mmode for the SSP. This is a system software problem."
+    },
+    {
+        "Error Code": "0054",
+        "Module Name": "cSpcsGspmMode.c",
+        "Text Message": "SPM is present, but no code compiled for the Mmode for the SPM. This is a system software problem."
+    },
+    {
+        "Error Code": "0055",
+        "Module Name": "cSpcsGspmTwod.c",
+        "Text Message": "SSP is present, but no code compiled for the 2D mode for the SSP. This is a system software problem."
+    },
+    {
+        "Error Code": "0056",
+        "Module Name": "cSpcsGspmTwod.c",
+        "Text Message": "SPM is present, but no code compiled for the 2D mode for the SPM. This is a system software problem."
+    },
+    {
+        "Error Code": "0057",
+        "Module Name": "cInit.c",
+        "Text Message": "Could not initialize the Front End Sub-System. No recommendations."
+    },
+    {
+        "Error Code": "0058",
+        "Module Name": "bImem.c",
+        "Text Message": "Imem failure. Replace the IMEM board. If this error repeats, it could be a software memory allocation problem."
+    },
+    {
+        "Error Code": "0059",
+        "Module Name": "cFecsXdcr.c",
+        "Text Message": "The scanhead prom checksum was incorrect. Replace the bad scanhead. If it repeats, this could be a problem with the FEC or SHSEL which read the data."
+    },
+    {
+        "Error Code": "0060",
+        "Module Name": "cFecsXdcr.c",
+        "Text Message": "The scanhead prom checksum was incorrect. Replace the bad scanhead. If this error repeats, this could be a communication problem with the FEC or SHSEL which read the data, which could be a software problem."
+    },
+    {
+        "Error Code": "0061",
+        "Module Name": "bMps.c",
+        "Text Message": "Problem when shutting down the system with the standby switch. This is for systems with an MPS. Most probable cause is software."
+    },
+    {
+        "Error Code": "0062",
+        "Module Name": "bFecFormat.c",
+        "Text Message": "When trying to stop the data path to change modes, the FEC would not stop. This could be a board problem, or a software problem. If the End to End and Machine Comprehensive Tests pass, it is probably not the board."
+    },
+    {
+        "Error Code": "0063",
+        "Module Name": "bFecFormat.c",
+        "Text Message": "When trying to start the data path to change modes, the FEC would not start. This could be a board problem, or a software problem. If the End to End and Machine Comprehensive Tests pass, it is probably not the board."
+    },
+    {
+        "Error Code": "0064",
+        "Module Name": "bFec.c",
+        "Text Message": "Problem when shutting down the system with the standby switch. This is for systems with a PSM. Most probable cause is software."
+    },
+    {
+        "Error Code": "0065",
+        "Module Name": "cFecsApim.c",
+        "Text Message": "The AP&I checksum from the Raima database files did not match the value in the control and data files for a scanhead. Possibly corrupted files for that scanhead application."
+    },
+    {
+        "Error Code": "0066",
+        "Module Name": "bImem.c",
+        "Text Message": "Could not read configuration for the IMEM. Replace the IMEM board. This could also be a problem with the communication to the IMEM board."
+    },
+    {
+        "Error Code": "0067",
+        "Module Name": "Unknown",
+        "Text Message": "Problem when trying to transfer data to the AIFOM. This could cause a scaling error. This could be a board problem, or a software problem. If the End to End and Machine Comprehensive Tests pass, it is probably not the board."
+    },
+    {
+        "Error Code": "0068",
+        "Module Name": "vdtScanSequence.c",
+        "Text Message": "Problem when switching from CW to 2D. This is a software problem."
+    },
+    {
+        "Error Code": "0069",
+        "Module Name": "cSpcsPhysio.c",
+        "Text Message": "Problem while setting the gain for channel B of the DDEA. This could be a board problem or also a problem with the communication to the DDEA."
+    },
+    {
+        "Error Code": "0070",
+        "Module Name": "cSpcsPhysio.c",
+        "Text Message": "Problem while setting the gain for channel A of the DDEA. This could be a board problem or also a problem with the communication to the DDEA."
+    },
+    {
+        "Error Code": "0071",
+        "Module Name": "cSpcsAaPath.c",
+        "Text Message": "Problem while getting the ADAPTR environment data from the environment file. Probably a corrupt or missing file. Could also be a software problem."
+    },
+    {
+        "Error Code": "0072",
+        "Module Name": "bFecFormat.c",
+        "Text Message": "System and FEC communications are out of sync. Most likely this is a software problem. Running the End to End and Machine Comprehensive tests will verify the hardware is good."
+    },
+    {
+        "Error Code": "0073",
+        "Module Name": "vsScanhead.c",
+        "Text Message": "CW calibration file was not available at the beginning of calibration. Run the CW calibration util."
+    },
+    {
+        "Error Code": "0074",
+        "Module Name": "vsScanhead.c",
+        "Text Message": "Could not write CW calibration results to the hard disk. Most likely this is a file corruption error with the hard disk. Could also be a system software error."
+    },
+    {
+        "Error Code": "0075",
+        "Module Name": "Unknown",
+        "Text Message": "Problem when starting the data path after an image update with the FEC board. This could be a board problem, or a software problem. If the End to End and Machine Comprehensive Tests pass, it is probably not the board."
+    },
+    {
+        "Error Code": "0076",
+        "Module Name": "Unknown",
+        "Text Message": "Problem when starting the data path after an image update with the AIFOM board. This could be a board problem, or a software problem. If the End to End and Machine Comprehensive Tests pass, it is probably not the board."
+    },
+    {
+        "Error Code": "0077",
+        "Module Name": "Unknown",
+        "Text Message": "Problem when starting the data path after an image update with the ADAPTR board. This could be a board problem, or a software problem. If the End to End and Machine Comprehensive Tests pass, it is probably not the board."
+    },
+    {
+        "Error Code": "0078",
+        "Module Name": "Unknown",
+        "Text Message": "Problem when starting the data path after an image update with the SSP board. This could be a board problem, or a software problem. If the End to End and Machine Comprehensive Tests pass, it is probably not the board."
+    },
+    {
+        "Error Code": "0079",
+        "Module Name": "Unknown",
+        "Text Message": "Problem when starting the data path after an image update with the PSP board. This could be a board problem, or a software problem. If the End to End and Machine Comprehensive Tests pass, it is probably not the board."
+    },
+    {
+        "Error Code": "0080",
+        "Module Name": "uDiagsTmpSWOptSetup.c",
+        "Text Message": "Problem allocating display resources for Temporary Software Options message banners or controls. This is a software problem. Existing Temporary Software Options should still be functional."
+    },
+    {
+        "Error Code": "0081",
+        "Module Name": "uAnalysisTransfer.cc",
+        "Text Message": "Power Calcs configuration failure writing or reading the backup/restore configuration file to the MO disk. Reviewing the error messages previous to and associated with this banner will indicate what the particular file and error were."
+    },
+    {
+        "Error Code": "0082",
+        "Module Name": "VDiags_Init.c",
+        "Text Message": "System CPU memory configuration is incorrect for an HDI 5000. A minimum of 48 MBytes is required. Check the System CPU and verify the correct amount of memory is installed."
+    },
+    {
+        "Error Code": "0083",
+        "Module Name": "vdbUtil.c",
+        "Text Message": "Problem when performing vdb data initialization. This is a software problem."
+    },
+    {
+        "Error Code": "0084",
+        "Module Name": "uMisem.c",
+        "Text Message": "Problem with DVS. Look in machine error log for the DVS error code contained in the message string."
+    },
+    {
+        "Error Code": "0085",
+        "Module Name": "vetScanFormat.c",
+        "Text Message": "EPM data conflict. This is a software problem."
+    },
+    {
+        "Error Code": "0086",
+        "Module Name": "mainVxworks.c",
+        "Text Message": "Swatch task failed to initialize. This is a software problem."
+    },
+    {
+        "Error Code": "0087",
+        "Module Name": "vMisem.c",
+        "Text Message": "The DVS installed hardware and software did not match the expected values. Verify the installed hardware and software differences are correct (typically this occurs on an install or upgrade) and replace any that are invalid. For any differences that are acceptable, save Installed as Expected in the config menu. If this occurs after saving installed as expected and then rebooting, there probably is a software problem."
+    },
+    {
+        "Error Code": "0088",
+        "Module Name": "Unknown",
+        "Text Message": "Memory corruption caused by improper use of malloc, free, or realloc. This is a software problem."
+    },
+    {
+        "Error Code": "0089",
+        "Module Name": "uMisem.c",
+        "Text Message": "No DVS bootup status. If other HDI functionality is working, either the HDI has a problem communicating with the DVS (failure in CPU, the ethernet cable, or the system software), or DVS did not bootup (failure in the DVS box)."
+    },
+    {
+        "Error Code": "0090",
+        "Module Name": "uMisem.c",
+        "Text Message": "Problem communicating with the DVS box. Either the HDI had a problem communicating with the DVS (failure in CPU, the ethernet cable, or the system software), or DVS failed to communicate (failure in the DVS box)."
+    }
+]
+
+

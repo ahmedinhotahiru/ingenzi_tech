@@ -1,3 +1,14 @@
-body {
+* {
     font-family: 'Poppins', sans-serif !important;
+    /* padding: 0px !important; */
+}
+
+html {
+    background-color: #f8f8fb;
+    color: #495057;
+    
+}
+
+body {
+    margin: 0px !important;
 }

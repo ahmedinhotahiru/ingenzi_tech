@@ -61,7 +61,7 @@ const ManualsPage = () => {
             <div className="tabs">
               <Link to="/manuals" className="tab">Access Manuals</Link>
               <Link to="/logs" className="tab">Retrieve Device Logs</Link>
-              <Link to="/upload" className="tab">Upload</Link>
+              <Link to="/upload" className="tab">Upload Manuals</Link>
             </div>
           </div>
 

@@ -59,8 +59,10 @@ embeddings = OpenAIEmbeddings(openai_api_key="sk-OJ2_gW9HAKApES_5DbyRODLahM36bT1
 # Directory containing the PDF files
 pdf_directory = "Manuals"
 error_directory = "Errors"
+maintenance_directory = "Maintenance_docs"
 collection_name = 'ultrasound_manuals'
 error_collection_name = "error_manuals"
+maintenance_collection_name = "maintenance_manuals"
 db_path = "./chroma_db"
 
 def initialize_vectorstore(collection_name="ultrasound_manuals", pdf_directory="Manuals", db_path="./chroma_db"):
@@ -102,8 +104,21 @@ def initialize_vectorstore(collection_name="ultrasound_manuals", pdf_directory="
                     pdf_pbar.update(1)
 
 
+        # if collection_name == "error_manuals":
+        #     text_splitter = RecursiveCharacterTextSplitter(
+        #         separators=["\n", ",", "}", "]"],
+        #         keep_separator=True,
+        #         is_separator_regex=False,
+        #         chunk_size=500,
+        #         chunk_overlap=100
+        #     )
+        #     print("\nSplitting error documents...")
+        #     documents_splits = text_splitter.split_documents(extracted_documents)
+        # else:
+        
         # Split documents
         text_splitter = RecursiveCharacterTextSplitter()
+        # text_splitter = RecursiveCharacterTextSplitter(chunk_size=250, chunk_overlap=75)
         print("\nSplitting documents...")
         documents_splits = text_splitter.split_documents(extracted_documents)
 
@@ -122,6 +137,7 @@ def initialize_vectorstore(collection_name="ultrasound_manuals", pdf_directory="
 # Use the function to load or create vector store
 vector = initialize_vectorstore(collection_name, pdf_directory, db_path)
 error_vector_store = initialize_vectorstore(error_collection_name, error_directory, db_path)
+# maintenance_vector_store = initialize_vectorstore(maintenance_collection_name, maintenance_directory, db_path)
 
 
 # Create retriever tool
@@ -140,6 +156,15 @@ error_retriever_tool = create_retriever_tool(
     "error_code_search",
     "Retrieve error code descriptions. For any questions about error codes, you must use this tool!",
 )
+
+
+# Create maintenance_docs retriever tool
+# maintenance_retriever = maintenance_vector_store.as_retriever()
+# maintenance_retriever_tool = create_retriever_tool(
+#     maintenance_retriever,
+#     "maintenance_search",
+#     "Retrieve information on Philips ultrasound systems, including product specifications, maintenance protocols, disinfection guidelines, and usage instructions. For any questions regarding the operation, setup, or handling of Philips ultrasound systems, use this tool!",
+# )
 
 
 
@@ -167,7 +192,7 @@ prompt = ChatPromptTemplate.from_messages(
             You are an AI assistant.
 
             For questions about Ultrasound Machine and its related issues, use the ultrasound_search tool.
-            If the query is about error codes, use the error_code_search tool to get the description of that error code, and use the ultrasound_search outline steps the user can follow to fix it. If the error code is not found, tell the user to provide a valid error code, do not assume anything.
+            If the query is about error codes, use the error_code_search tool to get the description of that error code, and use the ultrasound_search to outline steps the user can follow to fix it. If the error code is not found, tell the user to provide a valid error code, do not assume anything.
 
             For any other general information, use the tavily_search tool.
 
@@ -181,10 +206,56 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 )   
 
+# For any questions related to the operation, setup, or handling of ultrasound systems, such as product specifications, maintenance protocols, disinfection guidelines, or usage instructions, use the maintenance_search tool.
+
+
+
+
+# prompt = ChatPromptTemplate.from_messages(
+#     [
+#         (
+#             "system",
+#             '''
+
+#             You are an advanced AI assistant specializing in Philips ultrasound systems and related diagnostic equipment. You have access to multiple specialized tools to assist users effectively:
+
+#             1. **ultrasound_search** - For any questions about the ultrasound machine itself, including general information, troubleshooting, setup, and operational guidance.
+
+#             2. **error_code_search** - Use this tool to retrieve descriptions of specific error codes:
+#                - When a query includes an error code (e.g., "0008"), first use the tool to locate an exact match. If not found, suggest that the user recheck the code for accuracy, or ask if they would like a list of similar codes if possible.
+#                - If the code is found, retrieve its description. For troubleshooting steps, use **ultrasound_search** to provide practical guidance on resolving the issue. Avoid assumptions if the code is not located.
+
+#             3. **maintenance_search** - For detailed information on maintenance, cleaning, technical specifications, safety standards, and usage instructions for Philips ultrasound systems.
+
+#             4. **tavily_search** - For general inquiries that fall outside the specific functions of ultrasound machines, error codes, or maintenance, use this tool as a fallback.
+
+#             **Instructions for Usage**:
+#             - Always select the tool that best matches the user's query. For error codes, confirm exact matches where possible. If not located on the first try, clarify with the user or suggest possible similar codes if helpful.
+#             - Provide concise initial responses and progressively disclose more details upon user request. 
+
+#             **Example Scenarios**:
+#             - "How do I clean the TEE transducer?" → Use **maintenance_search**.
+#             - "What does error code E123 mean?" → Use **error_code_search** first, then **ultrasound_search** for troubleshooting if found.
+#             - "Can the ultrasound machine export to DICOM?" → Use **ultrasound_search**.
+#             - "What are the system requirements for Q-Station?" → Use **maintenance_search**.
+
+#             Be clear, friendly, and professional in tone, providing information logically, especially for actionable steps. Always verify and prioritize user safety.
+
+#             '''
+#         ),
+#         MessagesPlaceholder(variable_name="chat_history"),
+#         ("user", "{input}"),
+#         MessagesPlaceholder(variable_name="agent_scratchpad"),
+#     ]
+# )   
+
+
+
 @cl.on_chat_start
 def setup_chain():
     llm = ChatOpenAI(openai_api_key="sk-OJ2_gW9HAKApES_5DbyRODLahM36bT13evmH3wxERkT3BlbkFJ5fwb2Eq-euILAFeg8IeJp5lw3MSHOxRFyB7Agjn28A", model="gpt-3.5-turbo")
     tools = [retriever_tool, error_retriever_tool, tavily_search]
+    # tools = [retriever_tool, error_retriever_tool, maintenance_retriever_tool, tavily_search]
     llm_with_tools = llm.bind_tools(tools)
 
     agent = (
@@ -229,3 +300,4 @@ async def handle_message(message: cl.Message):
         await cl.Message(content="Form info sent").send()
 
     
+

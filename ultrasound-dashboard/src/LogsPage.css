@@ -2,7 +2,7 @@
 
 /* Main container */
 .logs-page {
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -12,12 +12,12 @@
 }
 
 .logs-page .overlap-wrapper {
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     width: 100%;
 }
 
 .logs-page .overlap {
-    background-color: #f5f5f5;
+    /* background-color: #f5f5f5; */
     background-size: 100% 100%;
     min-height: 100vh;
     height: 100%;
@@ -26,11 +26,12 @@
 
 /* Header (Navigation Bar) */
 .logs-page .overlap-group {
-    background-color: #d9d9d9;
-    box-shadow: 0px 4px 4px #00000040;
+    /* background-color: #d9d9d9;
+    box-shadow: 0px 4px 4px #00000040; */
     height: 90px; /* Adjusted height */
     position: relative;
-    width: 97.5%;
+    /* width: 97.5%; */
+    width: 95.5%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -49,8 +50,10 @@
 .logs-page .tab {
     background-color: rgb(6, 103, 200);
     color: white;
-    font-size: 16px;
-    padding: 20px 20px;
+    /* font-size: 16px; */
+    font-size: 13px;
+    /* padding: 20px 20px; */
+    padding: 15px 15px;
     border: 10px;
     border-radius: 5px;
     cursor: pointer;
@@ -59,7 +62,9 @@
 }
 
 .logs-page .tab:hover {
-    background-color: #027fa3;
+    /* background-color: #027fa3; */
+    background-color: #00aa55;
+
 }
 
 /* Main Section: Retrieve Device Logs */
@@ -124,10 +129,13 @@
 }
 
 .logs-page .retrieve-button {
-    background-color: #029dcc;
+    /* background-color: #029dcc; */
+    background-color: #00aa55;
     color: white;
-    font-size: 16px;
-    padding: 13px 10px;
+    /* font-size: 16px; */
+    font-size: 14px;
+    /* padding: 13px 10px; */
+    padding: 13px 13px;
     margin-left: 4%;
 
     border: none;
@@ -140,7 +148,8 @@
 }
 
 .logs-page .retrieve-button:hover {
-    background-color: #027fa3;
+    /* background-color: #027fa3; */
+    background-color: #0667c8;
 }
 
 .logs-page .logs-list {
@@ -185,7 +194,8 @@
 }
 
 .logs-page .download-button:hover {
-    background-color: #027fa3;
+    /* background-color: #027fa3; */
+    background-color: #00aa55;
     color: white;
 }
 

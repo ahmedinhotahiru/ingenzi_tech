@@ -2,7 +2,7 @@
 
 /* Main container */
 .manuals-page {
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -12,12 +12,12 @@
 }
 
 .manuals-page .overlap-wrapper {
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     width: 100%;
 }
 
 .manuals-page .overlap {
-    background-color: #f5f5f5;
+    /* background-color: #f5f5f5; */
     background-size: 100% 100%;
     min-height: 100vh;
     position: relative;
@@ -25,11 +25,12 @@
 
 /* Header (Navigation Bar) */
 .manuals-page .overlap-group {
-    background-color: #d9d9d9;
-    box-shadow: 0px 4px 4px #00000040;
+    /* background-color: #d9d9d9;
+    box-shadow: 0px 4px 4px #00000040; */
     height: 90px; /* Adjusted height */
     position: relative;
-    width: 97.5%;
+    /* width: 97.5%; */
+    width: 95.5%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -42,26 +43,30 @@
 
 .manuals-page .tabs {
     display: flex;
-    gap: 30px;
+    /* gap: 30px; */
+    gap: 20px;
 }
 
 .manuals-page .tab {
     background-color: rgb(6, 103, 200);
     color: white;
-    font-size: 16px;
-    padding: 20px 30px;
+    /* font-size: 16px; */
+    font-size: 13px;
+    /* padding: 20px 30px; */
+    padding: 15px 15px;
     border: none;
-    border-radius: 8px;
+    border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     text-decoration: none;
-    display: flex;
+    /* display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; */
 }
 
 .manuals-page .tab:hover {
-    background-color: #027fa3;
+    /* background-color: #027fa3; */
+    background-color: #00aa55;
 }
 
 /* Main Section: Retrieve Device Manuals */
@@ -140,7 +145,8 @@
 }
 
 .manuals-page .download-button:hover {
-    background-color: #027fa3;
+    /* background-color: #027fa3; */
+    background-color: #00aa55;
     color: white;
 }
 
