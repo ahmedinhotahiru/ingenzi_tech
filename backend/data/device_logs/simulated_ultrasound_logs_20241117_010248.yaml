@@ -1,0 +1,313 @@
+- details:
+    firmware_status: outdated
+    shutdown_status: System shutdown successfully
+    startup_status: System booted successfully
+  event: SYSTEM
+  timestamp: '2024-11-17T01:02:48Z'
+- details:
+    battery_health: 50%
+    depth: 7cm
+    gain: 71%
+    image_quality: 7/10
+    session_id: 54051
+  event: SESSION
+  timestamp: '2024-11-17T01:05:48Z'
+- details:
+    calibration_result: PASS
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T01:17:48Z'
+- details:
+    battery_health: 73%
+    depth: 6cm
+    gain: 69%
+    image_quality: 1/10
+    session_id: 87181
+  event: SESSION
+  timestamp: '2024-11-17T01:28:48Z'
+- details:
+    calibration_result: PASS
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T01:40:48Z'
+- details:
+    battery_health: 100%
+    depth: 5cm
+    gain: 76%
+    image_quality: 3/10
+    session_id: 42388
+  event: SESSION
+  timestamp: '2024-11-17T01:42:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T01:47:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T01:57:48Z'
+- details:
+    battery_health: 98%
+    depth: 16cm
+    gain: 70%
+    image_quality: 8/10
+    session_id: 55047
+  event: SESSION
+  timestamp: '2024-11-17T02:08:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T02:21:48Z'
+- details:
+    calibration_result: PASS
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T02:28:48Z'
+- details:
+    battery_health: 53%
+    depth: 6cm
+    gain: 63%
+    image_quality: 9/10
+    session_id: 69281
+  event: SESSION
+  timestamp: '2024-11-17T02:35:48Z'
+- details:
+    battery_health: 51%
+    depth: 11cm
+    gain: 74%
+    image_quality: 5/10
+    session_id: 13110
+  event: SESSION
+  timestamp: '2024-11-17T02:42:48Z'
+- details:
+    battery_health: 93%
+    depth: 18cm
+    gain: 72%
+    image_quality: 3/10
+    session_id: 46027
+  event: SESSION
+  timestamp: '2024-11-17T02:55:48Z'
+- details:
+    calibration_result: PASS
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T03:01:48Z'
+- details:
+    battery_health: 68%
+    depth: 11cm
+    gain: 62%
+    image_quality: 8/10
+    session_id: 81799
+  event: SESSION
+  timestamp: '2024-11-17T03:13:48Z'
+- details:
+    battery_health: 72%
+    depth: 19cm
+    gain: 68%
+    image_quality: 7/10
+    session_id: 47334
+  event: SESSION
+  timestamp: '2024-11-17T03:25:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T03:32:48Z'
+- details:
+    battery_health: 59%
+    depth: 11cm
+    gain: 67%
+    image_quality: 1/10
+    session_id: 86622
+  event: SESSION
+  timestamp: '2024-11-17T03:46:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T03:59:48Z'
+- details:
+    battery_health: 99%
+    depth: 12cm
+    gain: 71%
+    image_quality: 2/10
+    session_id: 44579
+  event: SESSION
+  timestamp: '2024-11-17T04:11:48Z'
+- details:
+    calibration_result: PASS
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T04:25:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T04:35:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T04:46:48Z'
+- details:
+    battery_health: 92%
+    depth: 6cm
+    gain: 70%
+    image_quality: 10/10
+    session_id: 33380
+  event: SESSION
+  timestamp: '2024-11-17T04:52:48Z'
+- details:
+    calibration_result: PASS
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T05:07:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T05:19:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T05:25:48Z'
+- details:
+    calibration_result: PASS
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T05:34:48Z'
+- details:
+    battery_health: 82%
+    depth: 12cm
+    gain: 70%
+    image_quality: 4/10
+    session_id: 44853
+  event: SESSION
+  timestamp: '2024-11-17T05:39:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T05:55:48Z'
+- details:
+    battery_health: 78%
+    depth: 13cm
+    gain: 52%
+    image_quality: 10/10
+    session_id: 78532
+  event: SESSION
+  timestamp: '2024-11-17T06:05:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T06:17:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T06:31:48Z'
+- details:
+    battery_health: 71%
+    depth: 10cm
+    gain: 65%
+    image_quality: 8/10
+    session_id: 58091
+  event: SESSION
+  timestamp: '2024-11-17T06:37:48Z'
+- details:
+    calibration_result: PASS
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T06:50:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T07:02:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T07:18:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T07:28:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T07:29:48Z'
+- details:
+    calibration_result: PASS
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T07:42:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T07:50:48Z'
+- details:
+    battery_health: 91%
+    depth: 17cm
+    gain: 68%
+    image_quality: 1/10
+    session_id: 59069
+  event: SESSION
+  timestamp: '2024-11-17T08:02:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T08:07:48Z'
+- details:
+    battery_health: 65%
+    depth: 11cm
+    gain: 76%
+    image_quality: 9/10
+    session_id: 26518
+  event: SESSION
+  timestamp: '2024-11-17T08:15:48Z'
+- details:
+    battery_health: 88%
+    depth: 10cm
+    gain: 74%
+    image_quality: 7/10
+    session_id: 50503
+  event: SESSION
+  timestamp: '2024-11-17T08:19:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T08:29:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: L12345
+  event: CALIBRATION
+  timestamp: '2024-11-17T08:35:48Z'
+- details:
+    calibration_result: PASS
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T08:41:48Z'
+- details:
+    battery_health: 91%
+    depth: 12cm
+    gain: 80%
+    image_quality: 6/10
+    session_id: 25891
+  event: SESSION
+  timestamp: '2024-11-17T08:50:48Z'
+- details:
+    calibration_result: FAIL
+    probe_id: C78901
+  event: CALIBRATION
+  timestamp: '2024-11-17T09:03:48Z'

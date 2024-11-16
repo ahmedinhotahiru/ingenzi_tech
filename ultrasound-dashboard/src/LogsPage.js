@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './LogsPage.css'; // Linking your CSS
-import { FaHome, FaDownload, FaSyncAlt } from 'react-icons/fa'; // Importing icons
+import { FaHome, FaDownload } from 'react-icons/fa'; // Importing icons
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import { Bar } from 'react-chartjs-2'; // Importing chart component
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
@@ -9,7 +9,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const initialLogs = [
-  { id: 1, name: 'Log029.txt', date: '23-Sept-2024' },
+  { id: 1, name: 'Log029.txt', date: '27-Sept-2024' },
   { id: 2, name: 'Log026.txt', date: '30-Nov-2024' },
   // Add more logs as needed
 ];
@@ -46,7 +46,12 @@ const LogsPage = () => {
       },
     ],
   });
-  // const [isFunctionalTestAllSet, setIsFunctionalTestAllSet] = useState(true);
+  const [showSelfTestCard, setShowSelfTestCard] = useState(false);
+  const [checklist, setChecklist] = useState({
+    transducers: false,
+    power: false,
+    ventilation: false,
+  });
   const chartRef = useRef(null);
 
   const fetchLogs = async () => {
@@ -65,54 +70,26 @@ const LogsPage = () => {
     setSearchTerm(event.target.value);
   };
 
-  // const handleRetrieveLogs = () => {
-  //   // Simulate fetching new log files
-  //   const newLogs = [
-  //     { id: logs.length + 1, name: `Log0${logs.length + 30}.txt`, date: new Date().toLocaleDateString() },
-  //     // Add more new logs as needed
-  //   ];
-  //   setLogs([...logs, ...newLogs]);
+  const handleSelfTestClick = () => {
+    setShowSelfTestCard(true);
+  };
 
-  //   // Generate new random data for the chart
-  //   const newChartData = {
-  //     labels: ['Calibration Results', 'Image Quality Metrics', 'Battery Status'],
-  //     datasets: [
-  //       {
-  //         label: 'Machine Information',
-  //         data: [
-  //           Math.floor(Math.random() * 100), // Random value for Calibration Results
-  //           Math.floor(Math.random() * 100), // Random value for Image Quality Metrics
-  //           Math.floor(Math.random() * 100), // Random value for Battery Status
-  //         ],
-  //         backgroundColor: 'rgba(2, 157, 204, 0.6)',
-  //         borderColor: 'rgba(2, 157, 204, 1)',
-  //         borderWidth: 1,
-  //       },
-  //     ],
-  //   };
-  //   setChartData(newChartData);
+  const handleChecklistChange = (event) => {
+    const { name, checked } = event.target;
+    setChecklist(prevChecklist => ({
+      ...prevChecklist,
+      [name]: checked,
+    }));
+  };
 
-  //   // Alternate between "All Set" and "Error Detected" for Functional Tests
-  //   const newFunctionalTestValue = isFunctionalTestAllSet ? 'Error Detected' : 'All Set';
-  //   setIsFunctionalTestAllSet(!isFunctionalTestAllSet);
-
-  //   // Update machine info with new information
-  //   const newMachineInfo = {
-  //     'System Errors or Warnings': {
-  //       description: 'Indicates any errors or warnings detected in the system.',
-  //       value: `${Math.floor(Math.random() * 5)} warnings`
-  //     },
-  //     'Functional Tests': {
-  //       description: 'Results from tests that check the functionality of specific components.',
-  //       value: newFunctionalTestValue
-  //     },
-  //     'Software and Firmware Status': {
-  //       description: 'Confirmation that the operating software and firmware are up to date.',
-  //       value: 'Up to date'
-  //     },
-  //   };
-  //   setMachineInfo(newMachineInfo);
-  // };
+  const handleSelfTestSubmit = () => {
+    if (checklist.transducers && checklist.power && checklist.ventilation) {
+      alert('All conditions satisfied. Initiating self-test...');
+      setShowSelfTestCard(false);
+    } else {
+      alert('Please ensure all conditions are satisfied before submitting.');
+    }
+  };
 
   const filteredLogs = logs.filter(log => {
     const searchLower = searchTerm.toLowerCase();
@@ -156,6 +133,49 @@ const LogsPage = () => {
           </div>
 
           <h1 className="main-heading">Retrieve Device Logs</h1>
+          <button className="self-test-button" onClick={handleSelfTestClick}>Initiate Device Self-Test</button>
+
+          {showSelfTestCard && (
+            <div className="self-test-card">
+              <h2>Device Self-Test Checklist</h2>
+              <ul>
+                <li>
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="transducers"
+                      checked={checklist.transducers}
+                      onChange={handleChecklistChange}
+                    />
+                    Disconnect all transducers and probes
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="power"
+                      checked={checklist.power}
+                      onChange={handleChecklistChange}
+                    />
+                    Ensure the device is properly powered
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="ventilation"
+                      checked={checklist.ventilation}
+                      onChange={handleChecklistChange}
+                    />
+                    Place the device in a ventilated area
+                  </label>
+                </li>
+              </ul>
+              <button className="submit-button" onClick={handleSelfTestSubmit}>Submit</button>
+            </div>
+          )}
 
           {/* Main Section: Search and Logs List */}
           <div className="grid-container">
@@ -172,24 +192,18 @@ const LogsPage = () => {
                   />
                 </div>
                 <button className="retrieve-button" onClick={retrieveNewLogs}>
-                  <FaSyncAlt/> Retrieve New Logs
+                  Retrieve New Logs
                 </button>
                 <div className="logs-list">
-
-
                   {filteredLogs.map((log, index) => (
                     <div key={index} className="log-item">
                       <span className="log-name">{log.file}</span>
                       <span className="log-date">{log.date}</span>
-
                       <a href={`http://127.0.0.1:5000/api/files/download/${log.file}?type=${log.type}`} download={log.file} className="download-button">
                         <FaDownload className="download-icon" /> Download
                       </a>
                     </div>
                   ))}
-
-
-
                 </div>
               </div>
             </div>
