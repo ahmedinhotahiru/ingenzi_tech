@@ -12,7 +12,7 @@ import os
 load_dotenv(find_dotenv())
 
 # GitHub credentials
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+# GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 GITHUB_REPO = "mhabdulbaaki/llm-for-ultrasound-device-troubleshooting"
 
 error_path = ".\data\error_codes\Philips_HDI_5000_Error_Codes_Full.json"

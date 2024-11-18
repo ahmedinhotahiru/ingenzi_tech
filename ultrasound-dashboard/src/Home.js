@@ -180,7 +180,7 @@ const Home = () => {
           {/* Reminder Section */}
           {reminder && (
             <div className="reminder">
-              <p>{reminder}</p>
+              <p><FaBell/> {reminder}</p>
             </div>
           )}
 

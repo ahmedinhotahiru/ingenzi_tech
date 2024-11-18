@@ -187,7 +187,8 @@
 } */
 /* Reminder Section */
 .home-page .reminder {
-    background-color: #ffeb3b;
+    /* background-color: #ffeb3b; */
+    background-color: white;
     color: #333;
     padding: 10px;
     border-radius: 5px;
