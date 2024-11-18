@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory # type: ignore
 from flask_cors import CORS
 from github import Github # type: ignore
 from dotenv import load_dotenv, find_dotenv # type: ignore
-from client_driver import *
+# from client_driver import *
 from logs_simulator import generate_self_test_report_json, generate_json_logs
 from datetime import datetime, timedelta
 import json
