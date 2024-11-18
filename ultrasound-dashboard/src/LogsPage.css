@@ -2,22 +2,18 @@
 
 /* Main container */
 .logs-page {
-    /* background-color: #ffffff; */
     display: flex;
     flex-direction: row;
     justify-content: center;
-    /* font-family: sans-serif,Helvetica, sans-serif; */
     font-family: "Poppins", sans-serif;
     width: 100%;
 }
 
 .logs-page .overlap-wrapper {
-    /* background-color: #ffffff; */
     width: 100%;
 }
 
 .logs-page .overlap {
-    /* background-color: #f5f5f5; */
     background-size: 100% 100%;
     min-height: 100vh;
     height: 100%;
@@ -26,11 +22,8 @@
 
 /* Header (Navigation Bar) */
 .logs-page .overlap-group {
-    /* background-color: #d9d9d9;
-    box-shadow: 0px 4px 4px #00000040; */
     height: 90px; /* Adjusted height */
     position: relative;
-    /* width: 97.5%; */
     width: 95.5%;
     display: flex;
     justify-content: space-between;
@@ -50,9 +43,7 @@
 .logs-page .tab {
     background-color: rgb(6, 103, 200);
     color: white;
-    /* font-size: 16px; */
     font-size: 13px;
-    /* padding: 20px 20px; */
     padding: 15px 15px;
     border: 10px;
     border-radius: 5px;
@@ -62,9 +53,7 @@
 }
 
 .logs-page .tab:hover {
-    /* background-color: #027fa3; */
     background-color: #00aa55;
-
 }
 
 /* Main Section: Retrieve Device Logs */
@@ -106,6 +95,25 @@
     height: 5%; /* Ensure it takes full height of the container */
 }
 
+.logs-page .self-test-button {
+    background-color: #00aa55;
+    color: white;
+    font-size: 14px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+    margin-left: 47%;
+    display: flex;
+    justify-content: center;
+}
+
+.logs-page .self-test-button:hover {
+    background-color: #0667c8;
+}
+
 .logs-page .new-logs {
     font-size: 25px;
     font-weight: 500;
@@ -123,24 +131,18 @@
 .logs-page .search-input {
     width: 95%;
     padding: 10px;
-    /* border: 1px solid #ccc; */
     border-radius: 7px;
     font-size: 16px;
 }
 
 .logs-page .retrieve-button {
-    /* background-color: #029dcc; */
     background-color: #00aa55;
     color: white;
-    /* font-size: 16px; */
     font-size: 14px;
-    /* padding: 13px 10px; */
     padding: 13px 13px;
     margin-left: 4%;
-
     border: none;
     border-radius: 7px;
-    /* place botton to the right*/
     align-self: flex-start;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -148,7 +150,6 @@
 }
 
 .logs-page .retrieve-button:hover {
-    /* background-color: #027fa3; */
     background-color: #0667c8;
 }
 
@@ -194,7 +195,6 @@
 }
 
 .logs-page .download-button:hover {
-    /* background-color: #027fa3; */
     background-color: #00aa55;
     color: white;
 }
@@ -267,6 +267,98 @@
     text-decoration: none;
 }
 
+/* Self-Test Card */
+.self-test-card {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    width: 80%;
+    margin-left: 36%;
+    max-width: 500px;
+}
+
+.self-test-card h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.self-test-card ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.self-test-card li {
+    margin-bottom: 10px;
+}
+
+.self-test-card label {
+    font-size: 16px;
+    color: #333;
+}
+
+.self-test-card input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.self-test-card .submit-button {
+    background-color: #00aa55;
+    color: white;
+    font-size: 14px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.self-test-card .submit-button:hover {
+    background-color: #0667c8;
+}
+
+/* Self-Test Results */
+.self-test-results-grid {
+    width: 93%;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    /* add a left and right margin of 40px; */
+    margin-left: 50px;
+    /* margin-right: 70px; */
+
+}
+
+.self-test-results-card {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.self-test-results-card h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+.self-test-results-card .result-item {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.self-test-results-card ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.self-test-results-card li {
+    margin-bottom: 5px;
+}
+
 /* Responsive design */
 @media screen and (max-width: 768px) {
     .logs-page .grid-container {
@@ -276,5 +368,9 @@
 
     .logs-page .left-grid, .logs-page .right-grid {
         width: 90%;
+    }
+
+    .self-test-results-grid {
+        grid-template-columns: 1fr;
     }
 }
