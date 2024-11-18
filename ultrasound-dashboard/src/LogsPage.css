@@ -105,7 +105,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-bottom: 20px;
-    margin-left: 44%;
+    margin-left: 47%;
     display: flex;
     justify-content: center;
 }
@@ -274,13 +274,14 @@
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    margin: 20px 3%;
-    width: 60%;
-    max-width: 450px;
+    margin: 20px 0;
+    width: 80%;
+    margin-left: 36%;
+    max-width: 500px;
 }
 
 .self-test-card h2 {
-    font-size: 24px;
+    font-size: 20px;
     margin-bottom: 20px;
 }
 
@@ -318,6 +319,46 @@
     background-color: #0667c8;
 }
 
+/* Self-Test Results */
+.self-test-results-grid {
+    width: 93%;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    /* add a left and right margin of 40px; */
+    margin-left: 50px;
+    /* margin-right: 70px; */
+
+}
+
+.self-test-results-card {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.self-test-results-card h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+.self-test-results-card .result-item {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.self-test-results-card ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.self-test-results-card li {
+    margin-bottom: 5px;
+}
+
 /* Responsive design */
 @media screen and (max-width: 768px) {
     .logs-page .grid-container {
@@ -327,5 +368,9 @@
 
     .logs-page .left-grid, .logs-page .right-grid {
         width: 90%;
+    }
+
+    .self-test-results-grid {
+        grid-template-columns: 1fr;
     }
 }

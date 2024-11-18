@@ -29,6 +29,45 @@ const initialMachineInfo = {
   },
 };
 
+const staticSelfTestResults = {
+  calibration_status: 'FAIL',
+  components_tested: {
+    imaging_modes: {
+      '2D': 'FAIL',
+      Doppler: 'PASS',
+      'M-Mode': 'FAIL',
+    },
+    network_connectivity: {
+      network_status: 'Connected',
+      signal_strength: '-51 dBm',
+    },
+    power_supply: {
+      battery_level: '97%',
+      current: '1.2A',
+      voltage: '22.1V',
+    },
+    probe_check: {
+      connection_status: 'Connected',
+      frequency_response: '3.5 MHz',
+      probe_id: 'L12345',
+      type: 'Linear',
+    },
+    temperature_check: '38°C',
+  },
+  error_logs: [
+    {
+      description: 'Probe disconnected unexpectedly',
+      error_code: 'E-404',
+    },
+  ],
+  firmware_version: '5.3.2',
+  recommendations: 'Recalibrate probe',
+  system_status: 'FAIL',
+  test_duration: '2 minutes',
+  test_id: 'ST-90337',
+  timestamp: '2024-10-29T02:00:14.761750Z',
+};
+
 const LogsPage = () => {
   const [logs, setLogs] = useState([]);
   const [machineInfo, setMachineInfo] = useState(initialMachineInfo);
@@ -47,11 +86,7 @@ const LogsPage = () => {
     ],
   });
   const [showSelfTestCard, setShowSelfTestCard] = useState(false);
-  const [checklist, setChecklist] = useState({
-    transducers: false,
-    power: false,
-    ventilation: false,
-  });
+  const [showSelfTestResults, setShowSelfTestResults] = useState(false);
   const chartRef = useRef(null);
 
   const fetchLogs = async () => {
@@ -74,21 +109,10 @@ const LogsPage = () => {
     setShowSelfTestCard(true);
   };
 
-  const handleChecklistChange = (event) => {
-    const { name, checked } = event.target;
-    setChecklist(prevChecklist => ({
-      ...prevChecklist,
-      [name]: checked,
-    }));
-  };
-
   const handleSelfTestSubmit = () => {
-    if (checklist.transducers && checklist.power && checklist.ventilation) {
-      alert('All conditions satisfied. Initiating self-test...');
-      setShowSelfTestCard(false);
-    } else {
-      alert('Please ensure all conditions are satisfied before submitting.');
-    }
+    alert('All conditions satisfied. Initiating self-test...');
+    setShowSelfTestCard(false);
+    setShowSelfTestResults(true);
   };
 
   const filteredLogs = logs.filter(log => {
@@ -137,43 +161,116 @@ const LogsPage = () => {
 
           {showSelfTestCard && (
             <div className="self-test-card">
-              <h2>Device Self-Test Checklist</h2>
+              <h2>Only click submit when the below has been checked</h2>
               <ul>
-                <li>
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="transducers"
-                      checked={checklist.transducers}
-                      onChange={handleChecklistChange}
-                    />
-                    Disconnect all transducers and probes
-                  </label>
-                </li>
-                <li>
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="power"
-                      checked={checklist.power}
-                      onChange={handleChecklistChange}
-                    />
-                    Ensure the device is properly powered
-                  </label>
-                </li>
-                <li>
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="ventilation"
-                      checked={checklist.ventilation}
-                      onChange={handleChecklistChange}
-                    />
-                    Place the device in a ventilated area
-                  </label>
-                </li>
+                <li>Disconnect all transducers and probes</li>
+                <li>Ensure the device is properly powered</li>
+                <li>Place the device in a ventilated area</li>
               </ul>
               <button className="submit-button" onClick={handleSelfTestSubmit}>Submit</button>
+            </div>
+          )}
+
+          {showSelfTestResults && (
+            <div className="self-test-results-grid">
+              <div className="self-test-results-card">
+                <h3>Probe Check</h3>
+                <div className="result-item">
+                  <ul>
+                    <li>Connection Status: {staticSelfTestResults.components_tested.probe_check.connection_status}</li>
+                    <li>Frequency Response: {staticSelfTestResults.components_tested.probe_check.frequency_response}</li>
+                    <li>Probe ID: {staticSelfTestResults.components_tested.probe_check.probe_id}</li>
+                    <li>Type: {staticSelfTestResults.components_tested.probe_check.type}</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="self-test-results-card">
+                <h3>Imaging Modes</h3>
+                <div className="result-item">
+                  <ul>
+                    <li>2D: {staticSelfTestResults.components_tested.imaging_modes['2D']}</li>
+                    <li>Doppler: {staticSelfTestResults.components_tested.imaging_modes.Doppler}</li>
+                    <li>M-Mode: {staticSelfTestResults.components_tested.imaging_modes['M-Mode']}</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="self-test-results-card">
+                <h3>Network Connectivity</h3>
+                <div className="result-item">
+                  <ul>
+                    <li>Network Status: {staticSelfTestResults.components_tested.network_connectivity.network_status}</li>
+                    <li>Signal Strength: {staticSelfTestResults.components_tested.network_connectivity.signal_strength}</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="self-test-results-card">
+                <h3>Power Supply</h3>
+                <div className="result-item">
+                  <ul>
+                    <li>Battery Level: {staticSelfTestResults.components_tested.power_supply.battery_level}</li>
+                    <li>Current: {staticSelfTestResults.components_tested.power_supply.current}</li>
+                    <li>Voltage: {staticSelfTestResults.components_tested.power_supply.voltage}</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="self-test-results-card">
+                <h3>Calibration Status</h3>
+                <div className="result-item">
+                  <strong>Status:</strong> {staticSelfTestResults.calibration_status}
+                </div>
+              </div>
+              <div className="self-test-results-card">
+                <h3>Temperature Check</h3>
+                <div className="result-item">
+                  Temperature: {staticSelfTestResults.components_tested.temperature_check}
+                </div>
+              </div>
+              <div className="self-test-results-card">
+                <h3>Error Logs</h3>
+                <div className="result-item">
+                  <ul>
+                    {staticSelfTestResults.error_logs.map((error, index) => (
+                      <li key={index}>{error.description} (Error Code: {error.error_code})</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <div className="self-test-results-card">
+                <h3>Firmware Version</h3>
+                <div className="result-item">
+                  Version: {staticSelfTestResults.firmware_version}
+                </div>
+              </div>
+              <div className="self-test-results-card">
+                <h3>Recommendations</h3>
+                <div className="result-item">
+                  Recommendations: {staticSelfTestResults.recommendations}
+                </div>
+              </div>
+              <div className="self-test-results-card">
+                <h3>System Status</h3>
+                <div className="result-item">
+                  Status: {staticSelfTestResults.system_status}
+                </div>
+              </div>
+              <div className="self-test-results-card">
+                <h3>Test Duration</h3>
+                <div className="result-item">
+                  Duration: {staticSelfTestResults.test_duration}
+                </div>
+              </div>
+              <div className="self-test-results-card">
+                <h3>Test ID</h3>
+                <div className="result-item">
+                  <strong>ID:</strong> {staticSelfTestResults.test_id}
+                </div>
+              </div>
+              {/* <div className="self-test-results-card">
+                <h3>Timestamp</h3>
+                <div className="result-item">
+                  <strong>Timestamp:</strong> {staticSelfTestResults.timestamp}
+                </div>
+              </div> */}
             </div>
           )}
 
