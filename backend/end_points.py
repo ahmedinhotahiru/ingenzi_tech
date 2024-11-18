@@ -3,7 +3,7 @@ from flask_cors import CORS
 from github import Github # type: ignore
 from dotenv import load_dotenv, find_dotenv # type: ignore
 from client_driver import *
-from logs_simulator import generate_self_test_report, generate_yaml_logs
+from logs_simulator import generate_self_test_report_json, generate_json_logs
 from datetime import datetime, timedelta
 import json
 import base64
@@ -18,7 +18,7 @@ GITHUB_REPO = "mhabdulbaaki/llm-for-ultrasound-device-troubleshooting"
 error_path = ".\data\error_codes\Philips_HDI_5000_Error_Codes_Full.json"
 
 # Initialize GitHub object with your token
-g = Github("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")
+g = Github("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")
 repo = g.get_repo(GITHUB_REPO)
 
 app = Flask(__name__)
@@ -92,27 +92,30 @@ def get_files():
         # sort the files by timestamp in descending order
         files_ = sorted(files_with_timestamps, key=files_with_timestamps.get, reverse=True)
         
-        files_ = [{"type":file_type, "file": file, "date": datetime.fromtimestamp(files_with_timestamps[file]).strftime("%Y-%m-%d")}for file in files_]
+        files_ = [{
+            "type":file_type, 
+            "file": file, 
+            "date": datetime.fromtimestamp(files_with_timestamps[file]).strftime("%Y-%m-%d")} for file in files_]
         
         return jsonify(files_)
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-    
 
 @app.route("/api/self-test-report")
 def run_self_test():
-    file_name = generate_self_test_report()
+    response = json.loads(generate_self_test_report_json())
 
-    return {"file name": file_name, "date": datetime.now().strftime("%Y-%m-%d")}
+    return response
 
 
 @app.route("/api/retrieve-logs")
 def retrieve_logs():
-    file_name = generate_yaml_logs()
+    response = json.loads(generate_json_logs())
 
-    return {"file name": file_name, "date": datetime.now().strftime("%Y-%m-%d")}
+    # return {"file name": file_name, "date": datetime.now().strftime("%Y-%m-%d")}
+    return response
 
 
 @app.route('/api/files/download/<filename>')
@@ -120,11 +123,6 @@ def download_file(filename):
     file_type = request.args.get('type')
     if file_type is None:
         return jsonify({"error": "No file type provided"}), 400 
-    
-    # if file_type == "logs":
-    #     FILES_DIRECTORY = os.path.join(app.root_path, 'data\device_logs')  # Adjust the path as needed
-    # elif file_type == "reports":
-    #     FILES_DIRECTORY = os.path.join(app.root_path, 'data\self_test_report')
         
     if file_type == "logs":
         directory = os.path.join(app.root_path, 'data\device_logs')  # Adjust the path as needed

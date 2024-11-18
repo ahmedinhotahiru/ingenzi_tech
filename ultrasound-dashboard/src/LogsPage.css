@@ -203,6 +203,10 @@
     margin-right: 8px;
 }
 
+.log-item{
+    cursor:pointer;
+}
+
 /* Info Section */
 .logs-page .right-grid {
     background-color: #fff;

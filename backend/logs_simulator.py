@@ -1,87 +1,7 @@
 import random
 import yaml
 from datetime import datetime, timedelta
-
-# # Define sample entries
-# probes = [
-#     {"id": "L12345", "type": "Linear", "frequency": "7.5 MHz"},
-#     {"id": "C78901", "type": "Convex", "frequency": "3.5 MHz"}
-# ]
-# modes = ["2D", "3D", "Color Doppler", "Power Doppler"]
-
-# # Generate simulated logs in YAML format
-# def generate_yaml_logs(num_entries=50)-> str:
-#     """
-#     Generate simulated logs in YAML format
-    
-#     returns the generated YAML file name
-#     """	
-#     logs = []
-#     current_time = datetime.now().replace(microsecond=0)
-    
-#     for i in range(num_entries):
-#         entry_type = random.choice(["SYSTEM", "SESSION", "ERROR", "PROBE", "CALIBRATION"])
-#         log_entry = {
-#             "timestamp": current_time.isoformat() + "Z",
-#             "event": ""
-#         }
-        
-#         if entry_type == "SYSTEM":
-#             log_entry["event"] = "SYSTEM"
-#             log_entry["details"] = {
-#                 "message": "System booted successfully" if random.choice([True, False]) else "System shutdown initiated",
-#                 "firmware_version": "5.3.2"
-#             }
-
-#         elif entry_type == "PROBE":
-#             probe = random.choice(probes)
-#             log_entry["event"] = "PROBE"
-#             log_entry["details"] = {
-#                 "probe_id": probe["id"],
-#                 "type": probe["type"],
-#                 "frequency": probe["frequency"]
-#             }
-
-#         elif entry_type == "SESSION":
-#             session_id = random.randint(10000, 99999)
-#             mode = random.choice(modes)
-#             depth = random.randint(5, 20)
-#             gain = random.randint(50, 80)
-#             log_entry["event"] = "SESSION"
-#             log_entry["session_id"] = session_id
-#             log_entry["details"] = {
-#                 "mode": mode,
-#                 "depth": f"{depth}cm",
-#                 "gain": f"{gain}%"
-#             }
-
-#         elif entry_type == "ERROR":
-#             log_entry["event"] = "ERROR"
-#             log_entry["details"] = {
-#                 "message": "Probe disconnected unexpectedly" if random.choice([True, False]) else "Network connection lost"
-#             }
-        
-#         elif entry_type == "CALIBRATION":
-#             probe = random.choice(probes)
-#             log_entry["event"] = "CALIBRATION"
-#             log_entry["details"] = {
-#                 "probe_id": probe["id"],
-#                 "result": "within tolerance"
-#             }
-
-#         # Append log entry to the list
-#         logs.append(log_entry)
-#         current_time += timedelta(minutes=random.randint(1, 15))  # Increment time for the next log
-
-#     # Save logs to a YAML file
-#     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-#     filename = f".\data\device_logs\simulated_ultrasound_logs_{timestamp}.yaml"
-    
-#     with open(filename, "w") as file:
-#         yaml.dump(logs, file, default_flow_style=False)
-    
-#     return filename
-
+import json
 
 
 # Sample data for randomized fields
@@ -91,9 +11,10 @@ probes = [
 ]
 imaging_modes = ["2D", "Doppler", "M-Mode"]
 statuses = ["PASS", "FAIL"]
+firmware_statuses = ["up-to-date", "outdated"]
 
 # Function to generate a random self-test report in YAML format
-def generate_self_test_report():
+def generate_self_test_report_yaml():
     # Create the self-test report structure
     report = {
         "timestamp": datetime.now().isoformat() + "Z",
@@ -145,23 +66,47 @@ def generate_self_test_report():
     return filename
 
 
-
-# ==================================================================================================
-
-import random
-import yaml
-from datetime import datetime, timedelta
-
-# Sample data for probes, image quality, and firmware status
-probes = [
-    {"id": "L12345", "type": "Linear", "frequency": "7.5 MHz"},
-    {"id": "C78901", "type": "Convex", "frequency": "3.5 MHz"}
-]
-statuses = ["PASS", "FAIL"]
-firmware_statuses = ["up-to-date", "outdated"]
+def generate_self_test_report_json() :
+    
+    report = {
+        "timestamp": datetime.now().isoformat() + "Z",
+        "test_id": f"ST-{random.randint(10000, 99999)}",
+        "system_status": random.choice(statuses),
+        "components_tested": {
+            "probe_check": {
+                "probe_id": random.choice(probes)["id"],
+                "type": random.choice(probes)["type"],
+                "connection_status": "Connected" if random.choice([True, False]) else "Disconnected",
+                "frequency_response": random.choice(probes)["frequency"]
+            },
+            "imaging_modes": {mode: random.choice(statuses) for mode in imaging_modes},
+            "power_supply": {
+                "voltage": f"{random.uniform(22, 26):.1f}V",
+                "current": f"{random.uniform(1.2, 1.8):.1f}A",
+                "battery_level": f"{random.randint(50, 100)}%"
+            },
+            "temperature_check": f"{random.randint(35, 40)}°C",
+            "network_connectivity": {
+                "network_status": "Connected" if random.choice([True, False]) else "Disconnected",
+                "signal_strength": f"{random.randint(-80, -50)} dBm"
+            }
+        },
+        "firmware_version": "5.3.2",
+        "error_logs": [
+            {"error_code": "E-404", "description": "Probe disconnected unexpectedly"} if random.choice([True, False]) else {}
+        ],
+        "calibration_status": {
+            "probe": random.choice(statuses),
+            "display": random.choice(statuses)
+        },
+        "test_duration": f"{random.randint(1, 5)} minutes",
+        "recommendations": "None" if random.choice([True, False]) else "Recalibrate probe"
+    }
+    
+    return json.dumps(report)
 
 # Generate simulated logs in YAML format with SYSTEM and additional metrics
-def generate_yaml_logs(num_entries=50):
+def generate_json_logs(num_entries=1):
     logs = []
     current_time = datetime.now().replace(microsecond=0)
     
@@ -178,9 +123,11 @@ def generate_yaml_logs(num_entries=50):
     logs.append(system_event)
     
     # Increment time for each entry
-    for i in range(num_entries):
+    for i in range(len(["SESSION", "CALIBRATION"])):
         # Create a log entry with random data
-        entry_type = random.choice(["SESSION", "CALIBRATION"])
+        # entry_type = random.choice(["SESSION", "CALIBRATION"])
+        entry_type = ["SESSION", "CALIBRATION"][i]
+        
         log_entry = {
             "timestamp": (current_time + timedelta(minutes=random.randint(1, 5))).isoformat() + "Z",
             "event": entry_type,
@@ -190,12 +137,12 @@ def generate_yaml_logs(num_entries=50):
         # Populate details based on entry type
         if entry_type == "SESSION":
             session_id = random.randint(10000, 99999)
-            image_quality = random.randint(1, 10)  # Image quality score out of 10
+            image_quality = random.randint(50, 100)  # Image quality score out of 10
             battery_status = random.randint(50, 100)  # Battery health in percentage
             log_entry["details"] = {
                 "session_id": session_id,
-                "image_quality": f"{image_quality}/10",
-                "battery_health": f"{battery_status}%",
+                "image_quality": image_quality,
+                "battery_health": battery_status,
                 "depth": f"{random.randint(5, 20)}cm",
                 "gain": f"{random.randint(50, 80)}%"
             }
@@ -205,7 +152,8 @@ def generate_yaml_logs(num_entries=50):
             calibration_result = random.choice(statuses)
             log_entry["details"] = {
                 "probe_id": probe["id"],
-                "calibration_result": calibration_result
+                "calibration_result": calibration_result,
+                "callibration_value": random.randint(50,100)
             }
 
         logs.append(log_entry)
@@ -215,32 +163,20 @@ def generate_yaml_logs(num_entries=50):
         
     # Save logs to a YAML file
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f".\data\device_logs\simulated_ultrasound_logs_{timestamp}.yaml"
+    # filename = f".\data\device_logs\simulated_ultrasound_logs_{timestamp}.yaml"
+    filename = f".\data\device_logs\simulated_ultrasound_logs_{timestamp}.json"
     
     with open(filename, "w") as file:
-        yaml.dump(logs, file, default_flow_style=False)
+        # yaml.dump(logs, file, default_flow_style=False)
+        json.dump(logs, file)
     
-    return filename
-
-    # # Generate a timestamped filename
-    # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    # filename = f"simulated_ultrasound_logs_{timestamp}.yaml"
-
-    # # Save the logs to a YAML file
-    # with open(filename, "w") as file:
-    #     yaml.dump(logs, file, default_flow_style=False)
-
-    # print(f"Logs generated and saved to {filename}")
-
-# Run the function to generate logs
-
-
-
+    # return filename
+    return json.dumps({"fileName":f"simulated_ultrasound_logs_{timestamp}.json", "data": logs})
 
 if __name__ == "__main__":
     # # Run the log generation function
-    generate_yaml_logs(10)
-    
+    generate_json_logs(10)
     
     # Run the function to generate a self-test report
-    generate_self_test_report()
+    res = generate_self_test_report_json()
+    print(res)
