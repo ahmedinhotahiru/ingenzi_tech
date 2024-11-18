@@ -1,3 +1,4 @@
 capstone_env/
 venv
 .env
+.venv
