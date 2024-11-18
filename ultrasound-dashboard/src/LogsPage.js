@@ -95,10 +95,49 @@ const LogsPage = () => {
     setSelfTestReport(data);
   }
 
+  const retrieveSingleLogFile = async (fileName) => {
+    const resp = await fetch(`http://127.0.0.1:5000/api/retrieve-logs/${fileName}`);
+    const data = await resp.json();
+
+    setMachineInfo({
+      'System Startup': {
+        description: 'Indicates any errors or warnings detected in the system.',
+        value: startCase(data[0].details["startup_status"])
+      },
+      'Firmware Status': {
+        description: 'Confirmation that the operating software and firmware are up to date.',
+        value: startCase(data[0].details["firmware_status"])
+      },
+      'Time Stamp': {
+        description: 'Results from tests that check the functionality of specific components.',
+        value: new Date(data[0]["timestamp"]).toDateString()
+      },
+    });
+
+    setChartData(prevState => ({
+      ...prevState,
+      datasets: [
+        {
+          label: 'Machine Information',
+          data: [
+            data[2].details["callibration_value"], 
+            data[1].details["image_quality"], 
+            data[1].details["battery_health"]], 
+          backgroundColor: 'rgba(2, 157, 204, 0.6)',
+          borderColor: 'rgba(2, 157, 204, 1)',
+          borderWidth: 1,
+        },
+      ],
+    }));
+  }
+
   const fetchLogs = async () => {
     const response = await fetch(`http://127.0.0.1:5000/api/get_files?type=logs`);
     const data = await response.json();
+
     setLogs(data);
+
+   retrieveSingleLogFile(data[0].file);
   };
 
   const retrieveNewLogs = async () => {
@@ -164,6 +203,7 @@ const LogsPage = () => {
       log["date"].toLowerCase().includes(searchLower)
     );
   });
+  
 
   useEffect(() => {
     setIsChartReady(true);
@@ -174,6 +214,7 @@ const LogsPage = () => {
       }
     };
   }, []);
+
 
   useEffect(() => {
     fetchLogs();
