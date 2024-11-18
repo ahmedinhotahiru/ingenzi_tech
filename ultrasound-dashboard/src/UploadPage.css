@@ -2,7 +2,7 @@
 
 /* Main container */
 .upload-page {
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -11,12 +11,12 @@
 }
 
 .upload-page .overlap-wrapper {
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     width: 100%;
 }
 
 .upload-page .overlap {
-    background-color: #f5f5f5;
+    /* background-color: #f5f5f5; */
     background-size: 100% 100%;
     min-height: 100vh;
     height: 100%;
@@ -25,11 +25,12 @@
 
 /* Header (Navigation Bar) */
 .upload-page .overlap-group {
-    background-color: #d9d9d9;
-    box-shadow: 0px 4px 4px #00000040;
+    /* background-color: #d9d9d9;
+    box-shadow: 0px 4px 4px #00000040; */
     height: 90px; /* Adjusted height */
     position: relative;
-    width: 97.5%;
+    /* width: 97.5%; */
+    width: 95.5%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -48,8 +49,10 @@
 .upload-page .tab {
     background-color: rgb(6, 103, 200);
     color: white;
-    font-size: 16px;
-    padding: 20px 20px;
+    /* font-size: 16px; */
+    font-size: 13px;
+    /* padding: 20px 20px; */
+    padding: 15px 15px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -58,7 +61,8 @@
 }
 
 .upload-page .tab:hover {
-    background-color: #027fa3;
+    /* background-color: #027fa3; */
+    background-color: #00aa55;
 }
 
 /* Main Section: Upload Manual */
