@@ -195,7 +195,13 @@ const Home = () => {
                     placeholder="Enter error code... e.g 0001" 
                     className="search-input"
                     value={errorCode}
-                    onChange={(e) => setErrorCode(e.target.value)}
+                    // onChange={(e) => setErrorCode(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value) && value.length <= 4) {
+                        setErrorCode(value);
+                      }
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         handleSearch(); // Trigger the handleSearch function on Enter key press
