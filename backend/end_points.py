@@ -12,7 +12,7 @@ import os
 load_dotenv(find_dotenv())
 
 # GitHub credentials
-# GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 GITHUB_REPO = "mhabdulbaaki/llm-for-ultrasound-device-troubleshooting"
 
 error_path = ".\data\error_codes\Philips_HDI_5000_Error_Codes_Full.json"
@@ -50,19 +50,24 @@ def upload_files():
 @app.route('/api/lookup-code')
 def search():
     # Get query parameter `query`
-    error_code = request.args.get('code')
-    
-    with open(error_path, 'r') as f:
-        data = json.load(f)
-        result = next((item for item in data if item["Error Code"] == error_code), None)
-        
-        if result is not None:
-            return {"Status":"Found", "Error Code": error_code, "Description": result["Text Message"], "Module Name": result["Module Name"]}
-        else:
-            return {"Status":"Not Found", "Error Code": error_code, "Description": "Not Found"}
+    try:
+        error_code = request.args.get('code')
+        if error_code.isnumeric() and len(error_code) == 4:
+            with open(error_path, 'r') as f:
+                data = json.load(f)
+                result = next((item for item in data if item["Error Code"] == error_code), None)
+                
+                if result is not None:
+                    return {"Status":"Found", "Error Code": error_code, "Description": result["Text Message"], "Module Name": result["Module Name"]}
 
-    
-    return f'Searching for: {error_code}'
+                else:
+                    return {"Status":"Not Found", "Error Code": error_code, "Description": "Not Found"}
+
+        else:
+            return {"Status":"invalid error code", "Error Code": error_code, "Description": "Invalid Error Code"}
+
+    except Exception as e:
+        return {"Status":"Error", "Error Code": error_code, "Description": str(e)}
 
 
 @app.route('/api/get_files')
@@ -113,9 +118,20 @@ def run_self_test():
 @app.route("/api/retrieve-logs")
 def retrieve_logs():
     response = json.loads(generate_json_logs())
-
     # return {"file name": file_name, "date": datetime.now().strftime("%Y-%m-%d")}
     return response
+
+
+@app.route("/api/retrieve-logs/<file_name>")
+def retrieve_logs_by_name(file_name):
+    try:
+        file_path = os.path.join('.\data\device_logs', file_name)
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+            return data
+    except Exception as e:
+        return {"error": str(e)}, 500
+    
 
 
 @app.route('/api/files/download/<filename>')
