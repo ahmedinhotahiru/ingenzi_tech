@@ -36,6 +36,9 @@ from tqdm import tqdm
 import chromadb
 from langchain_community.vectorstores import Chroma
 
+# Import the requests library
+import requests
+
 
 
 
@@ -175,7 +178,101 @@ def process_resource(res_all):
     return "\n\n".join(res.page_content for res in res_all)
 
 
+
+
+
 # CUSTOM TOOLS WILL BE DEFINED HERE
+
+
+@tool("retrieve_logs_from_api", return_direct=False)
+def retrieve_logs_from_api() -> str:
+    """
+    Calls the Flask API's /api/retrieve-logs endpoint to fetch the logs.
+    """
+
+    api_url = "http://127.0.0.1:5000/api/retrieve-logs"
+
+    try:
+        response = requests.get(api_url)
+
+        if response.status_code == 200:
+
+            # Save response
+            logs = response.json()
+
+            return f"Successfully retrieved logs: {logs}"
+        
+        else:
+            return "Failed to retrieve logs. Please try again later."
+    
+    except Exception as e:
+        return f"An error occured while fetching the logs: {str(e)}"
+    
+
+
+@tool("initiate_self_test_from_api", return_direct=False)
+def initiate_self_test_from_api() -> str:
+    """
+    Calls the Flask API's /api/self-test-report endpoint to run simulated device self test
+    """
+
+    # endpoint url to call
+    api_url = "http://127.0.0.1:5000/api/self-test-report"
+    
+    try:
+
+        # call endpoint url to initiate self test using the request library
+        response = requests.get(api_url)
+
+        # Check if the API Call returned a success status
+        if response.status_code == 200:
+
+            # save response
+            self_test_report = response.json()
+
+            return f"Self-test initiated successfully. Report: {self_test_report}"
+        
+        else:
+            return "Failed to initiate the self-test. Please try again later."
+
+    except Exception as e:
+        return f"An error occured while initiating the self test: {str(e)}"
+    
+
+
+@tool("get_error_code_description", return_direct=False)
+def get_error_code_description(errorCode: str) -> str:
+    
+    """
+    Fetches the description of an error code using the lookup-code API endpoint.
+    """
+
+    api_url = f"http://127.0.0.1:5000/api/lookup-code?code={errorCode}"
+
+    try:
+
+        # Call API endpoint to get error code description
+        response = requests.get(api_url)
+
+        # Check if the request was successful
+        if response.status_code == 200:
+
+            # save the response
+            error_code_description = response.json()
+
+            return f"Error code description: {error_code_description}"
+        
+        else:
+            return f"Failed to retrieve the error code description. HTTP Status: {response.status_code}"
+
+
+    except Exception as e:
+        return f"An error occurred while looking up the error code: {str(e)}"
+
+
+
+
+
 
 
 # error retriever tool
@@ -192,7 +289,12 @@ prompt = ChatPromptTemplate.from_messages(
             You are an AI assistant.
 
             For questions about Ultrasound Machine and its related issues, use the ultrasound_search tool.
-            If the query is about error codes, use the error_code_search tool to get the description of that error code, and use the ultrasound_search to outline steps the user can follow to fix it. If the error code is not found, tell the user to provide a valid error code, do not assume anything.
+            
+            If the query is about error codes, use the get_error_code_description tool to get the description of the specific error code, and use the ultrasound_search to figure out how to resolve it. When done, make sure to first display the description of the error code to the user, before going ahead to outline the steps to fix it. If the user does not specify the error code, then ask the user for the missing input. Do not fill these in yourself. If the error code is not found, tell the user to provide a valid error code, do not assume anything.
+
+            If the user asks for new logs from the device, use the retrieve_logs_from_api tool.
+
+            If the user asks for a self-test, use the initiate_self_test_from_api tool.
 
             For any other general information, use the tavily_search tool.
 
@@ -210,51 +312,11 @@ prompt = ChatPromptTemplate.from_messages(
 
 
 
-
-# prompt = ChatPromptTemplate.from_messages(
-#     [
-#         (
-#             "system",
-#             '''
-
-#             You are an advanced AI assistant specializing in Philips ultrasound systems and related diagnostic equipment. You have access to multiple specialized tools to assist users effectively:
-
-#             1. **ultrasound_search** - For any questions about the ultrasound machine itself, including general information, troubleshooting, setup, and operational guidance.
-
-#             2. **error_code_search** - Use this tool to retrieve descriptions of specific error codes:
-#                - When a query includes an error code (e.g., "0008"), first use the tool to locate an exact match. If not found, suggest that the user recheck the code for accuracy, or ask if they would like a list of similar codes if possible.
-#                - If the code is found, retrieve its description. For troubleshooting steps, use **ultrasound_search** to provide practical guidance on resolving the issue. Avoid assumptions if the code is not located.
-
-#             3. **maintenance_search** - For detailed information on maintenance, cleaning, technical specifications, safety standards, and usage instructions for Philips ultrasound systems.
-
-#             4. **tavily_search** - For general inquiries that fall outside the specific functions of ultrasound machines, error codes, or maintenance, use this tool as a fallback.
-
-#             **Instructions for Usage**:
-#             - Always select the tool that best matches the user's query. For error codes, confirm exact matches where possible. If not located on the first try, clarify with the user or suggest possible similar codes if helpful.
-#             - Provide concise initial responses and progressively disclose more details upon user request. 
-
-#             **Example Scenarios**:
-#             - "How do I clean the TEE transducer?" → Use **maintenance_search**.
-#             - "What does error code E123 mean?" → Use **error_code_search** first, then **ultrasound_search** for troubleshooting if found.
-#             - "Can the ultrasound machine export to DICOM?" → Use **ultrasound_search**.
-#             - "What are the system requirements for Q-Station?" → Use **maintenance_search**.
-
-#             Be clear, friendly, and professional in tone, providing information logically, especially for actionable steps. Always verify and prioritize user safety.
-
-#             '''
-#         ),
-#         MessagesPlaceholder(variable_name="chat_history"),
-#         ("user", "{input}"),
-#         MessagesPlaceholder(variable_name="agent_scratchpad"),
-#     ]
-# )   
-
-
-
 @cl.on_chat_start
 def setup_chain():
     llm = ChatOpenAI(openai_api_key="sk-OJ2_gW9HAKApES_5DbyRODLahM36bT13evmH3wxERkT3BlbkFJ5fwb2Eq-euILAFeg8IeJp5lw3MSHOxRFyB7Agjn28A", model="gpt-3.5-turbo")
-    tools = [retriever_tool, error_retriever_tool, tavily_search]
+    tools = [retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
+    # tools = [retriever_tool, error_retriever_tool, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
     # tools = [retriever_tool, error_retriever_tool, maintenance_retriever_tool, tavily_search]
     llm_with_tools = llm.bind_tools(tools)
 

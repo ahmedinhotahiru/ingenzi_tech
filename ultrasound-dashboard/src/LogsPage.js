@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {startCase } from "lodash";
 import './LogsPage.css'; // Linking your CSS
-import { FaDownload } from 'react-icons/fa'; // Importing icons
+import { FaDownload, FaSyncAlt } from 'react-icons/fa'; // Importing icons
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import { Bar } from 'react-chartjs-2'; // Importing chart component
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
@@ -330,7 +330,7 @@ const LogsPage = () => {
                   />
                 </div>
                 <button className="retrieve-button" onClick={retrieveNewLogs}>
-                  Retrieve New Logs
+                  <FaSyncAlt/> Retrieve New Logs
                 </button>
                 <div className="logs-list">
                   {filteredLogs.map((log, index) => (
