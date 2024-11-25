@@ -28,16 +28,22 @@ const Home = () => {
   const [selectedDate, setSelectedDate] = useState(new Date()); // State for the selected date and time
 
   useEffect(() => {
-    const storedNextServiceDate = localStorage.getItem('nextServiceDate');
-    if (storedNextServiceDate) {
-      const date = new Date(storedNextServiceDate);
-      setNextServiceDate(date);
+    // TODO: Get data from backend
+    fetch("http://127.0.0.1:5000/api/last-service-date").then(response => response.json()).then(data => {
+      if(data){
+        // Convert dates from timestamps to Date objects
+        const lastServiceDate_ = new Date(data.last_service_date * 1000);
+        const nextServiceDate_ = new Date(data.next_service_date * 1000);
 
-      const daysUntilService = differenceInDays(date, new Date());
-      if (daysUntilService <= 7) {
-        setReminder(`Reminder: Your next service is scheduled for ${format(date, 'dd MMM yyyy')}`);
+        setNextServiceDate(nextServiceDate_);
+        setLastServiceDate(lastServiceDate_);
+
+        const daysUntilService = differenceInDays(nextServiceDate_, new Date());
+        if (daysUntilService <= 7) {
+          setReminder(`Reminder: Your next service is scheduled for ${format(nextServiceDate_, 'dd MMM yyyy')}`);
+        }
       }
-    }
+    });
 
     // Load Google API client
     function start() {
@@ -65,13 +71,29 @@ const Home = () => {
   };
 
   // Function to handle submit
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+
+    setLastServiceDate(nextServiceDate); // Update the "Last service" date to the current "Next service" date
+    setNextServiceDate(selectedDate); // Update the "Next service" date
+    setShowModal(false); // Close the modal after selection
+
+    // TODO: Send data to backend
+    fetch("http://127.0.0.1:5000/api/last-service-date", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        last_service_date: nextServiceDate.getTime() / 1000,
+        next_service_date: selectedDate.getTime() / 1000,
+      }),
+    }).then(response => response.json()).then(data => {
+      console.log("DATA", data);
+    });
+
+
     const userConfirmed = window.confirm(`Would you like to add the selected date (${format(selectedDate, 'dd MMM yyyy HH:mm')}) to your calendar?`);
     if (userConfirmed) {
-      setLastServiceDate(nextServiceDate); // Update the "Last service" date to the current "Next service" date
-      setNextServiceDate(selectedDate); // Update the "Next service" date
-      setShowModal(false); // Close the modal after selection
-      localStorage.setItem('nextServiceDate', selectedDate.toISOString()); // Store the date in local storage
       addEventToGoogleCalendar(selectedDate); // Add event to Google Calendar
     }
   };

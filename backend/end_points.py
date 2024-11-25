@@ -16,6 +16,7 @@ GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 GITHUB_REPO = "mhabdulbaaki/llm-for-ultrasound-device-troubleshooting"
 
 error_path = ".\data\error_codes\Philips_HDI_5000_Error_Codes_Full.json"
+LAST_SERVICE_DATE_PATH = ".\data\last_service_date.json"
 
 # Initialize GitHub object with your token
 g = Github("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")
@@ -155,6 +156,41 @@ def download_file(filename):
         return send_from_directory(directory, filename, as_attachment=True)
     except Exception as e:
         return jsonify({"error": str(e)}), 404
+
+
+@app.route('/api/last-service-date', methods=['GET'])
+def get_last_service_date():
+    try:
+        if os.path.exists(LAST_SERVICE_DATE_PATH):
+            with open(LAST_SERVICE_DATE_PATH, 'r') as f:
+                data = json.load(f)
+                return data
+        else:
+            with open(LAST_SERVICE_DATE_PATH, 'w') as f:
+                next_service_date = datetime.timestamp(datetime.now())
+                last_service_date = datetime.timestamp(datetime.now())
+                data = {"last_service_date": last_service_date, "next_service_date": next_service_date}
+                json.dump(data, f)
+                return data
+    except Exception as e:
+        return {"error": str(e)}, 500
+    
+@app.route("/api/last-service-date", methods=['POST'])
+def update_last_service_date():
+    print("ReQUEST JSON: ", request.json)
+    print("ReQUEST RAW: ", request)
+    try:
+        if request.json is not None:
+            with open(LAST_SERVICE_DATE_PATH, 'w') as f:
+                last_service_date = request.json["last_service_date"]
+                next_service_date = request.json["next_service_date"]
+                data = {"last_service_date": last_service_date, "next_service_date": next_service_date}
+                json.dump(data, f)
+                return {"status": "success", "message": "Data updated successfully"}
+        else:
+            return {"status": "error", "message": "No data provided"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 if __name__ == '__main__':
     app.run(debug=True)
