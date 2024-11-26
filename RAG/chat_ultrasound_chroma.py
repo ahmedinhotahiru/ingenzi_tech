@@ -1,3 +1,4 @@
+from chainlit.types import Feedback
 from langchain_openai import OpenAI
 from langchain.chains import LLMChain, APIChain
 from langchain.memory.buffer import ConversationBufferMemory
@@ -16,6 +17,9 @@ from langchain_core.tools import tool
 from langchain_community.retrievers import TavilySearchAPIRetriever
 
 import chainlit as cl
+
+import chainlit.data as cl_data # for chainlit feedback system
+
 import os
 
 from langchain_community.tools.tavily_search import TavilySearchResults
@@ -38,6 +42,81 @@ from langchain_community.vectorstores import Chroma
 
 # Import the requests library
 import requests
+
+import json
+
+
+
+#---------------- Feedback system class -----------------------
+
+last_user_prompt = "" # store very last user prompt
+
+# Store existing feedback
+feedback_file = "feedback.jsonl"
+
+class CustomDataLayer(cl_data.BaseDataLayer):
+
+    async def upsert_feedback(self, feedback) -> str:
+        global feedback_file, last_user_prompt
+
+        # Dictionary to store new feedback
+        new_feedback = {
+            'id': feedback.forId,
+            'user_prompt': last_user_prompt,
+            'feedback': feedback.comment,
+            'value': feedback.value
+        } 
+
+        # # Capture details of new feedback
+        # new_feedback['id'] = feedback.forId
+        # # store original prompt that generated the feedback
+        # # new_feedback['user_prompt'] = 
+        # new_feedback['feedback'] = feedback.comment
+        # new_feedback['value'] = feedback.value
+
+        # print captured feedback in chainlit console
+        print(new_feedback)
+
+        # # Append new feedback to existing feedback
+        # existing_feedback.append(new_feedback)
+
+        # Append new feedback to existing feedback json file
+        with open(feedback_file, "a") as file:
+
+            # append new feedback to file (Serialize and write as a single line)
+            file.write(json.dumps(new_feedback) + "\n")
+
+        # return await super().upsert_feedback(feedback)
+
+    
+    # Stub implementations for other abstract methods
+    def build_debug_url(self, *args, **kwargs): pass
+    def create_element(self, element_dict): pass
+    def create_step(self, step_dict): pass
+    def create_user(self, user): pass
+    def delete_element(self, element_id): pass
+    def delete_feedback(self, feedback_id): pass
+    def delete_step(self, step_id): pass
+    def delete_thread(self, thread_id): pass
+    def get_element(self, thread_id, element_id): pass
+    def get_thread(self, thread_id): pass
+    def get_thread_author(self, thread_id): pass
+    def get_user(self, user_id): pass
+    def list_threads(self, pagination, filters): pass
+    def update_step(self, step_dict): pass
+    def update_thread(self, thread_id, name=None, user_id=None, metadata=None, tags=None): pass
+
+
+
+
+
+#---------------- Feedback system class -----------------------
+
+
+
+
+
+
 
 
 
@@ -140,7 +219,7 @@ def initialize_vectorstore(collection_name="ultrasound_manuals", pdf_directory="
 # Use the function to load or create vector store
 vector = initialize_vectorstore(collection_name, pdf_directory, db_path)
 error_vector_store = initialize_vectorstore(error_collection_name, error_directory, db_path)
-# maintenance_vector_store = initialize_vectorstore(maintenance_collection_name, maintenance_directory, db_path)
+maintenance_vector_store = initialize_vectorstore(maintenance_collection_name, maintenance_directory, db_path)
 
 
 # Create retriever tool
@@ -162,12 +241,12 @@ error_retriever_tool = create_retriever_tool(
 
 
 # Create maintenance_docs retriever tool
-# maintenance_retriever = maintenance_vector_store.as_retriever()
-# maintenance_retriever_tool = create_retriever_tool(
-#     maintenance_retriever,
-#     "maintenance_search",
-#     "Retrieve information on Philips ultrasound systems, including product specifications, maintenance protocols, disinfection guidelines, and usage instructions. For any questions regarding the operation, setup, or handling of Philips ultrasound systems, use this tool!",
-# )
+maintenance_retriever = maintenance_vector_store.as_retriever()
+maintenance_retriever_tool = create_retriever_tool(
+    maintenance_retriever,
+    "maintenance_search",
+    "Retrieve information on Philips ultrasound systems, including product specifications, maintenance protocols, disinfection guidelines, and usage instructions. For any questions regarding the operation, setup, or handling of Philips ultrasound systems, use this tool!",
+)
 
 
 
@@ -290,7 +369,9 @@ prompt = ChatPromptTemplate.from_messages(
 
             For questions about Ultrasound Machine and its related issues, use the ultrasound_search tool.
             
-            If the query is about error codes, use the get_error_code_description tool to get the description of the specific error code, and use the ultrasound_search to figure out how to resolve it. When done, make sure to first display the description of the error code to the user, before going ahead to outline the steps to fix it. If the user does not specify the error code, then ask the user for the missing input. Do not fill these in yourself. If the error code is not found, tell the user to provide a valid error code, do not assume anything.
+            If the query is about error codes, use the get_error_code_description tool to get the description of the specific error code, identify what the main issue is from the error code description and use that to query the ultrasound_search to figure out how to resolve that issue. When done, make sure to first display the description of the error code to the user, before going ahead to outline the steps to fix it. If the user does not specify the error code, then ask the user for the missing input. Do not fill these in yourself. If the error code is not found, tell the user to provide a valid error code, do not assume anything.
+
+            For any questions related to the operation, setup, or handling of ultrasound systems, such as product specifications, maintenance protocols, disinfection guidelines, or usage instructions, use the maintenance_search tool.
 
             If the user asks for new logs from the device, use the retrieve_logs_from_api tool.
 
@@ -312,10 +393,48 @@ prompt = ChatPromptTemplate.from_messages(
 
 
 
+
+
+import chainlit as cl
+
+@cl.set_starters
+async def set_starters():
+    return [
+        cl.Starter(
+            label="Retrieve Device Logs",
+            message="Retrieve device logs",
+            icon="/public/help-center.svg",
+            ),
+
+        cl.Starter(
+            label="Initiate Self Test",
+            message="Initiate self test",
+            icon="/public/maintenance.svg",
+            ),
+        cl.Starter(
+            label="Error Code Help",
+            message="I have an error code and need help getting the description and how to fix it",
+            icon="/public/error.svg",
+            ),
+        cl.Starter(
+            label="General Help",
+            message="I have an issue on my ultrasound machine and need your help troubleshooting it.",
+            icon="/public/idea.svg",
+            )
+        ]
+
+
+
 @cl.on_chat_start
 def setup_chain():
+
+    # For Feedback system (Instantiate feedback)
+    cl_data._data_layer = CustomDataLayer()
+
     llm = ChatOpenAI(openai_api_key="sk-OJ2_gW9HAKApES_5DbyRODLahM36bT13evmH3wxERkT3BlbkFJ5fwb2Eq-euILAFeg8IeJp5lw3MSHOxRFyB7Agjn28A", model="gpt-3.5-turbo")
-    tools = [retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
+    tools = [retriever_tool, maintenance_retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
+    # tools = [retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
+
     # tools = [retriever_tool, error_retriever_tool, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
     # tools = [retriever_tool, error_retriever_tool, maintenance_retriever_tool, tavily_search]
     llm_with_tools = llm.bind_tools(tools)
@@ -339,9 +458,16 @@ def setup_chain():
 
 @cl.on_message
 async def handle_message(message: cl.Message):
+
+    global last_user_prompt # For feedback system
     global city, country, results, resultsDone
+    
 
     user_message = message.content.lower()
+
+    # Update last_user_prompt to this new user_message content for feedback system
+    last_user_prompt = user_message
+
     llm_chain = cl.user_session.get("llm_chain")
 
     result = llm_chain.invoke({"input": user_message, "chat_history": chat_history})

@@ -1,0 +1,5 @@
+{"id": "11c1bbc3-c77a-4dfc-8bb9-b67c1ae561e3", "user_prompt": "i have error 0060", "feedback": "This is the correct error code description for error 0060", "value": 1}
+{"id": "2b7599ef-409c-4b24-af3d-db8dbf93c0ba", "user_prompt": "the image is not clear when i scan", "feedback": "This was a great resolution to improving scan quality", "value": 1}
+{"id": "cc954d17-5243-4b29-9c23-2d1b650056ff", "user_prompt": "retrieve device logs", "feedback": "Worked great", "value": 1}
+{"id": "7f6c3986-d161-4ce1-839a-22f19902272b", "user_prompt": "give me best practices", "feedback": "Too generic response", "value": 0}
+{"id": "996d68ba-ba2f-4621-8080-d9278be79513", "user_prompt": "make it detailed", "feedback": "Very detailed and appropriate response", "value": 1}
