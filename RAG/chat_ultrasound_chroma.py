@@ -93,21 +93,21 @@ class CustomDataLayer(cl_data.BaseDataLayer):
 
     
     # Stub implementations for other abstract methods
-    def build_debug_url(self, *args, **kwargs): pass
-    def create_element(self, element_dict): pass
-    def create_step(self, step_dict): pass
-    def create_user(self, user): pass
-    def delete_element(self, element_id): pass
-    def delete_feedback(self, feedback_id): pass
-    def delete_step(self, step_id): pass
-    def delete_thread(self, thread_id): pass
-    def get_element(self, thread_id, element_id): pass
-    def get_thread(self, thread_id): pass
-    def get_thread_author(self, thread_id): pass
-    def get_user(self, user_id): pass
-    def list_threads(self, pagination, filters): pass
-    def update_step(self, step_dict): pass
-    def update_thread(self, thread_id, name=None, user_id=None, metadata=None, tags=None): pass
+    async def build_debug_url(self, *args, **kwargs): pass
+    async def create_element(self, element_dict): pass
+    async def create_step(self, step_dict): pass
+    async def create_user(self, user): pass
+    async def delete_element(self, element_id): pass
+    async def delete_feedback(self, feedback_id): pass
+    async def delete_step(self, step_id): pass
+    async def delete_thread(self, thread_id): pass
+    async def get_element(self, thread_id, element_id): pass
+    async def get_thread(self, thread_id): pass
+    async def get_thread_author(self, thread_id): pass
+    async def get_user(self, user_id): pass
+    async def list_threads(self, pagination, filters): pass
+    async def update_step(self, step_dict): pass
+    async def update_thread(self, thread_id, name=None, user_id=None, metadata=None, tags=None): pass
 
 
 
@@ -414,6 +414,42 @@ def schedule_maintenance(next_service_date: datetime) -> str:
 
 
 
+@tool("get_maintenance_info", return_direct=False)
+def get_maintenance_info() -> str:
+    """
+    Get information on maintenance dates from the API.
+
+    Returns:
+    - A confirmation message if successful, or an error message if any step fails.
+    """
+
+    
+    # API endpoint to get the last service date
+    api_url = "http://127.0.0.1:5000/api/last-service-date"
+
+    try:
+        # Step 1: Retrieve last service date from API
+        response = requests.get(api_url)
+
+        if response.status_code == 200:
+
+            last_service_date = response.json().get("last_service_date")
+            next_service_date = response.json().get("next_service_date")
+
+            # Parse last service date into a datetime object if needed
+            last_service_date = datetime.fromtimestamp(last_service_date)
+            next_service_date = datetime.fromtimestamp(next_service_date)
+
+            return f"Successfully retrieved service dates. Last service date was {last_service_date.strftime('%d %b %Y %H:%M')}, and next service date is {next_service_date.strftime('%d %b %Y %H:%M')}."
+
+        else:
+            return "Failed to retrieve service dates."
+
+    except Exception as e:
+        return f"An error occurred during retrieval: {str(e)}"
+
+
+
 # error retriever tool
 # user manuals tool
 
@@ -437,7 +473,7 @@ prompt = ChatPromptTemplate.from_messages(
 
             If the user asks for a self-test, use the initiate_self_test_from_api tool.
 
-            If the users asks to schedule maintenance date, use the schedule_maintenance tool to update the service dates. If the user does not provide a valid date for the next service, ask for clarification and do not proceed until a valid input is provided.
+            If the users asks to schedule maintenance date, use the schedule_maintenance tool to update the service dates. If the user does not provide a valid date for the next service, ask for clarification and do not proceed until a valid input is provided. If the user asks you to suggest a date for the next maintenance, suggest a date that is 3 months from the last service date, and ask the user for confirmation to proceed to schedule next maintenance to that date. Only proceed to schedule maintenance upon the user's approval. If the user asks when the last or next maintenance date is, use the get_maintenance_info tool to get them the appropriate service date.
 
 
             For any other general information, use the tavily_search tool.
@@ -495,7 +531,7 @@ def setup_chain():
     cl_data._data_layer = CustomDataLayer()
 
     llm = ChatOpenAI(openai_api_key="sk-OJ2_gW9HAKApES_5DbyRODLahM36bT13evmH3wxERkT3BlbkFJ5fwb2Eq-euILAFeg8IeJp5lw3MSHOxRFyB7Agjn28A", model="gpt-3.5-turbo")
-    tools = [retriever_tool, maintenance_retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, schedule_maintenance, tavily_search]
+    tools = [retriever_tool, maintenance_retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, schedule_maintenance, get_maintenance_info, tavily_search]
     # tools = [retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
 
     # tools = [retriever_tool, error_retriever_tool, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
