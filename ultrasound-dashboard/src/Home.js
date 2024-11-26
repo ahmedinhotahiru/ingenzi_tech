@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format, differenceInDays } from 'date-fns'; // For formatting the date and calculating the difference in days
-import { FaComments } from 'react-icons/fa'; // Importing chat icon
-import { FaTools, FaBell } from 'react-icons/fa'; // Import maintenance icon
+import { FaComments, FaTools, FaBell } from 'react-icons/fa'; // Importing icons
 
 import { gapi } from 'gapi-script'; // Import Google API client
 
@@ -26,19 +25,16 @@ const Home = () => {
   const modalRef = useRef(null); // Reference for the modal
   const [reminder, setReminder] = useState(''); // State for the reminder message
   const [selectedDate, setSelectedDate] = useState(new Date()); // State for the selected date and time
+  const [showDropdown, setShowDropdown] = useState(false); // State to toggle manage modules dropdown
+  const [showDeviceDropdown, setShowDeviceDropdown] = useState(false); // State to toggle device dropdown
+
+  // Static values for the different modules
+  const devices = [
+    { name: 'HDI 5000' },
+    // { name: 'HDI 4000' },
+  ];
 
   useEffect(() => {
-    const storedNextServiceDate = localStorage.getItem('nextServiceDate');
-    if (storedNextServiceDate) {
-      const date = new Date(storedNextServiceDate);
-      setNextServiceDate(date);
-
-      const daysUntilService = differenceInDays(date, new Date());
-      if (daysUntilService <= 7) {
-        setReminder(`Reminder: Your next service is scheduled for ${format(date, 'dd MMM yyyy')}`);
-      }
-    }
-
     // Load Google API client
     function start() {
       gapi.client.init({
@@ -65,13 +61,29 @@ const Home = () => {
   };
 
   // Function to handle submit
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+
+    setLastServiceDate(nextServiceDate); // Update the "Last service" date to the current "Next service" date
+    setNextServiceDate(selectedDate); // Update the "Next service" date
+    setShowModal(false); // Close the modal after selection
+
+    // TODO: Send data to backend
+    fetch("http://127.0.0.1:5000/api/last-service-date", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        last_service_date: nextServiceDate.getTime() / 1000,
+        next_service_date: selectedDate.getTime() / 1000,
+      }),
+    }).then(response => response.json()).then(data => {
+      console.log("DATA", data);
+    });
+
+
     const userConfirmed = window.confirm(`Would you like to add the selected date (${format(selectedDate, 'dd MMM yyyy HH:mm')}) to your calendar?`);
     if (userConfirmed) {
-      setLastServiceDate(nextServiceDate); // Update the "Last service" date to the current "Next service" date
-      setNextServiceDate(selectedDate); // Update the "Next service" date
-      setShowModal(false); // Close the modal after selection
-      localStorage.setItem('nextServiceDate', selectedDate.toISOString()); // Store the date in local storage
       addEventToGoogleCalendar(selectedDate); // Add event to Google Calendar
     }
   };
@@ -131,6 +143,11 @@ const Home = () => {
     }
   };
 
+  // Function to handle device selection
+  const handleDeviceSelection = () => {
+    window.location.reload(); // Refresh the home page
+  };
+
   // Effect to handle clicks outside the modal and Escape key press
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -167,7 +184,26 @@ const Home = () => {
             <div className="tabs">
               <button className="tab" onClick={() => navigate('/manuals')}>Access Manuals</button>
               <button className="tab" onClick={() => navigate('/logs')}>Retrieve Device Logs</button>
-              <button className="tab" onClick={() => navigate('/upload')}>Upload Manuals</button>
+              <div className="dropdown">
+                <button className="tab" onClick={() => setShowDropdown(!showDropdown)}>Manage Modules</button>
+                {showDropdown && (
+                  <div className="dropdown-content">
+                    <div className="nested-dropdown">
+                      <button className="dropdown-item" onClick={() => setShowDeviceDropdown(!showDeviceDropdown)}>Select Device</button>
+                      {showDeviceDropdown && (
+                        <div className="nested-dropdown-content">
+                          {devices.map((device, index) => (
+                            <button key={index} className="dropdown-item" onClick={handleDeviceSelection}>
+                              {device.name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <button className="dropdown-item" onClick={() => navigate('/upload')}>Add New Module</button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -195,7 +231,6 @@ const Home = () => {
                     placeholder="Enter error code... e.g 0001" 
                     className="search-input"
                     value={errorCode}
-                    // onChange={(e) => setErrorCode(e.target.value)}
                     onChange={(e) => {
                       const value = e.target.value;
                       if (/^\d*$/.test(value) && value.length <= 4) {
