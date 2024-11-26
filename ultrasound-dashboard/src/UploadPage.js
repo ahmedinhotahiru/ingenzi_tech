@@ -99,7 +99,7 @@ const UploadPage = () => {
             </div>
           </div>
 
-          <h1 className="main-heading">Upload a Manual</h1>
+          <h1 className="main-heading">Upload Documents </h1>
 
           <div className="grid-container">
             {/* Left Grid: Upload Section */}
@@ -156,7 +156,7 @@ const UploadPage = () => {
               <form onSubmit={handleFileUpload} className="upload-form">
                 {/* Submit Button */}
                 <button type="submit" className="upload-button">
-                  Upload Manual
+                  Upload..
                 </button>
               </form>
                 
