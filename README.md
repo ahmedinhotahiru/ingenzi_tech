@@ -64,7 +64,7 @@ The application has three main components that need to be run simultaneously in 
 
 If you would like to run the feedback system app:
 
-#### 1. Install Dash Dependencies
+#### 1. Start the Dash App
    - In a third terminal, navigate to the `RAG` folder.
    - Run the app using the following command:
 
