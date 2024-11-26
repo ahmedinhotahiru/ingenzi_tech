@@ -134,7 +134,15 @@ The application has three main components that need to be run simultaneously in 
    Replace `<new-port>` if port `8000` is occupied.
    - Once running, the Chainlit copilot can also be accessed as a standalone application at http://localhost:8000/ (or the specified port).
 
+<<<<<<< HEAD
 #### 4. Run the Feedback App (For Admins)
+=======
+### Step 4: Run the Feedback App (For Admins)
+
+If you would like to run the feedback system app:
+
+#### 1. Start the Dash App
+>>>>>>> 113cd66 (No changes)
    - In a fourth terminal, navigate to the `RAG` folder.
    - Run the app using the following command:
 
@@ -142,6 +150,7 @@ The application has three main components that need to be run simultaneously in 
      python feedback_app.py
      ```
 
+<<<<<<< HEAD
    - Access the app at `http://127.0.0.1:8050/`.
 
 ### Step 5: Access the Application
@@ -162,5 +171,20 @@ For detailed setup, maintenance, and troubleshooting instructions, refer to the 
 - Ensure that all components (React app, backend server, Chainlit chat server, and the feedback app) are running simultaneously in separate terminals.
 - Replace all API keys and tokens as outlined to avoid authorization issues.
 - Use appropriate ports to prevent conflicts with other services.
+=======
+   - This will start the Dash app on your local machine.
+
+#### 3. Access the Feedback App
+   - Once the app is running, open your browser and navigate to `http://127.0.0.1:8050/` to view and interact with the feedback table.
+
+### Notes
+- Ensure that all components (React app, backend server, Chainlit chat server, and the feedback app) are running simultaneously in separate terminals.
+- After setup, you should be able to access both the ultrasound troubleshooting tool and the feedback app as intended.
+
+
+### Notes
+- Ensure that all three components (React app, backend server, and Chainlit chat server) are running simultaneously in separate terminals.
+- After setup, you should be able to access the application as intended.
+>>>>>>> 113cd66 (No changes)
 
 ---

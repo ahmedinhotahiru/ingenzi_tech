@@ -443,6 +443,99 @@ def get_maintenance_info() -> str:
     except Exception as e:
         return f"An error occurred during retrieval: {str(e)}"
 
+@tool("schedule_maintenance", return_direct=False)
+def schedule_maintenance(next_service_date: datetime) -> str:
+    """
+    Schedules maintenance for a device by submitting the next service date and fetching the last service date from the API.
+
+    Parameters:
+    - next_service_date (str): The next service date in ISO format (e.g., '2025-10-15T14:00:00').
+
+    Returns:
+    - A confirmation message if successful, or an error message if any step fails.
+    """
+
+    # Define the API endpoints
+    get_last_service_date_url = "http://127.0.0.1:5000/api/last-service-date"
+    # API endpoint to get the last service date
+    api_url = "http://127.0.0.1:5000/api/last-service-date"
+
+    try:
+        # Step 1: Retrieve last service date from API
+        response = requests.get(api_url)
+
+        if response.status_code == 200:
+
+            # Get the current next service date to now be set as last service date
+            last_service_date = response.json().get("next_service_date")
+            
+            # Parse last service date into a datetime object if needed
+            # last_service_date = datetime.utcfromtimestamp(last_service_date)
+            
+            # Step 2: Parse the user-provided next service date
+            # next_service_date_obj = datetime.strptime(next_service_date, "%Y-%m-%d %H:%M:%S")
+            
+            # Step 3: Convert both dates to Unix timestamps
+            # last_service_timestamp = int(last_service_date.timestamp())
+            next_service_timestamp = int(next_service_date.timestamp())
+            
+            # Step 4: Submit both dates to the backend
+            payload = {
+                "last_service_date": last_service_date,
+                "next_service_date": next_service_timestamp,
+            }
+            response = requests.post(api_url, json=payload)
+
+            if response.status_code == 200:
+                return f"Successfully scheduled maintenance. Next service date set to {next_service_date.strftime('%d %b %Y %H:%M')}."
+            else:
+                return f"Failed to schedule maintenance. API response: {response.text}"
+
+        else:
+            return "Failed to retrieve the last service date."
+
+    except Exception as e:
+        return f"An error occurred during scheduling: {str(e)}"
+
+
+
+
+
+
+@tool("get_maintenance_info", return_direct=False)
+def get_maintenance_info() -> str:
+    """
+    Get information on maintenance dates from the API.
+
+    Returns:
+    - A confirmation message if successful, or an error message if any step fails.
+    """
+
+    
+    # API endpoint to get the last service date
+    api_url = "http://127.0.0.1:5000/api/last-service-date"
+
+    try:
+        # Step 1: Retrieve last service date from API
+        response = requests.get(api_url)
+
+        if response.status_code == 200:
+
+            last_service_date = response.json().get("last_service_date")
+            next_service_date = response.json().get("next_service_date")
+
+            # Parse last service date into a datetime object if needed
+            last_service_date = datetime.fromtimestamp(last_service_date)
+            next_service_date = datetime.fromtimestamp(next_service_date)
+
+            return f"Successfully retrieved service dates. Last service date was {last_service_date.strftime('%d %b %Y %H:%M')}, and next service date is {next_service_date.strftime('%d %b %Y %H:%M')}."
+
+        else:
+            return "Failed to retrieve service dates."
+
+    except Exception as e:
+        return f"An error occurred during retrieval: {str(e)}"
+
 
 
 # error retriever tool
@@ -484,37 +577,6 @@ prompt = ChatPromptTemplate.from_messages(
 )   
 
 # For any questions related to the operation, setup, or handling of ultrasound systems, such as product specifications, maintenance protocols, disinfection guidelines, or usage instructions, use the maintenance_search tool.
-
-
-
-
-import chainlit as cl
-
-@cl.set_starters
-async def set_starters():
-    return [
-        cl.Starter(
-            label="Retrieve Device Logs",
-            message="Retrieve device logs",
-            icon="/public/help-center.svg",
-            ),
-
-        cl.Starter(
-            label="Initiate Self Test",
-            message="Initiate self test",
-            icon="/public/maintenance.svg",
-            ),
-        cl.Starter(
-            label="Error Code Help",
-            message="I have an error code and need help getting the description and how to fix it",
-            icon="/public/error.svg",
-            ),
-        cl.Starter(
-            label="General Help",
-            message="I have an issue on my ultrasound machine and need your help troubleshooting it.",
-            icon="/public/idea.svg",
-            )
-        ]
 
 
 
