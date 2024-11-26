@@ -35,6 +35,25 @@ const Home = () => {
   ];
 
   useEffect(() => {
+    // Fetch the data from the file or API on page load
+    const loadServiceDates = async () => {
+      try {
+        // Fetch from API call
+        const response = await fetch('http://127.0.0.1:5000/api/last-service-date');
+        const data = await response.json();
+        
+        const lastServiceTimestamp = data.last_service_date * 1000; // Convert from seconds to milliseconds
+        const nextServiceTimestamp = data.next_service_date * 1000; // Convert from seconds to milliseconds
+
+        setLastServiceDate(new Date(lastServiceTimestamp)); // Set last service date
+        setNextServiceDate(new Date(nextServiceTimestamp)); // Set next service date
+      } catch (error) {
+        console.error('Error loading service dates:', error);
+      }
+    };
+
+    loadServiceDates();
+
     // Load Google API client
     function start() {
       gapi.client.init({

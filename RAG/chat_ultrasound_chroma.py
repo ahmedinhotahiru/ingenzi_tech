@@ -45,6 +45,9 @@ import requests
 
 import json
 
+from datetime import datetime
+import time
+
 
 
 #---------------- Feedback system class -----------------------
@@ -352,6 +355,63 @@ def get_error_code_description(errorCode: str) -> str:
 
 
 
+@tool("schedule_maintenance", return_direct=False)
+def schedule_maintenance(next_service_date: datetime) -> str:
+    """
+    Schedules maintenance for a device by submitting the next service date and fetching the last service date from the API.
+
+    Parameters:
+    - next_service_date (str): The next service date in ISO format (e.g., '2025-10-15T14:00:00').
+
+    Returns:
+    - A confirmation message if successful, or an error message if any step fails.
+    """
+
+    # Define the API endpoints
+    get_last_service_date_url = "http://127.0.0.1:5000/api/last-service-date"
+    # API endpoint to get the last service date
+    api_url = "http://127.0.0.1:5000/api/last-service-date"
+
+    try:
+        # Step 1: Retrieve last service date from API
+        response = requests.get(api_url)
+
+        if response.status_code == 200:
+
+            # Get the current next service date to now be set as last service date
+            last_service_date = response.json().get("next_service_date")
+            
+            # Parse last service date into a datetime object if needed
+            # last_service_date = datetime.utcfromtimestamp(last_service_date)
+            
+            # Step 2: Parse the user-provided next service date
+            # next_service_date_obj = datetime.strptime(next_service_date, "%Y-%m-%d %H:%M:%S")
+            
+            # Step 3: Convert both dates to Unix timestamps
+            # last_service_timestamp = int(last_service_date.timestamp())
+            next_service_timestamp = int(next_service_date.timestamp())
+            
+            # Step 4: Submit both dates to the backend
+            payload = {
+                "last_service_date": last_service_date,
+                "next_service_date": next_service_timestamp,
+            }
+            response = requests.post(api_url, json=payload)
+
+            if response.status_code == 200:
+                return f"Successfully scheduled maintenance. Next service date set to {next_service_date.strftime('%d %b %Y %H:%M')}."
+            else:
+                return f"Failed to schedule maintenance. API response: {response.text}"
+
+        else:
+            return "Failed to retrieve the last service date."
+
+    except Exception as e:
+        return f"An error occurred during scheduling: {str(e)}"
+
+
+
+
 
 
 # error retriever tool
@@ -376,6 +436,9 @@ prompt = ChatPromptTemplate.from_messages(
             If the user asks for new logs from the device, use the retrieve_logs_from_api tool.
 
             If the user asks for a self-test, use the initiate_self_test_from_api tool.
+
+            If the users asks to schedule maintenance date, use the schedule_maintenance tool to update the service dates. If the user does not provide a valid date for the next service, ask for clarification and do not proceed until a valid input is provided.
+
 
             For any other general information, use the tavily_search tool.
 
@@ -432,7 +495,7 @@ def setup_chain():
     cl_data._data_layer = CustomDataLayer()
 
     llm = ChatOpenAI(openai_api_key="sk-OJ2_gW9HAKApES_5DbyRODLahM36bT13evmH3wxERkT3BlbkFJ5fwb2Eq-euILAFeg8IeJp5lw3MSHOxRFyB7Agjn28A", model="gpt-3.5-turbo")
-    tools = [retriever_tool, maintenance_retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
+    tools = [retriever_tool, maintenance_retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, schedule_maintenance, tavily_search]
     # tools = [retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
 
     # tools = [retriever_tool, error_retriever_tool, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
