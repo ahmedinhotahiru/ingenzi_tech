@@ -60,6 +60,28 @@ The application has three main components that need to be run simultaneously in 
 
    This will start the Chainlit chat as a standalone interface and as a copilot that will be mounted on the React app once it loads.
 
+### Step 4: Run the Feedback App (For Admins)
+
+If you would like to run the feedback system app:
+
+#### 1. Install Dash Dependencies
+   - In a third terminal, navigate to the `RAG` folder.
+   - Run the app using the following command:
+
+     ```bash
+     python feedback_app.py
+     ```
+
+   - This will start the Dash app on your local machine.
+
+#### 3. Access the Feedback App
+   - Once the app is running, open your browser and navigate to `http://127.0.0.1:8050/` to view and interact with the feedback table.
+
+### Notes
+- Ensure that all components (React app, backend server, Chainlit chat server, and the feedback app) are running simultaneously in separate terminals.
+- After setup, you should be able to access both the ultrasound troubleshooting tool and the feedback app as intended.
+
+
 ### Notes
 - Ensure that all three components (React app, backend server, and Chainlit chat server) are running simultaneously in separate terminals.
 - After setup, you should be able to access the application as intended.
