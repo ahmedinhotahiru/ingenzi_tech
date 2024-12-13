@@ -148,6 +148,11 @@ Once all components are running:
 
 - Admins can access the feedback app at http://127.0.0.1:8050/.
 
+---
+
+### Admin Guide
+For detailed setup, maintenance, and troubleshooting instructions, refer to the [Comprehensive Admin Guide](https://docs.google.com/document/d/1AEEONaFrA4EH3LazvzqPEq9Cce8cfGuAa_ih4bQtR94/edit?usp=sharing).
+
 ### Notes
 - Ensure that all components (React app, backend server, Chainlit chat server, and the feedback app) are running simultaneously in separate terminals.
 - Replace all API keys and tokens as outlined to avoid authorization issues.
