@@ -11,7 +11,21 @@ cd ingenzi_tech
 ```
 
 ### Step 2: Install Python Dependencies
-In the root directory of the project, install the required Python dependencies using `requirements.txt`.
+- First, create a python virtual environment (of your preferred name) in the project directory:
+
+```bash
+python -m venv capstone_venv
+```
+
+- Once the virtual environment is created, activate it by running:
+
+```bash
+capstone_venv\Scripts\Activate.ps1
+```
+
+You can replace 'capstone_venv' with your preferred virtual environment name.
+
+- In the root directory of the project, install the required Python dependencies using `requirements.txt`.
 
 ```bash
 pip install -r requirements.txt
