@@ -12,14 +12,14 @@ import os
 load_dotenv(find_dotenv())
 
 # GitHub credentials
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-GITHUB_REPO = "mhabdulbaaki/llm-for-ultrasound-device-troubleshooting"
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN") #alternatively create and store your token in a .env file
+GITHUB_REPO = "replace_with_your_repo_name"
 
 error_path = ".\data\error_codes\Philips_HDI_5000_Error_Codes_Full.json"
 LAST_SERVICE_DATE_PATH = ".\data\last_service_date.json"
 
 # Initialize GitHub object with your token
-g = Github("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")
+g = Github("your github token")
 repo = g.get_repo(GITHUB_REPO)
 
 app = Flask(__name__)

@@ -352,9 +352,6 @@ def get_error_code_description(errorCode: str) -> str:
         return f"An error occurred while looking up the error code: {str(e)}"
 
 
-
-
-
 @tool("schedule_maintenance", return_direct=False)
 def schedule_maintenance(next_service_date: datetime) -> str:
     """
@@ -408,8 +405,6 @@ def schedule_maintenance(next_service_date: datetime) -> str:
 
     except Exception as e:
         return f"An error occurred during scheduling: {str(e)}"
-
-
 
 
 
@@ -489,7 +484,6 @@ prompt = ChatPromptTemplate.from_messages(
 )   
 
 # For any questions related to the operation, setup, or handling of ultrasound systems, such as product specifications, maintenance protocols, disinfection guidelines, or usage instructions, use the maintenance_search tool.
-
 
 
 
