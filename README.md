@@ -1,5 +1,10 @@
 # Ingenzi Tech | LLM-Powered Philips HDI 5000 Ultrasound Machine Troubleshooting Tool
 
+## Demo Video
+[![Watch the demo video](https://img.youtube.com/vi/hG8LZTb0rpc/0.jpg)](https://www.youtube.com/watch?v=hG8LZTb0rpc)
+
+---
+
 ## Setup Instructions
 
 ### Step 1: Clone the Repository
