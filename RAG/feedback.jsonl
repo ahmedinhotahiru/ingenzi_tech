@@ -6,3 +6,5 @@
 {"id": "af3e94c7-df23-470c-8d05-8b298ab4ccdd", "user_prompt": "27th december 2024", "feedback": "Wrong response", "value": 0}
 {"id": "8b576706-4d28-49db-b9d7-face1358f863", "user_prompt": "when was the last maintenance date?", "feedback": "Could not identify that I was talking about scheduled maintenance", "value": 0}
 {"id": "efac689e-e430-4dc8-aead-dc2a94957ab8", "user_prompt": "what date do you suggest for the next scheduled maintenance?", "feedback": "Appropriate and correct response", "value": 1}
+{"id": "56fd285f-99a9-4566-9c06-fc73cb9c9004", "user_prompt": "no schedule it for the november 30th", "feedback": "That what very accurate", "value": 1}
+{"id": "9d348723-52fe-4c9a-a063-45067a666f7e", "user_prompt": "can you describe the  error code 0002", "feedback": "yes accurate", "value": 1}

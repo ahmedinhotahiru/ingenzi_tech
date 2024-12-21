@@ -204,7 +204,7 @@ const Home = () => {
               <button className="tab" onClick={() => navigate('/manuals')}>Access Manuals</button>
               <button className="tab" onClick={() => navigate('/logs')}>Retrieve Device Logs</button>
               <div className="dropdown">
-                <button className="tab" onClick={() => setShowDropdown(!showDropdown)}>Manage Modules</button>
+                <button className="tab" onClick={() => setShowDropdown(!showDropdown)}>Manage Devices</button>
                 {showDropdown && (
                   <div className="dropdown-content">
                     <div className="nested-dropdown">
@@ -219,7 +219,7 @@ const Home = () => {
                         </div>
                       )}
                     </div>
-                    <button className="dropdown-item" onClick={() => navigate('/upload')}>Add New Module</button>
+                    <button className="dropdown-item" onClick={() => navigate('/upload')}>Add New Device</button>
                   </div>
                 )}
               </div>

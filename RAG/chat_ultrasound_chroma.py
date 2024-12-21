@@ -139,7 +139,7 @@ resultsDone = False
 ACCESS_TOKEN = "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"
 
 
-embeddings = OpenAIEmbeddings(openai_api_key="sk-OJ2_gW9HAKApES_5DbyRODLahM36bT13evmH3wxERkT3BlbkFJ5fwb2Eq-euILAFeg8IeJp5lw3MSHOxRFyB7Agjn28A")
+embeddings = OpenAIEmbeddings(openai_api_key="sk-YaPyaZS38APDzY0qlIn-IA")
 
 # Directory containing the PDF files
 pdf_directory = "Manuals"
@@ -586,7 +586,7 @@ def setup_chain():
     # For Feedback system (Instantiate feedback)
     cl_data._data_layer = CustomDataLayer()
 
-    llm = ChatOpenAI(openai_api_key="sk-OJ2_gW9HAKApES_5DbyRODLahM36bT13evmH3wxERkT3BlbkFJ5fwb2Eq-euILAFeg8IeJp5lw3MSHOxRFyB7Agjn28A", model="gpt-3.5-turbo")
+    llm = ChatOpenAI(openai_api_key="sk-YaPyaZS38APDzY0qlIn-IA", model="gpt-3.5-turbo",base_url="https://cmu.litellm.ai")
     tools = [retriever_tool, maintenance_retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, schedule_maintenance, get_maintenance_info, tavily_search]
     # tools = [retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
 
