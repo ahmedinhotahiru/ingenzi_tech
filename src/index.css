@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: Druk Wide Bold Bold;
+  src: url(https://framerusercontent.com/assets/jCvdRn9JRjpW5ijmlKhrwURrt0.woff2);
+  font-display: swap;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+@font-face {
+  font-family: GT America Condensed Bold Placeholder;
+  src: local("Arial");
+  ascent-override: 106.77%;
+  descent-override: 21.25%;
+  line-gap-override: 0%;
+  size-adjust: 94.12%;
+}
+
+/********************* swipper ***********************/
+.swiper-horizontal > .swiper-pagination-bullets .swiper-pagination-bullet,
+.swiper-pagination-horizontal.swiper-pagination-bullets
+  .swiper-pagination-bullet {
+  width: 16px !important;
+  height: 4px !important;
+  border-radius: 5px !important;
+  margin: 0 6px !important;
+}
+
+.swiper-pagination {
+  bottom: 2px !important;
+}
+
+.swiper-wrapper {
+  height: max-content !important;
+  width: max-content !important;
+  padding-bottom: 64px;
+}
+
+.swiper-pagination-bullet-active {
+  background: #4f46e5 !important;
+}
+
+.swiper-slide.swiper-slide-active > .slide_active\:border-indigo-600 {
+  --tw-border-opacity: 1;
+  border-color: rgb(79 70 229 / var(--tw-border-opacity));
+}
+
+.swiper-slide.swiper-slide-active > .group .slide_active\:text-gray-800 {
+  ---tw-text-opacity: 1;
+  color: rgb(31 41 55 / var(--tw-text-opacity));
+}
+
+:root {
+  --primary-color: #3490dc;
+  --secondary-color: #ffed4a;
+  --background-color: #ffffff;
+
+  /************** fonts **************/
+  --font-primary: "Druk Wide Bold Bold", "Druk Wide Bold Bold Placeholder",
+    sans-serif;
+  --font-secondary: Montserrat, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-secondary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

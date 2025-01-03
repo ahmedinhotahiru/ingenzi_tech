@@ -1,0 +1,43 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        primary: "var(--primary-color)",
+        "primary-var": {
+          50: "var(--primary-variable-color-50)",
+          100: "var(--primary-variable-color-100)",
+          200: "var(--primary-variable-color-200)",
+          300: "var(--primary-variable-color-300)",
+          400: "var(--primary-variable-color-400)",
+          500: "var(--primary-variable-color-500)",
+          600: "var(--primary-variable-color-600)",
+          700: "var(--primary-variable-color-700)",
+          800: "var(--primary-variable-color-800)",
+          900: "var(--primary-variable-color-900)",
+        },
+        secondary: "var(--secondary-color)",
+        "secondary-var": {
+          50: "var(--secondary-variable-color-50)",
+          100: "var(--secondary-variable-color-100)",
+          200: "var(--secondary-variable-color-200)",
+          300: "var(--secondary-variable-color-300)",
+          400: "var(--secondary-variable-color-400)",
+          500: "var(--secondary-variable-color-500)",
+          600: "var(--secondary-variable-color-600)",
+          700: "var(--secondary-variable-color-700)",
+          800: "var(--secondary-variable-color-800)",
+          900: "var(--secondary-variable-color-900)",
+        },
+        background: "var(--background-color)",
+      },
+
+      fontFamily: {
+        primary: "var(--font-primary)",
+        secondary: "var(--font-secondary)",
+      },
+    },
+  },
+  plugins: [],
+};
