@@ -1,7 +1,7 @@
 import React from "react";
 import { HeroProps } from "../../types/types";
 
-const Hero1: React.FC<HeroProps> = ({
+const Hero4: React.FC<HeroProps> = ({
   imageUrl,
   tagline,
   subTagline,
@@ -10,12 +10,12 @@ const Hero1: React.FC<HeroProps> = ({
   headline,
 }) => {
   return (
-    <section className="mt-4 w-full max-w-screen-xl overflow-hidden rounded-2xl bg-transparent px-5 md:mt-9">
-      <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 items-center gap-5 md:gap-14 lg:grid-cols-12">
+    <section className="mt-4 flex justify-center overflow-hidden rounded-2xl bg-transparent px-5 md:mt-14">
+      <div className="w-full max-w-screen-xl">
+        <div className="grid w-full grid-cols-1 items-center gap-5 md:gap-32 lg:grid-cols-2">
           <div
-            data-aos="zoom-in-left"
-            className="w-full lg:col-span-6 xl:col-span-5 xl:-mx-0 2xl:-mx-5"
+            data-aos="zoom-in-right"
+            className="w-full md:order-2 xl:-mx-0 2xl:-mx-5"
           >
             <h1 className="py-8 text-center font-primary text-3xl font-extrabold leading-[50px] text-gray-900 sm:text-[2.7rem] sm:leading-[60px] lg:text-left">
               {tagline}{" "}
@@ -33,14 +33,12 @@ const Hero1: React.FC<HeroProps> = ({
               </button>
             </div>
           </div>
-          <div className="block w-full lg:col-span-6 xl:col-span-7">
-            <div className="w-full sm:w-auto lg:w-[60.8125rem] xl:ml-16">
-              <img
-                src={imageUrl}
-                alt="Hero section"
-                className="w-full rounded-xl object-cover object-center md:rounded-3xl lg:h-auto"
-              />
-            </div>
+          <div className="w-fit sm:w-auto">
+            <img
+              src={imageUrl}
+              alt="Hero section"
+              className="h-full w-full rounded-xl object-cover object-center md:min-h-[70vh] md:rounded-3xl lg:h-auto"
+            />
           </div>
         </div>
       </div>
@@ -48,4 +46,4 @@ const Hero1: React.FC<HeroProps> = ({
   );
 };
 
-export default Hero1;
+export default Hero4;

@@ -2,6 +2,7 @@
   "name": "company-app",
   "version": "0.1.0",
   "private": true,
+  "proxy": "https://api.sitescribe.link",
   "dependencies": {
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -42,6 +43,7 @@
     ]
   },
   "devDependencies": {
+    "@types/aos": "^3.0.7",
     "@types/jest": "^29.5.14",
     "@types/mocha": "^10.0.10",
     "@types/react-router-dom": "^5.3.3",

@@ -1,27 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FooterProps } from "../../types/types";
 
-interface Props {
-  props: {
-    siteName: string;
-    logoUrl: string;
-    buttonText: string;
-    scrollToTop: () => void;
-    buttonAction: () => void;
-    linkClicked: (id: string) => void;
-    navLinks: string[];
-    socialLinks: {
-      platform: string;
-      url: string;
-      icon: React.ReactNode;
-    }[];
-  };
-}
-
-const Footer2: React.FC<Props> = ({ props }) => {
-  const { siteName, logoUrl, scrollToTop, linkClicked, socialLinks, navLinks } =
-    props;
-
+const Footer2: React.FC<FooterProps> = ({
+  siteName,
+  logoUrl,
+  scrollToTop,
+  linkClicked,
+  socialLinks,
+  navLinks,
+}) => {
   return (
     <footer className="flex justify-center bg-background px-5 py-4">
       <div className="mx-auto w-full max-w-screen-xl py-4 md:py-8">
@@ -33,7 +21,7 @@ const Footer2: React.FC<Props> = ({ props }) => {
                 to={social.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="ms-5 text-gray-500"
+                className="ms-5 text-gray-500 hover:text-primary-var-500"
                 aria-label={social.platform}
               >
                 {social.icon}
@@ -51,7 +39,7 @@ const Footer2: React.FC<Props> = ({ props }) => {
                 <li key={index}>
                   <button
                     onClick={() => linkClicked(link.toLowerCase())}
-                    className="me-4 hover:underline max-md:py-1 md:me-6"
+                    className="me-4 hover:text-primary-var-500 hover:underline max-md:py-1 md:me-6"
                   >
                     {link}
                   </button>
@@ -62,18 +50,18 @@ const Footer2: React.FC<Props> = ({ props }) => {
 
           <div className="justify-center max-md:flex max-md:w-full">
             <div className="flex items-center gap-3 text-sm">
-              <div onClick={() => scrollToTop()}>
+              <div onClick={() => scrollToTop()} className="cursor-pointer">
                 <img src={logoUrl} className="h-4" alt={`${siteName} Logo`} />
               </div>
 
               <div className="max-md:text-sm">
                 COPYRIGHT © {new Date().getFullYear()}
-                <Link
-                  to=""
+                <span
+                  onClick={() => scrollToTop()}
                   className="pl-1 hover:cursor-pointer hover:underline"
                 >
                   {siteName}.
-                </Link>
+                </span>
               </div>
             </div>
           </div>

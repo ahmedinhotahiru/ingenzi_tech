@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { ContactForm, ContactProps } from "../../types/types";
 import Title from "../common/Title.tsx";
-const Contact1: React.FC<ContactProps> = ({ props }) => {
-  const { contactDetails, submitted } = props;
+import DefaultLoader from "../loaders/defaultLoader.tsx";
+
+const Contact1: React.FC<ContactProps> = ({ contactDetails, submitted }) => {
 
   const [inputs, setInputs] = useState<ContactForm>({
     name: "",
@@ -11,6 +12,8 @@ const Contact1: React.FC<ContactProps> = ({ props }) => {
     subject: "",
     message: "",
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -22,15 +25,20 @@ const Contact1: React.FC<ContactProps> = ({ props }) => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    submitted(inputs);
+    setIsLoading(true);
+    try {
+      await submitted(inputs);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <section className="w-full bg-background">
-      <div className="mx-auto max-w-screen-lg py-8 md:px-4 lg:py-16">
-        <Title title="Get In Touch" />
+      <div data-aos="flip-left" className="mx-auto max-w-screen-lg">
+        <Title title="Contact" description="Get In Touch" />
         <p className="text-center font-light text-gray-500">
           Feel free to contact us, submit your queries here and we will get back
           to you as soon as possible
@@ -107,9 +115,11 @@ const Contact1: React.FC<ContactProps> = ({ props }) => {
 
           <button
             type="submit"
-            className="w-full rounded-full bg-primary-var-500 px-5 py-3 text-center text-sm font-medium text-white hover:bg-primary-var-800 focus:outline-none focus:ring-4 focus:ring-primary-var-300"
+            className="flex w-full items-center justify-center gap-1 rounded-full bg-primary-var-500 px-5 py-3 text-center text-sm font-medium text-white hover:bg-primary-var-800 focus:outline-none focus:ring-4 focus:ring-primary-var-300 disabled:cursor-not-allowed disabled:bg-gray-400"
+            disabled={isLoading}
           >
-            Submit
+            {isLoading && <DefaultLoader height="1.25rem" />}
+            {isLoading ? "please wait..." : "Send"}
           </button>
         </form>
       </div>

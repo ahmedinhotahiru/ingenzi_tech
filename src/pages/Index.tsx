@@ -1,12 +1,28 @@
 import React from "react";
-import Contact1 from "../components/contact/Contact1.tsx";
 import { useSiteSettings } from "../context/index.tsx";
 import { ContactForm } from "../types/types";
-import Hero1 from "../components/hero/Hero1.tsx";
-import Faq1 from "../components/faqs/Faq1.tsx";
-import Testimonial1 from "../components/testimonials/Testimonial1.tsx";
-import Feature1 from "../components/features/Feature1.tsx";
-import About1 from "../components/about/About.tsx";
+import About1 from "../components/abouts/About.tsx";
+import { Hero1, Hero2, Hero3, Hero4 } from "../components/hero/index.ts";
+import { Faq1, Faq2, Faq3, Faq4 } from "../components/faqs/index.ts";
+import {
+  Testimonial1,
+  Testimonial2,
+  Testimonial3,
+  Testimonial4,
+} from "../components/testimonials/index.ts";
+import {
+  Contact1,
+  Contact2,
+  Contact3,
+  Contact4,
+} from "../components/contacts/index.ts";
+import {
+  Feature1,
+  Feature2,
+  Feature3,
+  Feature4,
+} from "../components/features/index.ts";
+
 const Index: React.FC = () => {
   const { siteSettings } = useSiteSettings();
 
@@ -14,7 +30,7 @@ const Index: React.FC = () => {
     console.log("values: ", value);
   };
   const handleClick = () => {
-    //
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const contactDetails = [
@@ -34,7 +50,7 @@ const Index: React.FC = () => {
           />
         </svg>
       ),
-      text: "Douala - Cameroon",
+      text: siteSettings.contact?.location,
     },
     {
       id: 2,
@@ -52,7 +68,7 @@ const Index: React.FC = () => {
           />
         </svg>
       ),
-      text: "+237 683 41 13 82",
+      text: siteSettings.contact?.phone,
     },
     {
       id: 3,
@@ -70,122 +86,203 @@ const Index: React.FC = () => {
           />
         </svg>
       ),
-      text: "email@gmail.com",
-    },
-  ];
-
-  const questionsAndAnswers = [
-    {
-      id: 1,
-      question: "How do I update my billing information?",
-      answer:
-        "To update your billing information, visit the 'Billing' section in your account settings and make the necessary changes.",
-    },
-    {
-      id: 2,
-      question: "How can I contact customer support?",
-      answer:
-        "To contact customer support, look for a 'Contact us' or 'Help' button or link on the website or platform.",
-    },
-    {
-      id: 3,
-      question: "How do I update my profile information?",
-      answer:
-        "Navigate to your profile settings to update your profile information such as name, email, and more.",
-    },
-    {
-      id: 4,
-      question: "How do I find my purchase history?",
-      answer:
-        "You can find your purchase history in the 'Orders' or 'Purchase History' section in your account.",
-    },
-  ];
-
-  const testimonialsData = [
-    {
-      text: "Pagedone has made it possible for me to stay on top of my portfolio and make informed decisions quickly and easily.",
-      name: "Jane D",
-      role: "CEO",
-      image: "https://pagedone.io/asset/uploads/1696229969.png",
-    },
-    {
-      text: "Thanks to pagedone, I feel more informed and confident about my investment decisions than ever before.",
-      name: "Harsh P.",
-      role: "Product Designer",
-      image: "https://pagedone.io/asset/uploads/1696229994.png",
-    },
-    {
-      text: "Pagedone has truly been a game-changer for my business decisions and strategic planning.",
-      name: "Alex K.",
-      role: "Entrepreneur",
-      image: "https://pagedone.io/asset/uploads/1696229994.png",
-    },
-    {
-      text: "Pagedone has streamlined my work processes and boosted my productivity significantly.",
-      name: "Jordan R.",
-      role: "Developer",
-      image: "https://pagedone.io/asset/uploads/1696229969.png",
-    },
-    {
-      text: "The insights I get from pagedone are invaluable, and it helps me stay ahead in the market.",
-      name: "Emily T.",
-      role: "Marketing Lead",
-      image: "https://pagedone.io/asset/uploads/1696229994.png",
-    },
-    {
-      text: "Pagedone has been a key factor in my decision-making process, and I trust it completely.",
-      name: "Michael W.",
-      role: "Business Analyst",
-      image: "https://pagedone.io/asset/uploads/1696229994.png",
+      text: siteSettings.contact?.email,
     },
   ];
 
   const Data = {
-    imageUrl:
-      "https://images.unsplash.com/photo-1667984390527-850f63192709?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDE2NzZ8MHwxfHNlYXJjaHwxfHxjbG91ZCUyMGNvbXB1dGluZ3xlbnwwfHx8fDE3MjU5NjMyODd8MA&ixlib=rb-4.0.3&q=80&w=1080",
-    title: "The new standard for",
-    subTitle: "Modern investor",
-    text: "When you're ready to invest, quickly execute your orders with Complex and outdated.",
-    buttonText: "Get Started",
+    imageUrl: siteSettings.business_info?.image,
+    tagline: siteSettings.business_info?.tagline,
+    subTagline: siteSettings.business_info?.subTagline,
+    headline: siteSettings.business_info?.headline,
+    buttonText: siteSettings.call_to_action[0]?.title,
     contactDetails,
     submitted: handleSubmit,
     handleClick,
-    questionsAndAnswers,
   };
 
-  const contactType = 1;
-  const heroType = 1;
-  const faqType = 1;
-  const testimonialType = 1;
-  const featureType = 1;
-  const aboutType = 1;
+  const aboutdata = {
+    siteName: siteSettings.business_info?.name,
+    description: siteSettings.business_info?.value_proposition,
+    buttonText: siteSettings.call_to_action[1]?.title || "Explore more",
+    handleClick,
+  };
 
-  const contacts = [<Contact1 props={Data} />];
-  const heroSections = [<Hero1 props={Data} />];
-  const faqs = [<Faq1 questionsAndAnswers={questionsAndAnswers} />];
-  const testimonials = [<Testimonial1 testimonials={testimonialsData} />];
-  const features = [<Feature1 />];
-  const aboutSections = [<About1 />];
+  const featureData = {
+    title: "Enjoy the finest features with our products",
+    description:
+      " We provide all the advantages that can simplify all your financial transactions without any further requirements",
+    // features: [
+    //   {
+    //     title: "Easy Payment",
+    //     description:
+    //       "We provide various methods for you to carry out all transactions related to your finances.",
+    //     icon: (
+    //       <svg
+    //         width="30"
+    //         height="30"
+    //         viewBox="0 0 30 30"
+    //         fill="none"
+    //         xmlns="http://www.w3.org/2000/svg"
+    //       >
+    //         <path
+    //           d="M24.7222 11.6667V7.22225C24.7222 5.99495 23.7273 5 22.5 5H4.72222C3.49492 5 2.5 5.99492 2.5 7.22222V22.7778C2.5 24.0051 3.49492 25 4.72222 25H22.5C23.7273 25 24.7222 24.005 24.7222 22.7777V17.7778M20.8333 17.7778H25.2778C26.5051 17.7778 27.5 16.7829 27.5 15.5556V13.8889C27.5 12.6616 26.5051 11.6667 25.2778 11.6667H20.8333C19.606 11.6667 18.6111 12.6616 18.6111 13.8889V15.5556C18.6111 16.7829 19.606 17.7778 20.8333 17.7778Z"
+    //           stroke="currentColor"
+    //           strokeWidth="2"
+    //         />
+    //       </svg>
+    //     ),
+    //   },
+    //   {
+    //     title: "Safe Transaction",
+    //     description:
+    //       "We have the most up-to-date security to support the safety of all our customers in carrying out transactions.",
+    //     icon: (
+    //       <svg
+    //         width="30"
+    //         height="30"
+    //         viewBox="0 0 30 30"
+    //         fill="none"
+    //         xmlns="http://www.w3.org/2000/svg"
+    //       >
+    //         <path
+    //           d="M14.375 15.8571C16.1009 15.8571 17.5 14.458 17.5 12.7321C17.5 11.0062 16.1009 9.6071 14.375 9.6071C12.6491 9.6071 11.25 11.0062 11.25 12.7321C11.25 14.458 12.6491 15.8571 14.375 15.8571ZM14.375 15.8571V20.8571M3.75 13.2264V15.2343C3.75 17.6868 3.75 18.9131 4.27747 19.9685C4.80493 21.0239 5.78567 21.76 7.74715 23.2322L8.57248 23.8516C11.4626 26.0208 12.9077 27.1054 14.5753 27.1054C16.243 27.1054 17.688 26.0208 20.5782 23.8516L21.4035 23.2322C23.365 21.76 24.3457 21.0239 24.8732 19.9685C25.4006 18.9131 25.4006 17.6868 25.4006 15.2343V13.2264C25.4006 9.95932 25.4006 8.32576 24.546 7.05852C23.6913 5.79128 22.1768 5.17918 19.1477 3.95499L18.3223 3.62144C16.4724 2.87381 15.5475 2.5 14.5753 2.5C13.6032 2.5 12.6782 2.87381 10.8283 3.62144L10.003 3.95499C6.97389 5.17919 5.45934 5.79128 4.60467 7.05852C3.75 8.32576 3.75 9.95932 3.75 13.2264Z"
+    //           stroke="currentColor"
+    //           strokeWidth="2"
+    //           strokeLinecap="round"
+    //           strokeLinejoin="round"
+    //         />
+    //       </svg>
+    //     ),
+    //   },
+    //   {
+    //     title: "Fast Customer Service",
+    //     description:
+    //       "We provide 24/7 customer service to help you resolve any issues promptly.",
+    //     icon: (
+    //       <svg
+    //         width="30"
+    //         height="30"
+    //         viewBox="0 0 30 30"
+    //         fill="none"
+    //         xmlns="http://www.w3.org/2000/svg"
+    //       >
+    //         <path
+    //           d="M15.0067 10V15.6652C15.0067 16.0358 15.1712 16.3873 15.4556 16.6248L18.75 19.375M15 27.5C8.09644 27.5 2.5 21.9036 2.5 15C2.5 8.09644 8.09644 2.5 15 2.5C21.9036 2.5 27.5 8.09644 27.5 15C27.5 21.9036 21.9036 27.5 15 27.5Z"
+    //           stroke="currentColor"
+    //           strokeWidth="2"
+    //           strokeLinecap="round"
+    //           strokeLinejoin="round"
+    //         />
+    //       </svg>
+    //     ),
+    //   },
+    //   {
+    //     title: "Quick Transaction",
+    //     description:
+    //       "We provide faster transaction speeds than competitors, ensuring money arrives and is received quickly.",
+    //     icon: (
+    //       <svg
+    //         width="30"
+    //         height="30"
+    //         viewBox="0 0 30 30"
+    //         fill="none"
+    //         xmlns="http://www.w3.org/2000/svg"
+    //       >
+    //         <path
+    //           d="M10 14.7875L13.0959 17.8834C13.3399 18.1274 13.7353 18.1275 13.9794 17.8838L20.625 11.25M15 27.5C8.09644 27.5 2.5 21.9036 2.5 15C2.5 8.09644 8.09644 2.5 15 2.5C21.9036 2.5 27.5 8.09644 27.5 15C27.5 21.9036 21.9036 27.5 15 27.5Z"
+    //           stroke="currentColor"
+    //           strokeWidth="2"
+    //           strokeLinecap="round"
+    //           strokeLinejoin="round"
+    //         />
+    //       </svg>
+    //     ),
+    //   },
+    // ],
+    features: siteSettings.product_services_features,
+  };
+
+  const contactType = siteSettings.properties?.contactType || 1;
+  const heroType = siteSettings.properties?.heroType || 1;
+  const faqType = siteSettings.properties?.faqType || 1;
+  const testimonialType = siteSettings.properties?.testimonialType || 1;
+  const featureType = siteSettings.properties?.featureType || 1;
+  const aboutType = siteSettings.properties?.aboutType || 1;
+
+  const contacts = [Contact1, Contact2, Contact3, Contact4];
+  const heroSections = [Hero1, Hero2, Hero3, Hero4];
+  const faqs = [Faq1, Faq2, Faq3, Faq4];
+  const questionsAndAnswers = siteSettings?.faqs;
+  const testmonials = [Testimonial1, Testimonial2, Testimonial3, Testimonial4];
+  const features = [Feature1, Feature2, Feature3, Feature4];
+  const aboutSections = [About1];
+
+  const testimonials = siteSettings?.testimonials;
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-20 md:space-y-40">
       {/* Hero section */}
-      {heroSections[heroType - 1]}
-
+      <div data-aos="fade-up" id="home" className="flex w-full justify-center">
+        {React.createElement(heroSections[heroType - 1], {
+          ...Data,
+        })}
+      </div>
       {/* About section */}
-      {aboutSections[aboutType - 1]}
+      <div className="flex w-full justify-center px-5">
+        {" "}
+        <div data-aos="fade-up" id="about" className="w-full max-w-screen-xl">
+          {React.createElement(aboutSections[aboutType - 1], { ...aboutdata })}
+        </div>
+      </div>
 
       {/* Features section */}
-      {features[featureType - 1]}
+      <div className="flex w-full justify-center px-5">
+        {" "}
+        <div
+          data-aos="fade-up"
+          id="features"
+          className="w-full max-w-screen-xl"
+        >
+          {React.createElement(features[featureType - 1], { ...featureData })}
+        </div>
+      </div>
 
       {/* Testimonials section */}
-      {testimonials[testimonialType - 1]}
+      <div className="flex w-full justify-center px-5">
+        {" "}
+        <div
+          data-aos="fade-up"
+          id="testimonials"
+          className="w-full max-w-screen-xl"
+        >
+          {React.createElement(testmonials[testimonialType - 1], {
+            testimonials,
+          })}
+        </div>
+      </div>
 
       {/* FAQS section */}
-      {faqs[faqType - 1]}
+      <div className="flex w-full justify-center px-5">
+        <div data-aos="fade-up" id="faqs" className="w-full max-w-screen-xl">
+          {React.createElement(faqs[faqType - 1], {
+            questionsAndAnswers,
+          })}
+        </div>
+      </div>
 
       {/* Contact Content */}
-      {contacts[contactType - 1]}
+      <div className="flex w-full justify-center px-5">
+        <div
+          data-aos="fade-up"
+          id="contacts"
+          className="w-full max-w-screen-xl"
+        >
+          {React.createElement(contacts[contactType - 1], {
+            ...Data,
+          })}
+        </div>
+      </div>
     </div>
   );
 };

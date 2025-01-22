@@ -5,16 +5,9 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-
-// Define the shape of user settings (customize based on your actual data structure)
-interface UserSettings {
-  themeColor: string;
-  fontSize: string;
-  language: string;
-}
-
+import axios from "axios";
 interface DataContextProps {
-  siteSettings: UserSettings | null;
+  siteSettings: any | null;
   loading: boolean;
   error: string | null;
   initialLoading: boolean; // Track if initial loading is still in progress
@@ -27,26 +20,62 @@ const DataContext = createContext<DataContextProps | undefined>(undefined);
 export const ContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [siteSettings, setUserData] = useState<UserSettings | null>(null);
+  const [siteSettings, setUserData] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
+  let route = window.location.href;
+
+  let id: string | number | null;
+  if (route.includes("test")) {
+    id = route.split("/")[4];
+  } else {
+    id = null;
+  }
+
+  const live = 1;
+  const siteId = id || 300;
+
+  const getRandomType = () => Math.floor(Math.random() * 4) + 1;
+  const getRandomType2 = () => Math.floor(Math.random() * 3) + 1;
+
+  const newProperties = {
+    background_color: "white",
+    navLinks: ["Home", "About", "Features", "Testimonials", "FAQS", "Contacts"],
+    headerType: getRandomType2(),
+    footerType: getRandomType(),
+    contactType: getRandomType(),
+    heroType: getRandomType(),
+    faqType: getRandomType(),
+    testimonialType: getRandomType(),
+    featureType: 1,
+    aboutType: 1,
+  };
 
   // Fetch user settings data from an API
   useEffect(() => {
+    console.log("id2: ", id);
     const fetchData = async () => {
       setInitialLoading(false);
       try {
-        const response = await fetch(
-          "https://your-api-endpoint.com/user-settings",
+        const response = await axios.get(
+          `/api/v1/backend/fetch-site?id=${siteId}&live=${live}`,
         );
-        if (!response.ok) {
-          throw new Error("Failed to fetch user settings");
-        }
-        const result = await response.json();
-        setUserData(result);
+
+        response.data.properties = {
+          ...response.data.properties,
+          ...newProperties,
+        };
+        response.data.contact = {
+          ...response.data.contact,
+          ...{ location: "Douala - Cameroon", twitter: "twitter.com" },
+        };
+
+        console.log("result: ", response.data);
+        setUserData(response.data);
       } catch (error: any) {
-        // setError(error.message || "Error fetching data");
+        console.log("result: ", error);
+        setError(error.message || "Error fetching data");
       } finally {
         setLoading(false);
         setInitialLoading(false);

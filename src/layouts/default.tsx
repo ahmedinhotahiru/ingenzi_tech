@@ -1,39 +1,85 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { useSiteSettings } from "../context/index.tsx";
+import {
+  Header1,
+  Header2,
+  Header3,
+  Header4,
+} from "../components/headers/index.ts";
+import {
+  Footer1,
+  Footer2,
+  Footer3,
+  Footer4,
+} from "../components/footers/index.ts";
+import LoadingScreen from "../components/loaders/LoadingScreen.tsx";
 
-// Header imports
-import Header1 from "../components/header/Header1.tsx";
-import Header2 from "../components/header/Header2.tsx";
-import Header3 from "../components/header/Header3.tsx";
-import Header4 from "../components/header/Header4.tsx";
+interface SocialLink {
+  platform: string;
+  url: string;
+  icon: React.ReactNode;
+}
 
-// Footer imports
-import Footer1 from "../components/footer/Footer1.tsx";
-import Footer2 from "../components/footer/Footer2.tsx";
-import Footer3 from "../components/footer/Footer3.tsx";
-import Footer4 from "../components/footer/Footer4.tsx";
 interface DefaultLayoutProps {
   children: ReactNode;
 }
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
-  const { siteSettings } = useSiteSettings();
-  const handleButtonClick = () => {
-    console.log("Button clicked!");
+  const { siteSettings, loading } = useSiteSettings();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  // Function to toggle the menu state
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
   };
+
+  // Effect to listen for scroll events
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setHasScrolled(true);
+      } else {
+        setHasScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Cleanup listener on component unmount
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Loader to display while fetching site settings
+  if (loading || !siteSettings) {
+    return <LoadingScreen />;
+  }
+
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Function to handle link click (smooth scroll)
   const handleLinkClick = (section: string) => {
     const element = document.getElementById(section);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      const yOffset = -200;
+      const yPosition =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+      window.scrollTo({
+        top: yPosition,
+        behavior: "smooth",
+      });
     }
   };
 
-  const socialLinks = [
+  const handleButtonClick = () => {
+    console.log("Button clicked!");
+  };
+
+  const socialLinks: SocialLink[] = [
     {
       platform: "Instagram",
       url: "https://instagram.com",
@@ -110,56 +156,118 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
           <path
             fill="currentColor"
             fillRule="evenodd"
-            d="M9.429 8.969h3.714v1.85c.535-1.064 1.907-2.02 3.968-2.02c3.951 0 4.889 2.118 4.889 6.004V22h-4v-6.312c0-2.213-.535-3.461-1.897-3.461c-1.889 0-2.674 1.345-2.674 3.46V22h-4zM2.57 21.83h4V8.799h-4zM7.143 4.55a2.53 2.53 0 0 1-.753 1.802a2.57 2.57 0 0 1-1.82.748a2.6 2.6 0 0 1-1.818-.747A2.55 2.55 0 0 1 2 4.55c0-.677.27-1.325.753-1.803A2.58 2.58 0 0 1 4.571 2c.682 0 1.336.269 1.819.747s.753 1.126.753 1.803"
-            clipRule="evenodd"
+            d="M9.429 8.969h3.714v1.85c.535-1.064 1.907-2.02 3.968-2.02c3.951 0 4.889 2.118 4.889 6.004V22h-4v-6.312c0-2.213-.535-3.461-1.897-3.461c-1.889 0-2.674 1.345-2.674 3.46V22h-4zM2.57 21.83h4V8.799h-4zM7.143 4.55a2.53 2.53 0 0 1-.753 1.802a2.57 2.57 0 0 1-1.82.748a2.6 2.6 0 0 1-1.8-1.77a2.57 2.57 0 0 1 .755-1.8a2.56 2.56 0 0 1 1.801-.75a2.57 2.57 0 0 1 1.774 1.77"
+          />
+        </svg>
+      ),
+    },
+    {
+      platform: "YouTube",
+      url: "https://youtube.com",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6"
+          viewBox="0 0 24 24"
+        >
+          <mask id="lineMdYoutubeFilled0">
+            <g
+              fill="none"
+              fill-opacity="0"
+              stroke="#fff"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+            >
+              <path
+                fill="#fff"
+                stroke-dasharray="64"
+                stroke-dashoffset="64"
+                d="M12 5c9 0 9 0 9 7c0 7 0 7 -9 7c-9 0 -9 0 -9 -7c0 -7 0 -7 9 -7Z"
+              >
+                <animate
+                  fill="freeze"
+                  attributeName="fill-opacity"
+                  begin="0.6s"
+                  dur="0.5s"
+                  values="0;1"
+                />
+                <animate
+                  fill="freeze"
+                  attributeName="stroke-dashoffset"
+                  dur="0.6s"
+                  values="64;0"
+                />
+              </path>
+              <path fill="#000" stroke="none" d="M12 11L12 12L12 13z">
+                <animate
+                  fill="freeze"
+                  attributeName="d"
+                  begin="1.1s"
+                  dur="0.2s"
+                  values="M12 11L12 12L12 13z;M10 8.5L16 12L10 15.5z"
+                />
+                <set
+                  fill="freeze"
+                  attributeName="fill-opacity"
+                  begin="1.1s"
+                  to="1"
+                />
+              </path>
+            </g>
+          </mask>
+          <rect
+            width="24"
+            height="24"
+            fill="currentColor"
+            mask="url(#lineMdYoutubeFilled0)"
           />
         </svg>
       ),
     },
   ];
 
+  const updatedSocialLinks = socialLinks
+    .filter((link) => siteSettings.contact[link.platform.toLowerCase()])
+    .map((link) => ({
+      ...link,
+      url: siteSettings.contact[link.platform.toLowerCase()],
+    }));
+
   const Data = {
-    siteName: "Educloud Academy",
-    logoUrl:
-      "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20viewBox%3D%220%200%20121%2024%22%3E%3Cpath%20d%3D%22M%2086.963%205.49%20L%2086.963%200%20L%2063.34%200%20L%2063.34%2023.294%20L%2086.963%2023.294%20L%2086.963%2017.684%20L%2071.302%2017.684%20L%2071.302%2013.788%20L%2083.579%2013.788%20L%2083.579%209.106%20L%2071.302%209.106%20L%2071.302%205.49%20Z%22%20fill%3D%22rgb(224%2C48%2C38)%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M%2044.395%2015.466%20L%2043.75%2015.466%20L%2036.975%200%20L%2027.823%200%20L%2038.519%2023.298%20L%2048.986%2023.269%20C%2049.119%2023.269%2049.248%2023.182%2049.31%2023.044%20L%2059.145%200%20L%2050.746%200%20Z%22%20fill%3D%22rgb(224%2C48%2C38)%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M%20112.479%200.018%20L%20112.479%2013.24%20L%2099.919%200.026%20L%2091.162%200.026%20L%2091.162%2023.283%20L%2099.174%2023.283%20L%2099.174%209.166%20L%20112.708%2023.287%20L%20120.491%2023.287%20L%20120.491%200.018%20Z%22%20fill%3D%22rgb(224%2C48%2C38)%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M%200%200%20L%200%2023.294%20L%2023.623%2023.294%20L%2023.623%2017.684%20L%207.962%2017.684%20L%207.962%2013.788%20L%2020.239%2013.788%20L%2020.239%209.106%20L%207.962%209.106%20L%207.962%205.49%20L%2023.623%205.49%20L%2023.623%200%20Z%22%20fill%3D%22rgb(224%2C48%2C38)%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E",
-    buttonText: "Get Started",
+    siteName: siteSettings.business_info?.name || "",
+    logoUrl: siteSettings.properties?.logo,
+    buttonText: siteSettings.call_to_action[0]?.button_text,
     scrollToTop: handleScrollToTop,
     buttonAction: handleButtonClick,
     linkClicked: handleLinkClick,
-    navLinks: ["Home", "About", "Features", "Testimonials", "FAQS", "Contacts"],
-    socialLinks,
+    navLinks: siteSettings.properties?.navLinks!,
+    socialLinks: updatedSocialLinks,
+    isMenuOpen,
+    hasScrolled,
+    toggleMenu,
+    description: siteSettings.business_info?.value_proposition,
+    contact: {
+      location: siteSettings.contact?.location,
+      phone: siteSettings.contact?.phone,
+      email: siteSettings.contact?.email,
+    },
   };
 
-  const headerType = 1;
-  const footerType = 2;
+  const headers = [Header1, Header2, Header3, Header4];
+  const footers = [Footer1, Footer2, Footer3, Footer4];
 
-  const headers = [
-    <Header1 props={Data} />,
-    <Header2 props={Data} />,
-    <Header3 headerData={Data} />,
-    <Header4 headerData={Data} />,
-  ];
-
-  const footers = [
-    <Footer1 props={Data} />,
-    <Footer2 props={Data} />,
-    <Footer3 footerData={Data} />,
-    <Footer4 footerData={Data} />,
-  ];
+  const headerType = siteSettings.properties?.headerType || 1;
+  const footerType = siteSettings.properties?.footerType || 1;
 
   return (
-    <div className="w-full px-5 transition-all duration-700 ease-in-out">
-      {/* Header */}
-      {headers[headerType - 1]}
-
-      {/* Main Content */}
-      <main className="flex w-full justify-center pt-16">
-        <div className="w-full max-w-screen-xl">{children}</div>
-      </main>
-
-      {/* Footer */}
-      {footers[footerType - 1]}
-    </div>
+    <main className="w-full transition-all duration-700 ease-in-out">
+      {React.createElement(headers[headerType - 1], { ...Data })}
+      <section className="pt-16">{children}</section>
+      <div className="pt-16 md:pt-24">
+        {React.createElement(footers[footerType - 1], { ...Data })}
+      </div>
+    </main>
   );
 };
 

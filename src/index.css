@@ -2,24 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: Druk Wide Bold Bold;
-  src: url(https://framerusercontent.com/assets/jCvdRn9JRjpW5ijmlKhrwURrt0.woff2);
-  font-display: swap;
+:root {
+  /* Colors */
+  --primary-color: blue;
+  --primary-variable-color-50: #eff6ff;
+  --primary-variable-color-100: #dbeafe;
+  --primary-variable-color-200: #bfdbfe;
+  --primary-variable-color-300: #93c5fd;
+  --primary-variable-color-400: #60a5fa;
+  --primary-variable-color-500: #3b82f6;
+  --primary-variable-color-600: #2563eb;
+  --primary-variable-color-700: #1d4ed8;
+  --primary-variable-color-800: #1e40af;
+  --primary-variable-color-900: #1e3a8a;
+
+  --background-color: #ffffff;
+
+  /* Fonts */
+  --font-primary: "Montserrat", sans-serif;
 }
 
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap");
-
-@font-face {
-  font-family: GT America Condensed Bold Placeholder;
-  src: local("Arial");
-  ascent-override: 106.77%;
-  descent-override: 21.25%;
-  line-gap-override: 0%;
-  size-adjust: 94.12%;
+body {
+  margin: 0;
+  font-family: var(--font-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/********************* swipper ***********************/
+/* Swiper Custom Styles */
 .swiper-horizontal > .swiper-pagination-bullets .swiper-pagination-bullet,
 .swiper-pagination-horizontal.swiper-pagination-bullets
   .swiper-pagination-bullet {
@@ -39,8 +49,14 @@
   padding-bottom: 64px;
 }
 
+@media (max-width: 768px) {
+  .swiper-wrapper {
+    padding-bottom: 40px;
+  }
+}
+
 .swiper-pagination-bullet-active {
-  background: #4f46e5 !important;
+  background: var(--primary-variable-color-400) !important;
 }
 
 .swiper-slide.swiper-slide-active > .slide_active\:border-indigo-600 {
@@ -49,24 +65,6 @@
 }
 
 .swiper-slide.swiper-slide-active > .group .slide_active\:text-gray-800 {
-  ---tw-text-opacity: 1;
+  --tw-text-opacity: 1;
   color: rgb(31 41 55 / var(--tw-text-opacity));
-}
-
-:root {
-  --primary-color: #3490dc;
-  --secondary-color: #ffed4a;
-  --background-color: #ffffff;
-
-  /************** fonts **************/
-  --font-primary: "Druk Wide Bold Bold", "Druk Wide Bold Bold Placeholder",
-    sans-serif;
-  --font-secondary: Montserrat, sans-serif;
-}
-
-body {
-  margin: 0;
-  font-family: var(--font-secondary);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }

@@ -1,57 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { HeaderProps } from "../../types/types";
 
-interface Props {
-  props: {
-    siteName: string;
-    logoUrl: string;
-    buttonText: string;
-    scrollToTop: () => void;
-    buttonAction: () => void;
-    linkClicked: (id: string) => void;
-    navLinks: string[];
-  };
-}
-
-const Header1: React.FC<Props> = ({ props }) => {
-  const {
-    siteName,
-    logoUrl,
-    buttonText,
-    scrollToTop,
-    buttonAction,
-    linkClicked,
-    navLinks,
-  } = props;
-
-  // State to track whether the menu is open or not
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // State to track if the user has scrolled
-  const [hasScrolled, setHasScrolled] = useState(false);
-
-  // Function to toggle the menu state
-  const toggleMenu = () => {
-    setIsMenuOpen((prev) => !prev);
-  };
-
-  // Effect to listen for scroll events
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setHasScrolled(true);
-      } else {
-        setHasScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    // Cleanup listener on component unmount
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
+const Header1: React.FC<HeaderProps> = ({
+  siteName,
+  logoUrl,
+  buttonText,
+  scrollToTop,
+  buttonAction,
+  linkClicked,
+  navLinks,
+  hasScrolled,
+  isMenuOpen,
+  toggleMenu,
+}) => {
   return (
     <header
       className={`fixed start-0 top-0 z-[105] w-full bg-background bg-opacity-80 px-5 ${
@@ -71,7 +32,7 @@ const Header1: React.FC<Props> = ({ props }) => {
               alt={`${siteName} Logo`}
             />
           ) : (
-            <span className="self-center whitespace-nowrap font-primary text-lg font-bold text-primary">
+            <span className="self-center whitespace-nowrap font-primary text-lg font-bold text-primary md:text-2xl">
               {siteName}
             </span>
           )}
@@ -80,7 +41,7 @@ const Header1: React.FC<Props> = ({ props }) => {
         {/* Action button for larger screens */}
         <button
           type="button"
-          className="hidden space-x-3 rounded-full bg-primary-var-600 px-5 py-2.5 text-center text-sm font-semibold text-white shadow-lg outline-none hover:bg-primary-var-700 md:order-2 md:flex"
+          className="hidden space-x-3 rounded-full bg-primary-var-600 px-7 py-2.5 text-center text-sm font-semibold text-white shadow-lg outline-none hover:bg-primary-var-700 md:order-2 md:flex"
           onClick={() => {
             scrollToTop();
             buttonAction();
@@ -153,8 +114,9 @@ const Header1: React.FC<Props> = ({ props }) => {
             <li className="mt-4 md:hidden">
               <button
                 type="button"
-                className="w-full rounded-full bg-primary-var-600 px-4 py-2 text-center text-sm font-semibold text-white hover:bg-primary-var-700 focus:outline-none focus:ring-4 focus:ring-primary-var-300"
+                className="w-full rounded-full bg-primary-var-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-primary-var-700 focus:outline-none focus:ring-4 focus:ring-primary-var-300"
                 onClick={() => {
+                  toggleMenu();
                   scrollToTop();
                   buttonAction();
                 }}
