@@ -64,7 +64,7 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
       setInitialLoading(false);
       try {
         const response = await axios.get(
-          `/api/v1/backend/fetch-site?id=${siteId}&live=${live}`,
+          `https://api.sitescribe.link/api/v1/backend/fetch-site?id=${siteId}&live=${live}`,
         );
         console.log("result: ", response.data);
         response.data.properties = {
