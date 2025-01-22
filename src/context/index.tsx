@@ -39,21 +39,27 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
   const getRandomType = () => Math.floor(Math.random() * 4) + 1;
   const getRandomType2 = () => Math.floor(Math.random() * 3) + 1;
 
-  const newProperties = {
-    background_color: "white",
-    navLinks: ["Home", "About", "Features", "Testimonials", "FAQS", "Contacts"],
-    headerType: getRandomType2(),
-    footerType: getRandomType(),
-    contactType: getRandomType(),
-    heroType: getRandomType(),
-    faqType: getRandomType(),
-    testimonialType: getRandomType(),
-    featureType: 1,
-    aboutType: 1,
-  };
-
   // Fetch user settings data from an API
   useEffect(() => {
+    const newProperties = {
+      background_color: "white",
+      navLinks: [
+        "Home",
+        "About",
+        "Features",
+        "Testimonials",
+        "FAQS",
+        "Contacts",
+      ],
+      headerType: getRandomType2(),
+      footerType: getRandomType(),
+      contactType: getRandomType(),
+      heroType: getRandomType(),
+      faqType: getRandomType(),
+      testimonialType: getRandomType(),
+      featureType: 1,
+      aboutType: 1,
+    };
     const fetchData = async () => {
       setInitialLoading(false);
       try {
@@ -81,7 +87,7 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
     };
 
     fetchData();
-  }, [newProperties, siteId]);
+  }, [siteId]);
 
   return (
     <DataContext.Provider
