@@ -2,6 +2,7 @@
   "name": "company-app",
   "version": "0.1.0",
   "private": true,
+  "proxy": "https://api.sitescribe.link",
   "dependencies": {
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
