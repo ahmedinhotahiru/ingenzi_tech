@@ -81,7 +81,7 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
     };
 
     fetchData();
-  }, []);
+  }, [newProperties, siteId]);
 
   return (
     <DataContext.Provider
