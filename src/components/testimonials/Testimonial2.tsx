@@ -1,6 +1,4 @@
 import React from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
 import Title from "../common/Title.tsx";
 import "swiper/css";
 import "swiper/css/pagination";

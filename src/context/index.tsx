@@ -54,14 +54,13 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
 
   // Fetch user settings data from an API
   useEffect(() => {
-    console.log("id2: ", id);
     const fetchData = async () => {
       setInitialLoading(false);
       try {
         const response = await axios.get(
           `/api/v1/backend/fetch-site?id=${siteId}&live=${live}`,
         );
-
+        console.log("result: ", response.data);
         response.data.properties = {
           ...response.data.properties,
           ...newProperties,
@@ -71,7 +70,6 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
           ...{ location: "Douala - Cameroon", twitter: "twitter.com" },
         };
 
-        console.log("result: ", response.data);
         setUserData(response.data);
       } catch (error: any) {
         console.log("result: ", error);

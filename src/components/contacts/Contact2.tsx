@@ -28,7 +28,7 @@ const Contact2: React.FC<ContactProps> = ({ contactDetails, submitted }) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await submitted(inputs);
+      submitted(inputs);
     } finally {
       setIsLoading(false);
     }

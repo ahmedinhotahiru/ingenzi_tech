@@ -9,49 +9,51 @@ import { useSiteSettings } from "./context/index.tsx";
 import colors from "tailwindcss/colors";
 
 const App: React.FC = () => {
-  const { siteSettings } = useSiteSettings();
+  const { siteSettings, loading } = useSiteSettings();
 
-  // Initialize AOS for animations
   useEffect(() => {
+    // Initialize AOS for animations
     AOS.init({
       duration: 1000,
       offset: 100,
     });
   }, []);
 
-  // Set dynamic site colors and font
   useEffect(() => {
-    const root = document.documentElement;
+    if (siteSettings) {
+      const root = document.documentElement;
 
-    // Set primary and background colors
-    root.style.setProperty(
-      "--primary-color",
-      siteSettings?.properties?.accent_color || "#6366f1", // Default to Tailwind indigo-500
-    );
-    root.style.setProperty(
-      "--background-color",
-      siteSettings?.properties?.background_color || "#ffffff",
-    );
+      // Set primary and background colors
+      root.style.setProperty(
+        "--primary-color",
+        siteSettings?.properties?.accent_color || "#6366f1",
+      );
 
-    // Find and set Tailwind variable colors
-    const accentColor = siteSettings?.properties?.accent_color;
-    const primaryVariableColor =
-      Object.entries(colors).find(([key]) => key === accentColor)?.[1] ||
-      colors.indigo;
+      root.style.setProperty(
+        "--background-color",
+        siteSettings?.properties?.background_color || "#ffffff",
+      );
 
-    if (typeof primaryVariableColor === "object") {
-      Object.entries(primaryVariableColor).forEach(([key, value]) => {
-        root.style.setProperty(
-          `--primary-variable-color-${key}`,
-          value as string,
-        );
-      });
+      // Find and set Tailwind variable colors
+      const accentColor = siteSettings?.properties?.accent_color;
+      const primaryVariableColor =
+        Object.entries(colors).find(([key]) => key === accentColor)?.[1] ||
+        colors.indigo;
+
+      if (typeof primaryVariableColor === "object") {
+        Object.entries(primaryVariableColor).forEach(([key, value]) => {
+          root.style.setProperty(
+            `--primary-variable-color-${key}`,
+            value as string,
+          );
+        });
+      }
+
+      // Load and apply font
+      const fontFamily = siteSettings?.properties?.font_family || "Montserrat";
+      loadFont(fontFamily);
+      root.style.setProperty("--font-primary", `'${fontFamily}'`);
     }
-
-    // Load and apply font
-    const fontFamily = siteSettings?.properties?.font_family || "Montserrat";
-    loadFont(fontFamily);
-    root.style.setProperty("--font-primary", `'${fontFamily}'`);
   }, [siteSettings]);
 
   // Function to dynamically load Google Fonts
@@ -66,6 +68,11 @@ const App: React.FC = () => {
       document.head.appendChild(link);
     }
   };
+
+  // Ensure conditional rendering happens **after** hooks are declared
+  if (loading || !siteSettings) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="w-full">

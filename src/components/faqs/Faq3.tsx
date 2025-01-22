@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Title from "../common/Title.tsx";
 import { FAQProps } from "../../types/types";
 
 const Faq3: React.FC<FAQProps> = ({ questionsAndAnswers }) => {
