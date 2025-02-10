@@ -33,7 +33,7 @@ const Footer1: React.FC<FooterProps> = ({
           </div>
           <div className="flex justify-center">
             <ul className="flex flex-wrap items-center text-sm font-medium text-gray-500 max-md:justify-center sm:mb-0 md:mb-6">
-              {navLinks.map((link, index) => (
+              {navLinks?.map((link, index) => (
                 <li key={index}>
                   <button
                     onClick={() => linkClicked(link.toLowerCase())}

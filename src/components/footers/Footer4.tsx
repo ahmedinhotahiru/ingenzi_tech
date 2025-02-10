@@ -38,7 +38,7 @@ const Footer4: React.FC<FooterProps> = ({
               Quick Links
             </h4>
             <ul className="text-sm transition-all duration-500 [&_li]:mb-6">
-              {navLinks.map((link, index) => (
+              {navLinks?.map((link, index) => (
                 <li key={index}>
                   <button
                     onClick={() => linkClicked(link.toLowerCase())}

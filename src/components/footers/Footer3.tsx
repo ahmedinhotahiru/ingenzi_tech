@@ -27,7 +27,7 @@ const Footer3: React.FC<FooterProps> = ({
           </div>
 
           <ul className="text-md mb-10 flex flex-col items-center justify-center gap-7 border-b border-gray-200 py-16 transition-all duration-500 md:flex-row md:gap-12">
-            {navLinks.map((link, index) => (
+            {navLinks?.map((link, index) => (
               <li key={index}>
                 <button
                   onClick={() => linkClicked(link.toLowerCase())}

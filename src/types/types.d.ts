@@ -11,7 +11,7 @@ export interface HeaderProps {
   scrollToTop: () => void;
   buttonAction: () => void;
   linkClicked: (id: string) => void;
-  navLinks: string[];
+  navLinks?: string[];
 }
 
 // Hero section

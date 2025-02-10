@@ -97,7 +97,7 @@ const Header3: React.FC<HeaderProps> = ({
           } w-full items-center justify-between md:order-1 md:flex md:max-h-none md:w-auto md:opacity-100`}
         >
           <ul className="mt-4 flex w-full flex-col rounded-lg border border-gray-100 bg-gray-50 p-4 font-medium max-md:mt-5 md:ml-14 md:mt-0 md:flex-row md:items-center md:space-x-4 md:border-0 md:bg-white md:p-0 lg:space-x-8 rtl:space-x-reverse">
-            {navLinks.map((link, index) => (
+            {navLinks?.map((link, index) => (
               <li key={index}>
                 <button
                   onClick={() => linkClicked(link.toLowerCase())}

@@ -33,7 +33,6 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
     id = null;
   }
 
-  const live = 1;
   const siteId = id || 300;
 
   const getRandomType = () => Math.floor(Math.random() * 4) + 1;
@@ -51,30 +50,22 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
         "FAQS",
         "Contacts",
       ],
-      headerType: getRandomType2(),
-      footerType: getRandomType(),
-      contactType: getRandomType(),
-      heroType: getRandomType(),
-      faqType: getRandomType(),
-      testimonialType: getRandomType(),
-      featureType: 1,
-      aboutType: 1,
     };
     const fetchData = async () => {
       setInitialLoading(false);
       try {
         const response = await axios.get(
-          `/api/v1/backend/fetch-site?id=${siteId}&live=${live}`,
+          `https://sitescribe.vercel.app/api/v1/backend/fetch-site?id=300`,
         );
         console.log("result: ", response.data);
         response.data.properties = {
           ...response.data.properties,
           ...newProperties,
         };
-        response.data.contact = {
-          ...response.data.contact,
-          ...{ location: "Douala - Cameroon", twitter: "twitter.com" },
-        };
+        // response.data.contact = {
+        //   ...response.data.contact,
+        //   ...{ location: "Douala - Cameroon", twitter: "twitter.com" },
+        // };
 
         setUserData(response.data);
       } catch (error: any) {
