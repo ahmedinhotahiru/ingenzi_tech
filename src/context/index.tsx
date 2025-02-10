@@ -35,9 +35,6 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
 
   const siteId = id || 300;
 
-  const getRandomType = () => Math.floor(Math.random() * 4) + 1;
-  const getRandomType2 = () => Math.floor(Math.random() * 3) + 1;
-
   // Fetch user settings data from an API
   useEffect(() => {
     const newProperties = {
@@ -62,10 +59,10 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
           ...response.data.properties,
           ...newProperties,
         };
-        // response.data.contact = {
-        //   ...response.data.contact,
-        //   ...{ location: "Douala - Cameroon", twitter: "twitter.com" },
-        // };
+        response.data.contact = {
+          ...response.data.contact,
+          ...{ location: "Douala - Cameroon", twitter: "twitter.com" },
+        };
 
         setUserData(response.data);
       } catch (error: any) {
