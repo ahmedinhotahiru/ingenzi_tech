@@ -19,7 +19,7 @@ error_path = ".\data\error_codes\Philips_HDI_5000_Error_Codes_Full.json"
 LAST_SERVICE_DATE_PATH = ".\data\last_service_date.json"
 
 # Initialize GitHub object with your token
-g = Github("your github token")
+g = Github(GITHUB_TOKEN)
 repo = g.get_repo(GITHUB_REPO)
 
 app = Flask(__name__)
