@@ -8,9 +8,12 @@ import { FaComments, FaTools, FaBell } from 'react-icons/fa'; // Importing icons
 
 import { gapi } from 'gapi-script'; // Import Google API client
 
-const CLIENT_ID = '919850537874-1jaq60mqr0pqem55j566cbdf80jq03ub.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyBtxsEtyhDQiJsMjKlXbBKe4B9ysE-xSog';
+const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 const SCOPES = 'https://www.googleapis.com/auth/calendar';
+
+// Backend URL for the API
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Home = () => {
   const navigate = useNavigate(); // Hook to navigate programmatically
@@ -39,7 +42,7 @@ const Home = () => {
     const loadServiceDates = async () => {
       try {
         // Fetch from API call
-        const response = await fetch('http://127.0.0.1:5000/api/last-service-date');
+        const response = await fetch(`${BACKEND_URL}/api/last-service-date`);
         const data = await response.json();
         
         const lastServiceTimestamp = data.last_service_date * 1000; // Convert from seconds to milliseconds
@@ -87,7 +90,7 @@ const Home = () => {
     setShowModal(false); // Close the modal after selection
 
     // TODO: Send data to backend
-    fetch("http://127.0.0.1:5000/api/last-service-date", {
+    fetch(`${BACKEND_URL}/api/last-service-date`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -151,7 +154,7 @@ const Home = () => {
   // Function to handle error code search
   const handleSearch = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/lookup-code?code=${errorCode}`);
+      const response = await fetch(`${BACKEND_URL}/api/lookup-code?code=${errorCode}`);
       const data = await response.json();
       console.log(data);
 
@@ -204,7 +207,7 @@ const Home = () => {
               <button className="tab" onClick={() => navigate('/manuals')}>Access Manuals</button>
               <button className="tab" onClick={() => navigate('/logs')}>Retrieve Device Logs</button>
               <div className="dropdown">
-                <button className="tab" onClick={() => setShowDropdown(!showDropdown)}>Manage Devices</button>
+                <button className="tab" onClick={() => setShowDropdown(!showDropdown)}>Manage Modules</button>
                 {showDropdown && (
                   <div className="dropdown-content">
                     <div className="nested-dropdown">
@@ -219,7 +222,7 @@ const Home = () => {
                         </div>
                       )}
                     </div>
-                    <button className="dropdown-item" onClick={() => navigate('/upload')}>Add New Device</button>
+                    <button className="dropdown-item" onClick={() => navigate('/upload')}>Add New Module</button>
                   </div>
                 )}
               </div>
