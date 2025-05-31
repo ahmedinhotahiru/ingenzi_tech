@@ -1,191 +1,278 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './UploadPage.css'; // Import the custom CSS for styling
-import { FaFileUpload } from 'react-icons/fa'; // Import file upload and home icons
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+/* UploadPage.css */
 
-// Backend URL for the API
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+/* Main container */
+.upload-page {
+    /* background-color: #ffffff; */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    font-family: "Poppins", sans-serif;
+    width: 100%;
+}
 
-const UploadPage = () => {
-  const [selectedFiles, setSelectedFiles] = useState([]); // State to store the selected file
-  const [uploadStatus, setUploadStatus] = useState(''); // State to store the upload status
-  const [uploadedFiles, setUploadedFiles] = useState([]); // State to store the list of uploaded files
-  const [isDragging, setIsDragging] = useState(false); // State to manage drag-and-drop indication
-  const [documentType, setDocumentType] = useState(''); // State to store the selected document type
-  const [isLoading, setIsLoading] = useState(false); // State to manage loading indication
+.upload-page .overlap-wrapper {
+    /* background-color: #ffffff; */
+    width: 100%;
+}
 
-  // Handle file selection
-  const handleFileChange = (event) => {
-    setSelectedFiles(event.target.files);
-  };
+.upload-page .overlap {
+    /* background-color: #f5f5f5; */
+    background-size: 100% 100%;
+    min-height: 100vh;
+    height: 100%;
+    position: relative;
+}
 
-  // Handle file drop
-  const handleFileDrop = (event) => {
-    event.preventDefault();
-    const files = event.dataTransfer.files;
-    setSelectedFiles(files);
-    setIsDragging(false);
-  };
+/* Header (Navigation Bar) */
+.upload-page .overlap-group {
+    height: 90px; /* Adjusted height */
+    position: relative;
+    width: 95.5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px; /* Adjusted padding */
+}
 
-  // Handle drag over
-  const handleDragOver = (event) => {
-    event.preventDefault();
-    setIsDragging(true);
-  };
+.upload-page .image {
+    height: 95px; /* Adjust the height as needed */
+}
 
-  // Handle drag leave
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
+.upload-page .tabs {
+    display: flex;
+    gap: 20px;
+}
 
-  // Handle document type change
-  const handleDocumentTypeChange = (event) => {
-    setDocumentType(event.target.value);
-  };
+.upload-page .tab {
+    background-color: rgb(6, 103, 200);
+    color: white;
+    font-size: 13px;
+    padding: 15px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none; /* Remove underline */
+}
 
-  // Simulate file upload on form submit
-  const handleFileUpload = async (event) => {
-    event.preventDefault();
-    if (!selectedFiles || selectedFiles.length === 0) {
-      console.error('No files selected.');
-      return;
+.upload-page .tab:hover {
+    /* background-color: #027fa3; */
+    background-color: #00aa55;
+}
+
+/* Main Section: Upload Manual */
+.upload-page .grid-container {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr; /* Left grid is equal to right grid */
+    gap: 5%;
+    margin: 30px auto;
+    width: 90%;
+    margin-right: 6.5%;
+}
+
+.upload-page .left-grid {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Prevent content overflow */
+}
+
+.upload-page .main-heading {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 40px;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    text-align: center; /* Ensure text is centered */
+    width: 100%; /* Ensure it takes full width of the container */
+    height: 5%; /* Ensure it takes full height of the container */
+}
+
+.upload-page .header-section {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.upload-page .header-section h2 {
+    margin-top: 5px;
+    font: 40px "Inter-Bold", Helvetica, sans-serif;
+    color: #333;
+}
+
+.upload-page .instruction-text {
+    font-size: 16px;
+    color: #666;
+    margin-top: 10px;
+}
+
+.upload-page .drag-drop-text {
+    font-size: 14px;
+    color: #029dcc;
+    margin-top: 10px;
+}
+
+/* Document Type Selection */
+.upload-page .document-type-section {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.upload-page .document-type-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+/* Drag-and-Drop Frame */
+.upload-page .drag-drop-frame {
+    border: 2px dashed #029dcc;
+    border-radius: 12px;
+    padding: 40px;
+    width: 40%;
+    margin-top: 40px;
+    margin-left: 25%;
+    text-align: center;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upload-page .drag-drop-frame.dragging {
+    background-color: #e0f7fa;
+}
+
+.upload-page .upload-icon {
+    font-size: 48px;
+    color: #029dcc;
+    margin-bottom: 10px;
+}
+
+/* Upload form */
+.upload-page .upload-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.upload-page .file-input-wrapper {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.upload-page .file-label {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.upload-page .file-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.upload-page .selected-file {
+    font-size: 16px;
+    color: #666;
+    margin-top: 10px;
+}
+
+/* Submit button */
+.upload-page .upload-button {
+    background-color: #029dcc;
+    color: white;
+    font-size: 18px;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.upload-page .upload-button:hover {
+    background-color: #027fa3;
+}
+
+/* Upload status */
+.upload-page .upload-status {
+    margin-top: 20px;
+    font-size: 18px;
+    color: green;
+}
+
+/* Uploaded files list */
+.upload-page .uploaded-files-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.upload-page .uploaded-file-item {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+/* Loading bar */
+.upload-page .loading-bar {
+    width: 100%;
+    height: 4px;
+    background-color: #029dcc;
+    animation: loading 2s infinite;
+    margin-top: 20px;
+}
+
+@keyframes loading {
+    0% {
+        transform: translateX(-100%);
     }
-    if (!documentType) {
-      console.error('No document type selected.');
-      setUploadStatus('Please select a document type.');
-      return;
+    50% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Right grid */
+.upload-page .right-grid {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Prevent content overflow */
+}
+
+.upload-page .right-grid h4 {
+    font: 24px "Bold", Helvetica, sans-serif;
+    margin-bottom: 20px;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .upload-page .grid-container {
+        flex-direction: column;
+        align-items: center;
     }
 
-    const formData = new FormData();
-    // Append each file in the selectedFiles list to the formData
-    Array.from(selectedFiles).forEach((file) => {
-      formData.append('files', file);
-    });
-    formData.append('documentType', documentType); // Append the document type to the formData
-
-    setIsLoading(true); // Set loading state to true
-
-    try {
-      const response = await axios.post(`${BACKEND_URL}/api/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log("UPLOAD RESPONSE", response.data);
-      setUploadStatus('Files uploaded successfully.');
-      setUploadedFiles(prevFiles => [...prevFiles, ...Array.from(selectedFiles).map(file => file.name)]);
-      setSelectedFiles([]);
-      setDocumentType(''); // Reset document type
-    } catch (error) {
-      console.error('Error uploading files:', error);
-      setUploadStatus('Error uploading files.');
-    } finally {
-      setIsLoading(false); // Set loading state to false
+    .upload-page .left-grid, .upload-page .right-grid {
+        width: 90%;
     }
-  };
-
-  return (
-    <div className="upload-page">
-      <div className="overlap-wrapper">
-        <div className="overlap">
-          
-          {/* Navigation / Header */}
-          <div className="overlap-group">
-            <Link to="/">
-              <img className="image" src="/assets/logo_trasparent.png" alt="No Image" />
-            </Link>
-            <div className="tabs">
-              <Link to="/manuals" className="tab">Access Manuals</Link>
-              <Link to="/logs" className="tab">Retrieve Device Logs</Link>
-              <Link to="/upload" className="tab">Upload Manuals</Link>
-            </div>
-          </div>
-
-          <h1 className="main-heading">Upload Documents </h1>
-
-          <div className="grid-container">
-            {/* Left Grid: Upload Section */}
-            <div className="left-grid">
-              {/* Header and Instruction */}
-              <div className="header-section">
-                <p>Upload PDF Files Only.</p>
-              </div>
-
-              {/* Document Type Selection */}
-              <div className="document-type-section">
-                <select
-                  id="document-type"
-                  value={documentType}
-                  onChange={handleDocumentTypeChange}
-                  className="document-type-select"
-                >
-                  <option value="">--Select Document Type--</option>
-                  <option value="user-manual">User Manuals</option>
-                  <option value="service-manual">Service Manuals</option>
-                  <option value="regulatory-document">Regulatory Documents</option>
-                  <option value="general-purpose-document">General Purpose Documents</option>
-                </select>
-              </div>
-
-              {/* Drag-and-Drop Frame */}
-              <div
-                className={`drag-drop-frame ${isDragging ? 'dragging' : ''}`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleFileDrop}
-                onClick={() => document.getElementById('manual-upload').click()}
-              >
-                <FaFileUpload className="upload-icon" />
-                <p className='drag-drop-text'>Drag & Drop your file here or click to select files</p>
-              </div>
-
-              {/* Hidden File Input */}
-              <input
-                type="file"
-                id="manual-upload"
-                accept="application/pdf"
-                onChange={handleFileChange}
-                className="file-input"
-                style={{ display: 'none' }}
-              />
-
-              {/* Display Selected File Name */}
-              {selectedFiles.length > 0 && (
-                <p className="selected-file">Selected file: {Array.from(selectedFiles).map(file => file.name).join(', ')}</p>
-              )}
-
-              {/* Upload Form */}
-              <form onSubmit={handleFileUpload} className="upload-form">
-                {/* Submit Button */}
-                <button type="submit" className="upload-button">
-                  Upload..
-                </button>
-              </form>
-                
-              {/* Upload Status */}
-              {uploadStatus && <p className="upload-status">{uploadStatus}</p>}
-
-              {/* Loading Bar */}
-              {isLoading && <div className="loading-bar">Uploading...</div>}
-            </div>
-
-            {/* Right Grid: Uploaded Files Section */}
-            <div className="right-grid">
-              <h4>Uploaded Files</h4>
-              <ul className="uploaded-files-list">
-                {uploadedFiles.map((file, index) => (
-                  <li key={index} className="uploaded-file-item">
-                    {file}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default UploadPage;
+}
