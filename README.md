@@ -147,7 +147,7 @@ If you would like to run the feedback system app:
    - Run the app using the following command:
 
      ```bash
-     python feedback_app.py
+     python feedback.py
      ```
 
 <<<<<<< HEAD
