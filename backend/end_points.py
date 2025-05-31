@@ -9,11 +9,13 @@ import json
 import base64
 import os
 
-load_dotenv(find_dotenv())
+# load_dotenv(find_dotenv())
+load_dotenv()
 
 # GitHub credentials
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN") #alternatively create and store your token in a .env file
-GITHUB_REPO = "replace_with_your_repo_name"
+# GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")os.environ.get(
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
+GITHUB_REPO = "mhabdulbaaki/llm-for-ultrasound-device-troubleshooting"
 
 error_path = ".\data\error_codes\Philips_HDI_5000_Error_Codes_Full.json"
 LAST_SERVICE_DATE_PATH = ".\data\last_service_date.json"
@@ -194,5 +196,6 @@ def update_last_service_date():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    
 
 
