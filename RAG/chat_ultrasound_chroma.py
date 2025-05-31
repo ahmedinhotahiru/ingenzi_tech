@@ -48,6 +48,9 @@ import json
 from datetime import datetime
 import time
 
+from langchain.schema import Document
+
+
 
 
 #---------------- Feedback system class -----------------------
@@ -70,18 +73,8 @@ class CustomDataLayer(cl_data.BaseDataLayer):
             'value': feedback.value
         } 
 
-        # # Capture details of new feedback
-        # new_feedback['id'] = feedback.forId
-        # # store original prompt that generated the feedback
-        # # new_feedback['user_prompt'] = 
-        # new_feedback['feedback'] = feedback.comment
-        # new_feedback['value'] = feedback.value
-
         # print captured feedback in chainlit console
         print(new_feedback)
-
-        # # Append new feedback to existing feedback
-        # existing_feedback.append(new_feedback)
 
         # Append new feedback to existing feedback json file
         with open(feedback_file, "a") as file:
@@ -117,37 +110,35 @@ class CustomDataLayer(cl_data.BaseDataLayer):
 
 
 
+# Load environment variables from .env file
+load_dotenv()
 
 
-
-
-
-
-
-os.environ["TAVILY_API_KEY"] = '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'
+# os.environ["TAVILY_API_KEY"] = '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'
+os.environ["TAVILY_API_KEY"] = os.environ.get("TAVILY_API_KEY", "")
 
 tavily_search = TavilySearchResults()
 
-load_dotenv()
 chat_history = []
 city = ""
 country = ""
 results = ""
 resultsDone = False
 
+openai_api_key = os.environ.get("OPENAI_API_KEY", "")
+model_name = "gpt-4o"
 
-ACCESS_TOKEN = "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"
-
-
-embeddings = OpenAIEmbeddings(openai_api_key="sk-YaPyaZS38APDzY0qlIn-IA")
+embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
 
 # Directory containing the PDF files
 pdf_directory = "Manuals"
 error_directory = "Errors"
 maintenance_directory = "Maintenance_docs"
+device_history_directory = "device_history"
 collection_name = 'ultrasound_manuals'
 error_collection_name = "error_manuals"
 maintenance_collection_name = "maintenance_manuals"
+device_history_collection_name = "device_history"
 db_path = "./chroma_db"
 
 def initialize_vectorstore(collection_name="ultrasound_manuals", pdf_directory="Manuals", db_path="./chroma_db"):
@@ -187,19 +178,6 @@ def initialize_vectorstore(collection_name="ultrasound_manuals", pdf_directory="
                     extracted_texts = pdf_loader.load()
                     extracted_documents.extend(extracted_texts)
                     pdf_pbar.update(1)
-
-
-        # if collection_name == "error_manuals":
-        #     text_splitter = RecursiveCharacterTextSplitter(
-        #         separators=["\n", ",", "}", "]"],
-        #         keep_separator=True,
-        #         is_separator_regex=False,
-        #         chunk_size=500,
-        #         chunk_overlap=100
-        #     )
-        #     print("\nSplitting error documents...")
-        #     documents_splits = text_splitter.split_documents(extracted_documents)
-        # else:
         
         # Split documents
         text_splitter = RecursiveCharacterTextSplitter()
@@ -223,7 +201,7 @@ def initialize_vectorstore(collection_name="ultrasound_manuals", pdf_directory="
 vector = initialize_vectorstore(collection_name, pdf_directory, db_path)
 error_vector_store = initialize_vectorstore(error_collection_name, error_directory, db_path)
 maintenance_vector_store = initialize_vectorstore(maintenance_collection_name, maintenance_directory, db_path)
-
+device_history_vector_store = initialize_vectorstore(device_history_collection_name, device_history_directory, db_path)
 
 # Create retriever tool
 retriever = vector.as_retriever()
@@ -252,13 +230,21 @@ maintenance_retriever_tool = create_retriever_tool(
 )
 
 
+# Create device_history retriever tool
+device_history_retriever = device_history_vector_store.as_retriever()
+device_history_retriever_tool = create_retriever_tool(
+    device_history_retriever,
+    "device_history_search",
+    "Retrieve historical data on device logs, self-test reports, error code descriptions, and other stored interactions related to Philips ultrasound systems. For questions requiring past information or troubleshooting context for Philips ultrasound systems, use this tool!",
+)
+
+
 
 
 
 
 def process_resource(res_all):
     return "\n\n".join(res.page_content for res in res_all)
-
 
 
 
@@ -272,6 +258,8 @@ def retrieve_logs_from_api() -> str:
     Calls the Flask API's /api/retrieve-logs endpoint to fetch the logs.
     """
 
+    global device_history_vector_store
+
     api_url = "http://127.0.0.1:5000/api/retrieve-logs"
 
     try:
@@ -281,6 +269,27 @@ def retrieve_logs_from_api() -> str:
 
             # Save response
             logs = response.json()
+
+            # ------------------------------------------------------------
+            # Get the current timestamp
+            current_timestamp = datetime.now().isoformat()
+
+            # Create document from logs and add to vectorstore
+            documents = []
+            for log in logs:
+                document = Document(
+                    page_content=str(log),  # Ensure the log is converted to string
+                    metadata={"source": "device_log", "timestamp": current_timestamp}  # Dynamic timestamp
+                )
+                documents.append(document)
+
+            # Assuming device_history_vector_store is already initialized and accessible
+            device_history_vector_store.add_documents(documents)
+
+            print("\nAdded response to device history vectorstore for memory...\n")
+
+            # ------------------------------------------------------------
+
 
             return f"Successfully retrieved logs: {logs}"
         
@@ -298,6 +307,8 @@ def initiate_self_test_from_api() -> str:
     Calls the Flask API's /api/self-test-report endpoint to run simulated device self test
     """
 
+    global device_history_vector_store
+
     # endpoint url to call
     api_url = "http://127.0.0.1:5000/api/self-test-report"
     
@@ -311,6 +322,26 @@ def initiate_self_test_from_api() -> str:
 
             # save response
             self_test_report = response.json()
+
+            # ------------------------------------------------------------
+            # Get the current timestamp
+            current_timestamp = datetime.now().isoformat()
+
+            # Create document from self-test report and add to vectorstore
+            documents = []
+            document = Document(
+                page_content=str(self_test_report),  # Ensure report is converted to string
+                metadata={"source": "self_test_report", "timestamp": current_timestamp}  # Dynamic timestamp
+            )
+            documents.append(document)
+
+            # Assuming device_history_vector_store is already initialized and accessible
+            device_history_vector_store.add_documents(documents)
+
+            print("\nAdded response to device history vectorstore for memory...\n")
+
+            # ------------------------------------------------------------
+
 
             return f"Self-test initiated successfully. Report: {self_test_report}"
         
@@ -329,6 +360,8 @@ def get_error_code_description(errorCode: str) -> str:
     Fetches the description of an error code using the lookup-code API endpoint.
     """
 
+    global device_history_vector_store
+
     api_url = f"http://127.0.0.1:5000/api/lookup-code?code={errorCode}"
 
     try:
@@ -342,6 +375,24 @@ def get_error_code_description(errorCode: str) -> str:
             # save the response
             error_code_description = response.json()
 
+            # ------------------------------------------------------------
+            # Create document from error code description and add to vectorstore
+            documents = []
+            document = Document(
+                page_content=str(error_code_description),  # Ensure description is converted to string
+                metadata={"source": "error_code_description", "timestamp": "2024-12-03T12:00:00"}  # Example metadata
+            )
+            documents.append(document)
+
+            # Assuming device_history_vector_store is already initialized and accessible
+            device_history_vector_store.add_documents(documents)
+
+            print("\nAdded response to device history vectorstore for memory...\n")
+
+            
+            # ------------------------------------------------------------
+
+
             return f"Error code description: {error_code_description}"
         
         else:
@@ -352,96 +403,8 @@ def get_error_code_description(errorCode: str) -> str:
         return f"An error occurred while looking up the error code: {str(e)}"
 
 
-@tool("schedule_maintenance", return_direct=False)
-def schedule_maintenance(next_service_date: datetime) -> str:
-    """
-    Schedules maintenance for a device by submitting the next service date and fetching the last service date from the API.
-
-    Parameters:
-    - next_service_date (str): The next service date in ISO format (e.g., '2025-10-15T14:00:00').
-
-    Returns:
-    - A confirmation message if successful, or an error message if any step fails.
-    """
-
-    # Define the API endpoints
-    get_last_service_date_url = "http://127.0.0.1:5000/api/last-service-date"
-    # API endpoint to get the last service date
-    api_url = "http://127.0.0.1:5000/api/last-service-date"
-
-    try:
-        # Step 1: Retrieve last service date from API
-        response = requests.get(api_url)
-
-        if response.status_code == 200:
-
-            # Get the current next service date to now be set as last service date
-            last_service_date = response.json().get("next_service_date")
-            
-            # Parse last service date into a datetime object if needed
-            # last_service_date = datetime.utcfromtimestamp(last_service_date)
-            
-            # Step 2: Parse the user-provided next service date
-            # next_service_date_obj = datetime.strptime(next_service_date, "%Y-%m-%d %H:%M:%S")
-            
-            # Step 3: Convert both dates to Unix timestamps
-            # last_service_timestamp = int(last_service_date.timestamp())
-            next_service_timestamp = int(next_service_date.timestamp())
-            
-            # Step 4: Submit both dates to the backend
-            payload = {
-                "last_service_date": last_service_date,
-                "next_service_date": next_service_timestamp,
-            }
-            response = requests.post(api_url, json=payload)
-
-            if response.status_code == 200:
-                return f"Successfully scheduled maintenance. Next service date set to {next_service_date.strftime('%d %b %Y %H:%M')}."
-            else:
-                return f"Failed to schedule maintenance. API response: {response.text}"
-
-        else:
-            return "Failed to retrieve the last service date."
-
-    except Exception as e:
-        return f"An error occurred during scheduling: {str(e)}"
 
 
-
-
-@tool("get_maintenance_info", return_direct=False)
-def get_maintenance_info() -> str:
-    """
-    Get information on maintenance dates from the API.
-
-    Returns:
-    - A confirmation message if successful, or an error message if any step fails.
-    """
-
-    
-    # API endpoint to get the last service date
-    api_url = "http://127.0.0.1:5000/api/last-service-date"
-
-    try:
-        # Step 1: Retrieve last service date from API
-        response = requests.get(api_url)
-
-        if response.status_code == 200:
-
-            last_service_date = response.json().get("last_service_date")
-            next_service_date = response.json().get("next_service_date")
-
-            # Parse last service date into a datetime object if needed
-            last_service_date = datetime.fromtimestamp(last_service_date)
-            next_service_date = datetime.fromtimestamp(next_service_date)
-
-            return f"Successfully retrieved service dates. Last service date was {last_service_date.strftime('%d %b %Y %H:%M')}, and next service date is {next_service_date.strftime('%d %b %Y %H:%M')}."
-
-        else:
-            return "Failed to retrieve service dates."
-
-    except Exception as e:
-        return f"An error occurred during retrieval: {str(e)}"
 
 @tool("schedule_maintenance", return_direct=False)
 def schedule_maintenance(next_service_date: datetime) -> str:
@@ -549,7 +512,7 @@ prompt = ChatPromptTemplate.from_messages(
             "system",
             '''
 
-            You are an AI assistant.
+            You are an AI assistant. Your name is Tony, and you are a digital twin and a clone of the physical HDI 5000 ultrasound machine. So give personalised responses
 
             For questions about Ultrasound Machine and its related issues, use the ultrasound_search tool.
             
@@ -562,6 +525,11 @@ prompt = ChatPromptTemplate.from_messages(
             If the user asks for a self-test, use the initiate_self_test_from_api tool.
 
             If the users asks to schedule maintenance date, use the schedule_maintenance tool to update the service dates. If the user does not provide a valid date for the next service, ask for clarification and do not proceed until a valid input is provided. If the user asks you to suggest a date for the next maintenance, suggest a date that is 3 months from the last service date, and ask the user for confirmation to proceed to schedule next maintenance to that date. Only proceed to schedule maintenance upon the user's approval. If the user asks when the last or next maintenance date is, use the get_maintenance_info tool to get them the appropriate service date.
+
+
+            You have access to a device_history_search tool. Use this tool when a question requires past device logs, past self-test reports, past reported errors and error codes, or any other stored information relevant to troubleshooting. Whenever required, always check the vector store for historical context before responding if relevant data might exist.
+
+            Whenever the either user sends a message in a particular language or instructs you to respond in a particular language, make sure to respond in that language, and keep responding in that language until the user either changes language or instructs you to change language.
 
 
             For any other general information, use the tavily_search tool.
@@ -580,14 +548,53 @@ prompt = ChatPromptTemplate.from_messages(
 
 
 
+
+
+import chainlit as cl
+
+@cl.set_starters
+async def set_starters():
+    return [
+        cl.Starter(
+            label="Retrieve Device Logs",
+            message="Retrieve device logs",
+            icon="/public/help-center.svg",
+            ),
+
+        cl.Starter(
+            label="Initiate Self Test",
+            message="Initiate self test",
+            icon="/public/maintenance.svg",
+            ),
+        cl.Starter(
+            label="Error Code Help",
+            message="I have an error code and need help getting the description and how to fix it",
+            icon="/public/error.svg",
+            ),
+        cl.Starter(
+            label="General Help",
+            message="I have an issue on my ultrasound machine and need your help troubleshooting it.",
+            icon="/public/idea.svg",
+            )
+        ]
+
+
+
 @cl.on_chat_start
-def setup_chain():
+async def setup_chain():
+
+    # Send a greeting message when the chat starts
+    # await cl.Message(content="Hello there! 👋 \nI'm Tony 😎, the digital twin of your HDI 5000 ultrasound device 🩺✨. \nAs your device's virtual clone, I know everything about its performance, history, and how to keep it running smoothly. 🔧💡 \nHow can I assist you today? 😊").send()
+    
+    await cl.Message(content="Hello there! 👋 \nI'm Tony, the digital twin of your HDI 5000 ultrasound device. \n\nHow can I assist you today?").send()
 
     # For Feedback system (Instantiate feedback)
     cl_data._data_layer = CustomDataLayer()
 
-    llm = ChatOpenAI(openai_api_key="sk-YaPyaZS38APDzY0qlIn-IA", model="gpt-3.5-turbo",base_url="https://cmu.litellm.ai")
-    tools = [retriever_tool, maintenance_retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, schedule_maintenance, get_maintenance_info, tavily_search]
+    # llm = ChatOpenAI(openai_api_key="sk-OJ2_gW9HAKApES_5DbyRODLahM36bT13evmH3wxERkT3BlbkFJ5fwb2Eq-euILAFeg8IeJp5lw3MSHOxRFyB7Agjn28A", model="gpt-3.5-turbo")
+    # llm = ChatOpenAI(base_url=endpoint, openai_api_key=git_token, model=model_name)
+    llm = ChatOpenAI(openai_api_key=openai_api_key, model=model_name)
+    tools = [retriever_tool, maintenance_retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, schedule_maintenance, get_maintenance_info, device_history_retriever_tool, tavily_search]
     # tools = [retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
 
     # tools = [retriever_tool, error_retriever_tool, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
