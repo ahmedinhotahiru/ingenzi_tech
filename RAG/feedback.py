@@ -2,6 +2,7 @@ import dash
 from dash import dcc, html, dash_table
 from dash.dependencies import Input, Output
 import json
+import os
 
 # Initialize the app
 app = dash.Dash(__name__)
@@ -127,4 +128,5 @@ def download_feedback(n_clicks):
 
 # Run the app
 if __name__ == "__main__":
-    app.run_server(debug=False)
+    # app.run_server(debug=False)
+    app.run_server(host="0.0.0.0", port=int(os.environ.get("PORT", 8050)))
