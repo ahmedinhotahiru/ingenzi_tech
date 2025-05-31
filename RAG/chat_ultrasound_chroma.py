@@ -114,8 +114,10 @@ class CustomDataLayer(cl_data.BaseDataLayer):
 load_dotenv()
 
 
-# os.environ["TAVILY_API_KEY"] = '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'
 os.environ["TAVILY_API_KEY"] = os.environ.get("TAVILY_API_KEY", "")
+
+# React app backend URL
+backend_url = os.environ.get("REACT_APP_BACKEND_URL", "http://127.0.0.1:5000")
 
 tavily_search = TavilySearchResults()
 
@@ -124,6 +126,7 @@ city = ""
 country = ""
 results = ""
 resultsDone = False
+
 
 openai_api_key = os.environ.get("OPENAI_API_KEY", "")
 model_name = "gpt-4o"
@@ -260,7 +263,7 @@ def retrieve_logs_from_api() -> str:
 
     global device_history_vector_store
 
-    api_url = "http://127.0.0.1:5000/api/retrieve-logs"
+    api_url = f"{backend_url}/api/retrieve-logs"
 
     try:
         response = requests.get(api_url)
@@ -310,7 +313,7 @@ def initiate_self_test_from_api() -> str:
     global device_history_vector_store
 
     # endpoint url to call
-    api_url = "http://127.0.0.1:5000/api/self-test-report"
+    api_url = f"{backend_url}/api/self-test-report"
     
     try:
 
@@ -362,7 +365,7 @@ def get_error_code_description(errorCode: str) -> str:
 
     global device_history_vector_store
 
-    api_url = f"http://127.0.0.1:5000/api/lookup-code?code={errorCode}"
+    api_url = f"{backend_url}/api/lookup-code?code={errorCode}"
 
     try:
 
@@ -419,9 +422,9 @@ def schedule_maintenance(next_service_date: datetime) -> str:
     """
 
     # Define the API endpoints
-    get_last_service_date_url = "http://127.0.0.1:5000/api/last-service-date"
+    get_last_service_date_url = f"{backend_url}/api/last-service-date"
     # API endpoint to get the last service date
-    api_url = "http://127.0.0.1:5000/api/last-service-date"
+    api_url = f"{backend_url}/api/last-service-date"
 
     try:
         # Step 1: Retrieve last service date from API
@@ -476,7 +479,7 @@ def get_maintenance_info() -> str:
 
     
     # API endpoint to get the last service date
-    api_url = "http://127.0.0.1:5000/api/last-service-date"
+    api_url = f"{backend_url}/api/last-service-date"
 
     try:
         # Step 1: Retrieve last service date from API
