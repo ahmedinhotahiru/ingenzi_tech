@@ -3,6 +3,9 @@ import './ManualsPage.css'; // Linking your CSS
 import { FaDownload } from 'react-icons/fa'; // Importing icons
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
+// Backend URL for the API
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const ManualsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All');
@@ -15,7 +18,7 @@ const ManualsPage = () => {
     const manualList = [];
 
     for (const file_type of file_types) {
-      const response = await fetch(`http://127.0.0.1:5000/api/get_files?type=${file_type}`);
+      const response = await fetch(`${BACKEND_URL}/api/get_files?type=${file_type}`);
       const data = await response.json();
       manualList.push(...data);
     }
@@ -84,7 +87,7 @@ const ManualsPage = () => {
               {filteredManuals.map((manual, index) => (
                 <div key={index} className="manual-item">
                   <span className="manual-name">{manual.file}</span>
-                  <a href={`http://127.0.0.1:5000/api/files/download/${manual.file}?type=${manual.type}`} download={manual.file} className="download-button">
+                  <a href={`${BACKEND_URL}/api/files/download/${manual.file}?type=${manual.type}`} download={manual.file} className="download-button">
                     <FaDownload className="download-icon" /> Download
                   </a>
                 </div>
