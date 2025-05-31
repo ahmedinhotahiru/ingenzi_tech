@@ -4,6 +4,9 @@ import './UploadPage.css'; // Import the custom CSS for styling
 import { FaFileUpload } from 'react-icons/fa'; // Import file upload and home icons
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
+// Backend URL for the API
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const UploadPage = () => {
   const [selectedFiles, setSelectedFiles] = useState([]); // State to store the selected file
   const [uploadStatus, setUploadStatus] = useState(''); // State to store the upload status
@@ -64,7 +67,7 @@ const UploadPage = () => {
     setIsLoading(true); // Set loading state to true
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/upload', formData, {
+      const response = await axios.post(`${BACKEND_URL}/api/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
