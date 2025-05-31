@@ -17,8 +17,12 @@ load_dotenv()
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 GITHUB_REPO = "mhabdulbaaki/llm-for-ultrasound-device-troubleshooting"
 
-error_path = ".\data\error_codes\Philips_HDI_5000_Error_Codes_Full.json"
-LAST_SERVICE_DATE_PATH = ".\data\last_service_date.json"
+# error_path = ".\data\error_codes\Philips_HDI_5000_Error_Codes_Full.json"
+# LAST_SERVICE_DATE_PATH = ".\data\last_service_date.json"
+
+error_path = "./data/error_codes/Philips_HDI_5000_Error_Codes_Full.json"
+LAST_SERVICE_DATE_PATH = "./data/last_service_date.json"
+
 
 # Initialize GitHub object with your token
 g = Github(GITHUB_TOKEN)
