@@ -10,6 +10,9 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 
+// Set Backend URL
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 const initSelfTestReport = {
   "calibration_status": {
@@ -89,14 +92,14 @@ const LogsPage = () => {
   const chartRef = useRef(null);
 
   const runSelfTest = async () =>{
-    const resp = await fetch("http://127.0.0.1:5000/api/self-test-report");
+    const resp = await fetch(`${BACKEND_URL}/api/self-test-report`);
     const data = await resp.json();
 
     setSelfTestReport(data);
   }
 
   const retrieveSingleLogFile = async (fileName) => {
-    const resp = await fetch(`http://127.0.0.1:5000/api/retrieve-logs/${fileName}`);
+    const resp = await fetch(`${BACKEND_URL}/api/retrieve-logs/${fileName}`);
     const data = await resp.json();
 
     setMachineInfo({
@@ -132,7 +135,7 @@ const LogsPage = () => {
   }
 
   const fetchLogs = async () => {
-    const response = await fetch(`http://127.0.0.1:5000/api/get_files?type=logs`);
+    const response = await fetch(`${BACKEND_URL}/api/get_files?type=logs`);
     const data = await response.json();
 
     setLogs(data);
@@ -141,7 +144,7 @@ const LogsPage = () => {
   };
 
   const retrieveNewLogs = async () => {
-    const resp = await fetch("http://127.0.0.1:5000/api/retrieve-logs");
+    const resp = await fetch(`${BACKEND_URL}/api/retrieve-logs`);
     const data = await resp.json();
     fetchLogs();
 
@@ -378,7 +381,7 @@ const LogsPage = () => {
                     <div key={index} className="log-item">
                       <span className="log-name">{log.file}</span>
                       <span className="log-date">{log.date}</span>
-                      <a href={`http://127.0.0.1:5000/api/files/download/${log.file}?type=${log.type}`} download={log.file} className="download-button">
+                      <a href={`${BACKEND_URL}/api/files/download/${log.file}?type=${log.type}`} download={log.file} className="download-button">
                         <FaDownload className="download-icon" /> Download
                       </a>
                     </div>
