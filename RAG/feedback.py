@@ -1,199 +1,131 @@
-from flask import Flask, request, jsonify, send_from_directory # type: ignore
-from flask_cors import CORS
-from github import Github # type: ignore
-from dotenv import load_dotenv, find_dotenv # type: ignore
-# from client_driver import *
-from logs_simulator import generate_self_test_report_json, generate_json_logs
-from datetime import datetime, timedelta
+import dash
+from dash import dcc, html, dash_table
+from dash.dependencies import Input, Output
 import json
-import base64
-import os
 
-load_dotenv(find_dotenv())
+# Initialize the app
+app = dash.Dash(__name__)
 
-# GitHub credentials
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-GITHUB_REPO = "mhabdulbaaki/llm-for-ultrasound-device-troubleshooting"
+# Path to the feedback file
+feedback_file = "feedback.jsonl"
 
-error_path = ".\data\error_codes\Philips_HDI_5000_Error_Codes_Full.json"
-LAST_SERVICE_DATE_PATH = ".\data\last_service_date.json"
-
-# Initialize GitHub object with your token
-g = Github(GITHUB_TOKEN)
-repo = g.get_repo(GITHUB_REPO)
-
-app = Flask(__name__)
-CORS(app)
-
-@app.route('/api/upload', methods=['POST'])
-def upload_files():
-    if 'files' not in request.files:
-        return {'error': 'No files uploaded'}, 400
-
-    files = request.files.getlist('files')
-    uploaded_files = []
-
-    for file in files:
-        file_content = file.read()
-        file_name = file.filename
-        encoded_content = base64.b64encode(file_content).decode('utf-8')
-        commit_message = f"Upload {file_name}"
-
-        try:
-            file_path_in_repo = f'{file_name}'
-            repo.create_file(file_path_in_repo, commit_message, encoded_content)
-            uploaded_files.append(file_name)
-        except Exception as e:
-            return {'error': str(e)}, 500
-
-    return {'message': f'Uploaded files: {", ".join(uploaded_files)}'}
-
-@app.route('/api/lookup-code')
-def search():
-    # Get query parameter `query`
+# Helper function to load feedback data
+def load_feedback():
     try:
-        error_code = request.args.get('code')
-        if error_code.isnumeric() and len(error_code) == 4:
-            with open(error_path, 'r') as f:
-                data = json.load(f)
-                result = next((item for item in data if item["Error Code"] == error_code), None)
-                
-                if result is not None:
-                    return {"Status":"Found", "Error Code": error_code, "Description": result["Text Message"], "Module Name": result["Module Name"]}
+        with open(feedback_file, "r") as file:
+            return [json.loads(line) for line in file]
+    except FileNotFoundError:
+        return []  # Return an empty list if the file doesn't exist
 
-                else:
-                    return {"Status":"Not Found", "Error Code": error_code, "Description": "Not Found"}
+# App layout
+app.layout = html.Div(
+    style={
+        "background-color": "#f8f8fb",
+        "color": "#495057",
+        "font-family": "'Poppins', sans-serif",
+        "text-align": "center",
+        "padding": "20px",
+    },
+    children=[
+        html.H1(
+            "Ingenzi Feedback",
+            style={"font-size": "36px", "margin-bottom": "20px"}
+        ),
+        html.Div(
+            id="table-container",
+            style={
+                "display": "flex",
+                "justify-content": "center",
+                "align-items": "center",
+                "margin-bottom": "20px",
+            },
+            children=[
+                dash_table.DataTable(
+                    id="feedback-table",
+                    style_table={"width": "80%", "margin": "auto"},
+                    style_data={
+                        "whiteSpace": "normal",
+                        "height": "auto",
+                        "lineHeight": "20px",
+                    },
+                    style_header={
+                        "backgroundColor": "#007bff",
+                        "color": "white",
+                        "fontWeight": "bold",
+                    },
+                    style_cell={
+                        "textAlign": "left",
+                        "padding": "5px",
+                    },
+                    style_data_conditional=[
+                        {
+                            "if": {"filter_query": "{raw_value} = 0"},
+                            "backgroundColor": "#f8d7da",
+                            "color": "#721c24",
+                        },
+                    ],
+                    columns=[
+                        {"name": "ID", "id": "id"},
+                        {"name": "User Prompt", "id": "user_prompt"},
+                        {"name": "Feedback", "id": "feedback"},
+                        {
+                            "name": "Helpful",
+                            "id": "value",
+                            "presentation": "markdown",
+                        },
+                    ],
+                    markdown_options={"link_target": "_blank"},
+                ),
+            ],
+        ),
+        html.Button(
+            "Download Feedback Data",
+            id="download-button",
+            style={
+                "background-color": "#007bff",
+                "color": "white",
+                "padding": "10px 20px",
+                "border": "none",
+                "border-radius": "5px",
+                "cursor": "pointer",
+            },
+        ),
+        dcc.Download(id="download-dataframe-json"),
+    ],
+)
 
-        else:
-            return {"Status":"invalid error code", "Error Code": error_code, "Description": "Invalid Error Code"}
-
-    except Exception as e:
-        return {"Status":"Error", "Error Code": error_code, "Description": str(e)}
-
-
-@app.route('/api/get_files')
-def get_files():
-    file_type = request.args.get('type')
-    
-    if file_type is None:
-        return jsonify({"error": "No file type provided"}), 400
-    
-    if file_type == "logs":
-        directory = os.path.join(app.root_path, 'data\device_logs')  # Adjust the path as needed
-    elif file_type == "reports":
-        directory = os.path.join(app.root_path, 'data\self_test_report')
-    elif file_type == "user":
-        directory = os.path.join(app.root_path, 'data\manuals\\user')
-    elif file_type == "service":
-        directory = os.path.join(app.root_path, 'data\manuals\service')
-    elif file_type == "regulatory":
-        directory = os.path.join(app.root_path, 'data\manuals\\regulatory')
-        
-
-    try:
-        files = os.listdir(directory)
-        
-        # get a dictionary of files and current timestamp
-        files_with_timestamps = {file: os.path.getmtime(os.path.join(directory, file)) for file in files}
-        # sort the files by timestamp in descending order
-        files_ = sorted(files_with_timestamps, key=files_with_timestamps.get, reverse=True)
-        
-        files_ = [{
-            "type":file_type, 
-            "file": file, 
-            "date": datetime.fromtimestamp(files_with_timestamps[file]).strftime("%Y-%m-%d")} for file in files_]
-        
-        return jsonify(files_)
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/api/self-test-report")
-def run_self_test():
-    response = json.loads(generate_self_test_report_json())
-
-    return response
-
-
-@app.route("/api/retrieve-logs")
-def retrieve_logs():
-    response = json.loads(generate_json_logs())
-    # return {"file name": file_name, "date": datetime.now().strftime("%Y-%m-%d")}
-    return response
-
-
-@app.route("/api/retrieve-logs/<file_name>")
-def retrieve_logs_by_name(file_name):
-    try:
-        file_path = os.path.join('.\data\device_logs', file_name)
-        with open(file_path, 'r') as f:
-            data = json.load(f)
-            return data
-    except Exception as e:
-        return {"error": str(e)}, 500
-    
-
-
-@app.route('/api/files/download/<filename>')
-def download_file(filename):
-    file_type = request.args.get('type')
-    if file_type is None:
-        return jsonify({"error": "No file type provided"}), 400 
-        
-    if file_type == "logs":
-        directory = os.path.join(app.root_path, 'data\device_logs')  # Adjust the path as needed
-    elif file_type == "reports":
-        directory = os.path.join(app.root_path, 'data\self_test_report')
-    elif file_type == "user":
-        directory = os.path.join(app.root_path, 'data\manuals\\user')
-    elif file_type == "service":
-        directory = os.path.join(app.root_path, 'data\manuals\service')
-    elif file_type == "regulatory":
-        directory = os.path.join(app.root_path, 'data\manuals\\regulatory')
-    
-    try:
-        return send_from_directory(directory, filename, as_attachment=True)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 404
+# Callback to load data into the table
+@app.callback(
+    Output("feedback-table", "data"),
+    Input("feedback-table", "id"),
+)
+def update_table(_):
+    feedback = load_feedback()
+    for entry in feedback:
+        # Add a raw_value column for conditional styling
+        # entry["raw_value"] = entry["value"]  # Store the raw numeric value
+        # Add a markdown column with thumbs icons
+        entry["value"] = (
+            "![Green thumbs up](https://img.icons8.com/ios/30/4CAF50/thumb-up.png)"
+            if entry["value"] == 1
+            else "![Red thumbs down](https://img.icons8.com/ios/30/FF0000/thumbs-down.png)"
+        )
+    return feedback
 
 
-@app.route('/api/last-service-date', methods=['GET'])
-def get_last_service_date():
-    try:
-        if os.path.exists(LAST_SERVICE_DATE_PATH):
-            with open(LAST_SERVICE_DATE_PATH, 'r') as f:
-                data = json.load(f)
-                return data
-        else:
-            with open(LAST_SERVICE_DATE_PATH, 'w') as f:
-                next_service_date = datetime.timestamp(datetime.now())
-                last_service_date = datetime.timestamp(datetime.now())
-                data = {"last_service_date": last_service_date, "next_service_date": next_service_date}
-                json.dump(data, f)
-                return data
-    except Exception as e:
-        return {"error": str(e)}, 500
-    
-@app.route("/api/last-service-date", methods=['POST'])
-def update_last_service_date():
-    print("ReQUEST JSON: ", request.json)
-    print("ReQUEST RAW: ", request)
-    try:
-        if request.json is not None:
-            with open(LAST_SERVICE_DATE_PATH, 'w') as f:
-                last_service_date = request.json["last_service_date"]
-                next_service_date = request.json["next_service_date"]
-                data = {"last_service_date": last_service_date, "next_service_date": next_service_date}
-                json.dump(data, f)
-                return {"status": "success", "message": "Data updated successfully"}
-        else:
-            return {"status": "error", "message": "No data provided"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
+# Callback for the download button
+@app.callback(
+    Output("download-dataframe-json", "data"),
+    Input("download-button", "n_clicks"),
+    prevent_initial_call=True,
+)
+def download_feedback(n_clicks):
+    with open(feedback_file, "r") as file:
+        data = file.read()
+    return dict(content=data, filename="feedback.jsonl")
 
-if __name__ == '__main__':
-    # app.run(debug=True)
+
+# Run the app
+if __name__ == "__main__":
+    # app.run_server(debug=False)
     app.run_server(host="0.0.0.0", port=int(os.environ.get("PORT", 8050)))
-
-
