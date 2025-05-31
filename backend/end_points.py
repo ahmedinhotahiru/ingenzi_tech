@@ -18,8 +18,8 @@ load_dotenv()
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 GITHUB_REPO = "mhabdulbaaki/llm-for-ultrasound-device-troubleshooting"
 
-error_path = ".\data\error_codes\Philips_HDI_5000_Error_Codes_Full.json"
-LAST_SERVICE_DATE_PATH = ".\data\last_service_date.json"
+error_path = "./data/error_codes/Philips_HDI_5000_Error_Codes_Full.json"
+LAST_SERVICE_DATE_PATH = "./data/last_service_date.json"
 
 # Initialize GitHub object with your token
 g = Github(GITHUB_TOKEN)
@@ -82,15 +82,15 @@ def get_files():
         return jsonify({"error": "No file type provided"}), 400
     
     if file_type == "logs":
-        directory = os.path.join(app.root_path, 'data\device_logs')  # Adjust the path as needed
+        directory = os.path.join(app.root_path, 'data/device_logs')  # Adjust the path as needed
     elif file_type == "reports":
-        directory = os.path.join(app.root_path, 'data\self_test_report')
+        directory = os.path.join(app.root_path, 'data/self_test_report')
     elif file_type == "user":
-        directory = os.path.join(app.root_path, 'data\manuals\\user')
+        directory = os.path.join(app.root_path, 'data/manuals/user')
     elif file_type == "service":
-        directory = os.path.join(app.root_path, 'data\manuals\service')
+        directory = os.path.join(app.root_path, 'data/manuals/service')
     elif file_type == "regulatory":
-        directory = os.path.join(app.root_path, 'data\manuals\\regulatory')
+        directory = os.path.join(app.root_path, 'data/manuals/regulatory')
         
 
     try:
@@ -129,7 +129,7 @@ def retrieve_logs():
 @app.route("/api/retrieve-logs/<file_name>")
 def retrieve_logs_by_name(file_name):
     try:
-        file_path = os.path.join('.\data\device_logs', file_name)
+        file_path = os.path.join('./data/device_logs', file_name)
         with open(file_path, 'r') as f:
             data = json.load(f)
             return data
@@ -145,15 +145,15 @@ def download_file(filename):
         return jsonify({"error": "No file type provided"}), 400 
         
     if file_type == "logs":
-        directory = os.path.join(app.root_path, 'data\device_logs')  # Adjust the path as needed
+        directory = os.path.join(app.root_path, 'data/device_logs')  # Adjust the path as needed
     elif file_type == "reports":
-        directory = os.path.join(app.root_path, 'data\self_test_report')
+        directory = os.path.join(app.root_path, 'data/self_test_report')
     elif file_type == "user":
-        directory = os.path.join(app.root_path, 'data\manuals\\user')
+        directory = os.path.join(app.root_path, 'data/manuals/user')
     elif file_type == "service":
-        directory = os.path.join(app.root_path, 'data\manuals\service')
+        directory = os.path.join(app.root_path, 'data/manuals/service')
     elif file_type == "regulatory":
-        directory = os.path.join(app.root_path, 'data\manuals\\regulatory')
+        directory = os.path.join(app.root_path, 'data/manuals/regulatory')
     
     try:
         return send_from_directory(directory, filename, as_attachment=True)
