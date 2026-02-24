@@ -522,7 +522,7 @@ def query_mri_model(question: str) -> str:
 
     try:
         client = Client(mri_space_url)
-        result = client.predict(question, api_name="/predict")
+        result = client.predict(question)
         return result
 
     except Exception as e:
