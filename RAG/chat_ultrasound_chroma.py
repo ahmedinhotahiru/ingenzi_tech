@@ -50,6 +50,8 @@ import time
 
 from langchain.schema import Document
 
+from gradio_client import Client
+
 
 
 
@@ -119,6 +121,9 @@ os.environ["TAVILY_API_KEY"] = os.environ.get("TAVILY_API_KEY", "")
 # React app backend URL
 backend_url = os.environ.get("REACT_APP_BACKEND_URL", "http://127.0.0.1:5000")
 
+# HF Space URL for MRI inference (e.g. "username/space-name")
+mri_space_url = os.environ.get("MRI_SPACE_URL", "")
+
 tavily_search = TavilySearchResults()
 
 chat_history = []
@@ -126,7 +131,6 @@ city = ""
 country = ""
 results = ""
 resultsDone = False
-
 
 openai_api_key = os.environ.get("OPENAI_API_KEY", "")
 model_name = "gpt-4o"
@@ -504,6 +508,27 @@ def get_maintenance_info() -> str:
 
 
 
+@tool("query_mri_model", return_direct=False)
+def query_mri_model(question: str) -> str:
+    """
+    Uses a fine-tuned MedGemma model to answer MRI (Magnetic Resonance Imaging) related questions.
+    Use this tool for any questions about MRI systems, MRI safety, MRI operation, MRI setup,
+    MR-conditional devices, MRI scanning protocols, magnetic field strength, MRI camera usage,
+    or any other MRI-specific clinical or technical queries.
+    Do NOT use this tool for ultrasound-related questions.
+    """
+    if not mri_space_url:
+        return "MRI model service is not configured. Please set the MRI_SPACE_URL environment variable."
+
+    try:
+        client = Client(mri_space_url)
+        result = client.predict(question, api_name="/predict")
+        return result
+
+    except Exception as e:
+        return f"An error occurred while querying the MRI model: {str(e)}"
+
+
 # error retriever tool
 # user manuals tool
 
@@ -534,6 +559,8 @@ prompt = ChatPromptTemplate.from_messages(
 
             Whenever the either user sends a message in a particular language or instructs you to respond in a particular language, make sure to respond in that language, and keep responding in that language until the user either changes language or instructs you to change language.
 
+
+            For any questions specifically about MRI (Magnetic Resonance Imaging) systems — including MRI safety, MRI operation, MRI setup, MR-conditional devices, magnetic field strength, MRI camera usage, or any MRI-specific clinical or technical topics — use the query_mri_model tool. Do NOT use this tool for ultrasound questions.
 
             For any other general information, use the tavily_search tool.
 
@@ -597,7 +624,7 @@ async def setup_chain():
     # llm = ChatOpenAI(openai_api_key="sk-OJ2_gW9HAKApES_5DbyRODLahM36bT13evmH3wxERkT3BlbkFJ5fwb2Eq-euILAFeg8IeJp5lw3MSHOxRFyB7Agjn28A", model="gpt-3.5-turbo")
     # llm = ChatOpenAI(base_url=endpoint, openai_api_key=git_token, model=model_name)
     llm = ChatOpenAI(openai_api_key=openai_api_key, model=model_name)
-    tools = [retriever_tool, maintenance_retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, schedule_maintenance, get_maintenance_info, device_history_retriever_tool, tavily_search]
+    tools = [retriever_tool, maintenance_retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, schedule_maintenance, get_maintenance_info, device_history_retriever_tool, query_mri_model, tavily_search]
     # tools = [retriever_tool, get_error_code_description, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
 
     # tools = [retriever_tool, error_retriever_tool, retrieve_logs_from_api, initiate_self_test_from_api, tavily_search]
