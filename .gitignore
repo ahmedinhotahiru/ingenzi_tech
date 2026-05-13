@@ -1,4 +1,17 @@
 capstone_env/
 venv
-.env
 .venv
+
+# Environment files (any directory, any variant)
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Python bytecode
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# Local backup copies
+copy *.py

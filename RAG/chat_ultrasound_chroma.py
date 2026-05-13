@@ -50,8 +50,6 @@ import time
 
 from langchain.schema import Document
 
-from gradio_client import Client
-
 
 
 
@@ -121,8 +119,9 @@ os.environ["TAVILY_API_KEY"] = os.environ.get("TAVILY_API_KEY", "")
 # React app backend URL
 backend_url = os.environ.get("REACT_APP_BACKEND_URL", "http://127.0.0.1:5000")
 
-# HF Space URL for MRI inference (e.g. "username/space-name")
-mri_space_url = os.environ.get("MRI_SPACE_URL", "")
+# Modal endpoint for fine-tuned MedGemma MRI model
+mri_modal_endpoint = os.environ.get("MRI_MODAL_ENDPOINT", "")
+mri_modal_token = os.environ.get("MRI_MODAL_TOKEN", "")
 
 tavily_search = TavilySearchResults()
 
@@ -517,13 +516,18 @@ def query_mri_model(question: str) -> str:
     or any other MRI-specific clinical or technical queries.
     Do NOT use this tool for ultrasound-related questions.
     """
-    if not mri_space_url:
-        return "MRI model service is not configured. Please set the MRI_SPACE_URL environment variable."
+    if not mri_modal_endpoint or not mri_modal_token:
+        return "MRI model service is not configured. Set MRI_MODAL_ENDPOINT and MRI_MODAL_TOKEN."
 
     try:
-        client = Client(mri_space_url)
-        result = client.predict(question)
-        return result
+        response = requests.post(
+            mri_modal_endpoint,
+            headers={"Authorization": f"Bearer {mri_modal_token}"},
+            json={"question": question},
+            timeout=120,
+        )
+        response.raise_for_status()
+        return response.json().get("answer", "(no answer returned)")
 
     except Exception as e:
         return f"An error occurred while querying the MRI model: {str(e)}"
