@@ -19,13 +19,14 @@ def _download_weights():
 image = (
     modal.Image.debian_slim(python_version="3.11")
     .pip_install(
-        "torch==2.4.0",
+        "torch>=2.6,<3",
         "transformers>=4.55,<5",
         "accelerate>=0.34",
         "peft>=0.13",
         "huggingface_hub>=0.25",
         "fastapi[standard]",
         "pydantic>=2",
+        "pillow>=10",
     )
     .run_function(
         _download_weights,
