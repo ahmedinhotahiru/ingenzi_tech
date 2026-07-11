@@ -677,11 +677,113 @@ async def handle_message(message: cl.Message):
         await cl.Message(result['output']).send()
     else:
         # send the add request to the UI
-          
+
         fn = cl.CopilotFunction(name="formfill", args={"fieldA": city, "fieldB": country, "fieldC": result['output']})
         resultsDone = False
         res = await fn.acall()
         await cl.Message(content="Form info sent").send()
+
+
+# ---------------------------------------------------------------------------
+# REST endpoint: POST /chat
+#
+# Chainlit runs on FastAPI/uvicorn, so we attach a plain JSON endpoint to the
+# same server. When this app is deployed (e.g. on Render), other services can
+# send a question and get the answer back, e.g.:
+#
+#   curl -X POST https://<your-deployment>/chat \
+#        -H "Content-Type: application/json" \
+#        -d '{"message": "What does error code 1234 mean?"}'
+#
+# Pass an optional "session_id" to keep conversation memory across calls.
+# If the CHAT_API_KEY env var is set, callers must send
+# "Authorization: Bearer <key>".
+# ---------------------------------------------------------------------------
+from chainlit.server import app as fastapi_app
+from fastapi import Header
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from typing import Optional
+
+# In-memory history per session_id. Callers without a session_id are stateless.
+_rest_sessions = {}
+
+# The agent executor is built lazily on first request (and cached), so that
+# simply importing this module never requires an OpenAI key. The vectorstores
+# and tools are already loaded at module level, so building it is cheap. History
+# is passed in per-request, so this single executor serves every caller.
+_rest_executor = None
+
+
+def _get_rest_executor():
+    global _rest_executor
+    if _rest_executor is None:
+        rest_tools = [
+            retriever_tool,
+            maintenance_retriever_tool,
+            get_error_code_description,
+            retrieve_logs_from_api,
+            initiate_self_test_from_api,
+            schedule_maintenance,
+            get_maintenance_info,
+            device_history_retriever_tool,
+            query_mri_model,
+            tavily_search,
+        ]
+        llm_with_tools = ChatOpenAI(
+            openai_api_key=openai_api_key, model=model_name
+        ).bind_tools(rest_tools)
+        rest_agent = (
+            {
+                "input": lambda x: x["input"],
+                "agent_scratchpad": lambda x: format_to_openai_tool_messages(
+                    x["intermediate_steps"]
+                ),
+                "chat_history": lambda x: x["chat_history"],
+            }
+            | prompt
+            | llm_with_tools
+            | OpenAIToolsAgentOutputParser()
+        )
+        _rest_executor = AgentExecutor(
+            agent=rest_agent, tools=rest_tools, verbose=False
+        )
+    return _rest_executor
+
+
+class ChatRequest(BaseModel):
+    message: str
+    session_id: Optional[str] = None
+
+
+@fastapi_app.post("/chat")
+def rest_chat(body: ChatRequest, authorization: Optional[str] = Header(None)):
+    # Optional shared-secret auth.
+    api_key = os.environ.get("CHAT_API_KEY", "")
+    if api_key and authorization != f"Bearer {api_key}":
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+
+    if not body.message or not body.message.strip():
+        return JSONResponse({"error": "message is required"}, status_code=400)
+
+    history = _rest_sessions.get(body.session_id, []) if body.session_id else []
+
+    try:
+        result = _get_rest_executor().invoke(
+            {"input": body.message, "chat_history": history}
+        )
+    except Exception as e:
+        return JSONResponse({"error": f"agent error: {e}"}, status_code=500)
+
+    answer = result["output"]
+
+    if body.session_id:
+        history.extend(
+            [HumanMessage(content=body.message), AIMessage(content=answer)]
+        )
+        _rest_sessions[body.session_id] = history
+
+    return JSONResponse({"response": answer, "session_id": body.session_id})
 
     
 
