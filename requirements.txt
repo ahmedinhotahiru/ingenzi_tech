@@ -165,3 +165,8 @@ wsproto==1.2.0
 yarl==1.13.1
 zipp==3.20.2
 gunicorn>=20.1.0
+
+# Postgres/pgvector vector store (Neon) — replaces local Chroma for durable, fleet-ready storage
+langchain-postgres==0.0.12
+psycopg[binary]==3.3.4
+pgvector==0.2.5

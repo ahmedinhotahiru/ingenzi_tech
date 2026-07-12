@@ -37,8 +37,7 @@ import pickle
 from pathlib import Path
 from tqdm import tqdm
 
-import chromadb
-from langchain_community.vectorstores import Chroma
+from langchain_postgres import PGVector
 
 # Import the requests library
 import requests
@@ -136,78 +135,60 @@ model_name = "gpt-4o"
 
 embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
 
-# Directory containing the PDF files
-pdf_directory = "Manuals"
-error_directory = "Errors"
-maintenance_directory = "Maintenance_docs"
-device_history_directory = "device_history"
 collection_name = 'ultrasound_manuals'
 error_collection_name = "error_manuals"
 maintenance_collection_name = "maintenance_manuals"
 device_history_collection_name = "device_history"
-db_path = "./chroma_db"
 
-def initialize_vectorstore(collection_name="ultrasound_manuals", pdf_directory="Manuals", db_path="./chroma_db"):
-    """
-    Args:
-        collection_name (str): The name of the collection
-        pdf_directory (str): The directory where the documents to use are stored
+# Device / tenant identity for this deployment. There is a single device today,
+# but every stored document is tagged with this identity so the schema is already
+# fleet-ready: reference docs (manuals/errors/maintenance) are scoped by
+# brand + model; device history is scoped by device_id + customer_id.
+DEVICE_BRAND = os.environ.get("DEVICE_BRAND", "Philips")
+DEVICE_MODEL = os.environ.get("DEVICE_MODEL", "HDI-5000")
+DEVICE_ID = os.environ.get("DEVICE_ID", "HDI5000-DEMO-001")
+CUSTOMER_ID = os.environ.get("CUSTOMER_ID", "default")
 
-    Returns:
-        Chroma: Vectorstore
-    """
+# Postgres/pgvector (Neon) connection. Collections are populated once by
+# seed_pgvector.py; the app just connects to them here (no PDF loading at boot).
+# langchain_postgres uses SQLAlchemy, which needs the "+psycopg" driver prefix.
+_raw_db_url = os.environ.get("DATABASE_URL", "")
+if _raw_db_url.startswith("postgresql://"):
+    PG_CONNECTION = _raw_db_url.replace("postgresql://", "postgresql+psycopg://", 1)
+elif _raw_db_url.startswith("postgres://"):
+    PG_CONNECTION = _raw_db_url.replace("postgres://", "postgresql+psycopg://", 1)
+else:
+    PG_CONNECTION = _raw_db_url
 
 
-    # ChromaDB vector store
-    persistent_client = chromadb.PersistentClient(path=db_path) #Initialize chromadb
-    collection = persistent_client.get_or_create_collection(collection_name) # Get/Create collection/table of vector store
-
-    vector_store = Chroma(
-        collection_name=collection_name,
-        client=persistent_client,
-        embedding_function=embeddings
+def get_vectorstore(collection):
+    """Connect to an existing pgvector collection (seeded by seed_pgvector.py)."""
+    return PGVector(
+        embeddings=embeddings,
+        collection_name=collection,
+        connection=PG_CONNECTION,
+        use_jsonb=True,
+        create_extension=False,  # the `vector` extension was enabled during Neon setup
     )
 
-    # If collection is empty, load initial documents
-    if collection.count() == 0:
-        print("\nLoading documents into new collection...")
-        extracted_documents = []
 
-        pdf_files = [f for f in os.listdir(pdf_directory) if f.endswith('.pdf')]
-
-        # First progress bar for PDF processing
-        with tqdm(total=len(pdf_files), desc="Processing PDFs") as pdf_pbar:
-            for filename in pdf_files:
-                if filename.endswith(".pdf"):
-                    pdf_file_path = os.path.join(pdf_directory, filename)
-                    pdf_loader = PyPDFLoader(pdf_file_path)
-                    extracted_texts = pdf_loader.load()
-                    extracted_documents.extend(extracted_texts)
-                    pdf_pbar.update(1)
-        
-        # Split documents
-        text_splitter = RecursiveCharacterTextSplitter()
-        # text_splitter = RecursiveCharacterTextSplitter(chunk_size=250, chunk_overlap=75)
-        print("\nSplitting documents...")
-        documents_splits = text_splitter.split_documents(extracted_documents)
-
-        # Add these document embedded chunks to the initialized vector store
-        vector_store.add_documents(documents_splits)
-        print(f"\nCreated and populated new collection: {collection_name}")
-
-    else:
-        print(f"\nLoaded existing collection: {collection_name}")
-
-    return vector_store
+def history_metadata(doc_type):
+    """Metadata tags for a runtime device-history document (fleet-ready schema)."""
+    return {
+        "brand": DEVICE_BRAND,
+        "model": DEVICE_MODEL,
+        "device_id": DEVICE_ID,
+        "customer_id": CUSTOMER_ID,
+        "doc_type": doc_type,
+        "timestamp": datetime.now().isoformat(),
+    }
 
 
-
-
-# Use the function to load or create vector store
-vector = initialize_vectorstore(collection_name, pdf_directory, db_path)
-error_vector_store = initialize_vectorstore(error_collection_name, error_directory, db_path)
-maintenance_vector_store = initialize_vectorstore(maintenance_collection_name, maintenance_directory, db_path)
-device_history_vector_store = initialize_vectorstore(device_history_collection_name, device_history_directory, db_path)
+# Connect to the seeded collections
+vector = get_vectorstore(collection_name)
+error_vector_store = get_vectorstore(error_collection_name)
+maintenance_vector_store = get_vectorstore(maintenance_collection_name)
+device_history_vector_store = get_vectorstore(device_history_collection_name)
 
 # Create retriever tool
 retriever = vector.as_retriever()
@@ -277,15 +258,12 @@ def retrieve_logs_from_api() -> str:
             logs = response.json()
 
             # ------------------------------------------------------------
-            # Get the current timestamp
-            current_timestamp = datetime.now().isoformat()
-
             # Create document from logs and add to vectorstore
             documents = []
             for log in logs:
                 document = Document(
                     page_content=str(log),  # Ensure the log is converted to string
-                    metadata={"source": "device_log", "timestamp": current_timestamp}  # Dynamic timestamp
+                    metadata=history_metadata("log"),
                 )
                 documents.append(document)
 
@@ -330,14 +308,11 @@ def initiate_self_test_from_api() -> str:
             self_test_report = response.json()
 
             # ------------------------------------------------------------
-            # Get the current timestamp
-            current_timestamp = datetime.now().isoformat()
-
             # Create document from self-test report and add to vectorstore
             documents = []
             document = Document(
                 page_content=str(self_test_report),  # Ensure report is converted to string
-                metadata={"source": "self_test_report", "timestamp": current_timestamp}  # Dynamic timestamp
+                metadata=history_metadata("self_test"),
             )
             documents.append(document)
 
@@ -373,7 +348,8 @@ def get_error_code_description(errorCode: str) -> str:
     try:
 
         # Call API endpoint to get error code description
-        response = requests.get(api_url)
+        print(f"\n[get_error_code_description] GET {api_url}\n")
+        response = requests.get(api_url, timeout=30)
 
         # Check if the request was successful
         if response.status_code == 200:
@@ -386,7 +362,7 @@ def get_error_code_description(errorCode: str) -> str:
             documents = []
             document = Document(
                 page_content=str(error_code_description),  # Ensure description is converted to string
-                metadata={"source": "error_code_description", "timestamp": "2024-12-03T12:00:00"}  # Example metadata
+                metadata=history_metadata("error_lookup"),
             )
             documents.append(document)
 
@@ -402,10 +378,26 @@ def get_error_code_description(errorCode: str) -> str:
             return f"Error code description: {error_code_description}"
         
         else:
-            return f"Failed to retrieve the error code description. HTTP Status: {response.status_code}"
+            # Log the full detail (URL, status, response headers and body) to the
+            # server console so it's visible in the Render logs. A 429, 5xx, etc.
+            # usually explains itself in the body (e.g. a Cloudflare/Render rate
+            # limit page or a JSON error), which the status code alone hides.
+            print(
+                f"\n[get_error_code_description] FAILED\n"
+                f"  URL: {api_url}\n"
+                f"  Status: {response.status_code}\n"
+                f"  Server header: {response.headers.get('Server')}\n"
+                f"  Content-Type: {response.headers.get('Content-Type')}\n"
+                f"  Body (first 500 chars): {response.text[:500]}\n"
+            )
+            return (
+                f"Failed to retrieve the error code description. "
+                f"The backend at {backend_url} returned HTTP {response.status_code}."
+            )
 
 
     except Exception as e:
+        print(f"\n[get_error_code_description] EXCEPTION calling {api_url}: {e}\n")
         return f"An error occurred while looking up the error code: {str(e)}"
 
 
