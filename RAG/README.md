@@ -1,11 +1,11 @@
-# Tony — Ultrasound RAG Assistant (`RAG/`)
+# Tony - Ultrasound RAG Assistant (`RAG/`)
 
 Tony is an AI assistant that acts as a **digital twin of a Philips HDI 5000 ultrasound machine**. It answers questions about the device's manuals, error codes, maintenance, and MRI topics, and can pull live device data (logs, self-tests, service dates) through the backend API. It is built as a **Retrieval-Augmented Generation (RAG)** agent on top of LangChain + OpenAI, with its knowledge stored in a **Postgres/pgvector** database (Neon).
 
-This README covers **only the `RAG/` folder** — the chatbot/agent service. The Flask backend lives in `../backend/` and is maintained separately.
+This README covers **only the `RAG/` folder** - the chatbot/agent service. The Flask backend lives in `../backend/` and is maintained separately.
 
 > ### 🔒 Security note (this repo is public)
-> Concrete production values are **intentionally kept out of this README**: service URLs, hostnames, connection strings, API keys, and other secrets. Placeholders like `<chat-service>`, `<backend-service>`, and `<PORT>` stand in for the real values, which live in the **team's private ops notes** and the **Render / Neon dashboards** — never commit them here. All secrets are provided at runtime via environment variables.
+> Concrete production values are **intentionally kept out of this README**: service URLs, hostnames, connection strings, API keys, and other secrets. Placeholders like `<chat-service>`, `<backend-service>`, and `<PORT>` stand in for the real values, which live in the **team's private ops notes** and the **Render / Neon dashboards** - never commit them here. All secrets are provided at runtime via environment variables.
 
 ---
 
@@ -63,14 +63,14 @@ This README covers **only the `RAG/` folder** — the chatbot/agent service. The
 
 ## Two front doors
 
-Both interfaces call the **exact same agent, tools, and data** — they are just different presentation layers.
+Both interfaces call the **exact same agent, tools, and data** - they are just different presentation layers.
 
 | Interface | How it's served | Use case |
 |---|---|---|
 | **Chainlit chat UI** | `chainlit run` serves the web UI at `/` | Standalone chat / embedded copilot widget in the dashboard |
 | **`POST /chat` REST API** | Attached to Chainlit's FastAPI app via `from chainlit.server import app` | Integrate Tony into any custom frontend/service |
 
-Because the REST endpoint is attached to the Chainlit server, **the Chainlit service must be running for the API to work** — even if you only use the API.
+Because the REST endpoint is attached to the Chainlit server, **the Chainlit service must be running for the API to work** - even if you only use the API.
 
 ---
 
@@ -93,6 +93,8 @@ The agent is a LangChain OpenAI-tools agent bound to the following tools (see `s
 
 The system prompt (in `chat_ultrasound_chroma.py`) instructs the agent when to use each tool, how to handle error codes, and to reply in the user's language.
 
+> 🧠 The MRI model behind `query_mri_model` (fine-tuned MedGemma on Modal) is deployed separately and documented in **[MRI_MODEL.md](MRI_MODEL.md)**.
+
 ---
 
 ## Vector store & data model
@@ -106,7 +108,7 @@ Knowledge is stored in **Neon Postgres with the `pgvector` extension** via `lang
 | `error_manuals` | `Errors/` | ~18 | reference (brand + model) |
 | `device_history` | `device_history/` seed + **runtime writes** | grows | device (brand + model + device_id + customer_id) |
 
-**Fleet-ready metadata** — every stored document is tagged so the single-device store already supports many devices later:
+**Fleet-ready metadata** - every stored document is tagged so the single-device store already supports many devices later:
 
 ```json
 {
@@ -133,26 +135,26 @@ The store was originally **Chroma** (a local vector DB committed as `chroma_db/`
 ### Why we migrated
 The old Chroma setup had three problems:
 
-1. **Memory was not durable.** Chroma stored its data on the container's **local disk**. Render's filesystem is **ephemeral** — it is wiped on *every restart and every redeploy*. So the agent's `device_history` (logs, self-tests, past error lookups — its long-term memory) was **erased constantly**. The reference manuals only survived because they were baked into the git-committed image, and even those were re-embedded whenever a collection came up empty.
+1. **Memory was not durable.** Chroma stored its data on the container's **local disk**. Render's filesystem is **ephemeral** - it is wiped on *every restart and every redeploy*. So the agent's `device_history` (logs, self-tests, past error lookups - its long-term memory) was **erased constantly**. The reference manuals only survived because they were baked into the git-committed image, and even those were re-embedded whenever a collection came up empty.
 2. **Slow cold starts.** On boot the app rebuilt/loaded the vectorstores (and re-embedded content), which was slow and cost OpenAI tokens on every start.
-3. **Coupled and not scalable.** Storage was tied to a single container — it couldn't be shared between services or scaled to a fleet of devices.
+3. **Coupled and not scalable.** Storage was tied to a single container - it couldn't be shared between services or scaled to a fleet of devices.
 
 ### Why pgvector on a managed Postgres
-- **Durable** — device memory survives restarts, redeploys, and cold starts.
-- **Fast boot** — the app just *connects*; no rebuild or re-embedding at startup.
-- **Decoupled** — storage is independent of the container, so it can be shared and scaled.
-- **Fleet-ready** — Postgres cleanly stores the `brand/model/device_id/customer_id` metadata for filtered, multi-tenant retrieval.
-- **Managed & low-cost** — Neon's free tier (0.5 GB, scale-to-zero) is enough to start; moving to a bigger tier later is just a connection-string swap.
+- **Durable** - device memory survives restarts, redeploys, and cold starts.
+- **Fast boot** - the app just *connects*; no rebuild or re-embedding at startup.
+- **Decoupled** - storage is independent of the container, so it can be shared and scaled.
+- **Fleet-ready** - Postgres cleanly stores the `brand/model/device_id/customer_id` metadata for filtered, multi-tenant retrieval.
+- **Managed & low-cost** - Neon's free tier (0.5 GB, scale-to-zero) is enough to start; moving to a bigger tier later is just a connection-string swap.
 
 ### What changed in the code
 - `initialize_vectorstore()` (Chroma; rebuild-from-PDFs-if-empty) → **`get_vectorstore()`** (PGVector; connect-only).
 - The app **no longer loads PDFs at boot**. A separate script, [seed_pgvector.py](seed_pgvector.py), populates the DB **once**.
 - Every stored document is tagged via **`history_metadata()`** (runtime writes) and in the seeder (reference docs).
-- Dependencies added: `langchain-postgres`, `psycopg[binary]`, `pgvector`. Chroma imports were removed from this app (note: some `../backend` files still import Chroma — owned by the backend team).
+- Dependencies added: `langchain-postgres`, `psycopg[binary]`, `pgvector`. Chroma imports were removed from this app (note: some `../backend` files still import Chroma - owned by the backend team).
 - The committed `chroma_db/` directory was removed and gitignored.
 
 ### Two implementation details worth remembering
-- **Connection string:** `langchain_postgres` uses SQLAlchemy, which needs the `postgresql+psycopg://` driver prefix. The app and seeder auto-convert `postgresql://` → `postgresql+psycopg://`. Use Neon's **direct** connection string (pooling OFF — host **without** `-pooler`) with `?sslmode=require`, to avoid a pgbouncer prepared-statement quirk with psycopg.
+- **Connection string:** `langchain_postgres` uses SQLAlchemy, which needs the `postgresql+psycopg://` driver prefix. The app and seeder auto-convert `postgresql://` → `postgresql+psycopg://`. Use Neon's **direct** connection string (pooling OFF - host **without** `-pooler`) with `?sslmode=require`, to avoid a pgbouncer prepared-statement quirk with psycopg.
 - **Embedding batches:** `OpenAIEmbeddings`' default batch (1000 texts/request) can exceed OpenAI's **300,000-token-per-request** cap for large chunks, so the seeder sets `chunk_size=200`.
 
 ---
@@ -175,7 +177,7 @@ RAG/
 └── .chainlit/                  # Chainlit config
 ```
 
-> `chroma_db/` no longer exists here — it was the old local Chroma store, removed after the pgvector migration.
+> `chroma_db/` no longer exists here - it was the old local Chroma store, removed after the pgvector migration.
 
 ---
 
@@ -207,13 +209,13 @@ Set these in a local `.env` (never committed) or in the Render service's **Envir
 # 1. Install deps (from repo root; requirements.txt is at the root)
 pip install -r ../requirements.txt
 
-# 2. Provide env vars (PowerShell example — values are yours, keep them private)
+# 2. Provide env vars (PowerShell example - values are yours, keep them private)
 $env:OPENAI_API_KEY  = "<your-openai-key>"
 $env:DATABASE_URL    = "postgresql://<user>:<pass>@<neon-host>/<db>?sslmode=require"
 $env:TAVILY_API_KEY  = "<your-tavily-key>"
 $env:REACT_APP_BACKEND_URL = "<backend-base-url>"
 
-# 3. Seed the vector store (first time only — see next section)
+# 3. Seed the vector store (first time only - see next section)
 python seed_pgvector.py
 
 # 4. Run the app (serves the chat UI AND the /chat endpoint)
@@ -254,7 +256,7 @@ Notes:
 
 ### `POST /chat`
 
-Send a question, get the assistant's answer. (The base URL is deployment-specific — get it from the team's private ops notes.)
+Send a question, get the assistant's answer. (The base URL is deployment-specific - get it from the team's private ops notes.)
 
 **Headers**
 ```
@@ -269,8 +271,8 @@ Authorization: Bearer <CHAT_API_KEY>   # only if CHAT_API_KEY is set on the serv
   "session_id": "optional-stable-id"
 }
 ```
-- `message` (string, required) — the user's question.
-- `session_id` (string, optional) — pass a stable id to keep conversation memory across calls; omit for a stateless single-turn answer.
+- `message` (string, required) - the user's question.
+- `session_id` (string, optional) - pass a stable id to keep conversation memory across calls; omit for a stateless single-turn answer.
 
 **Response** `200 OK`
 ```json
@@ -320,8 +322,8 @@ Two Render services in the **same region**:
 | `<backend-service>` | Starter (paid) | Flask API (`../backend`) |
 
 - **Start command (chat):** `chainlit run chat_ultrasound_chroma.py --host 0.0.0.0 --port $PORT -h`
-- **Auto-deploy:** pushing to `main` redeploys automatically. There is no `render.yaml`/`Procfile` — settings live in the Render dashboard.
-- **`REACT_APP_BACKEND_URL = http://<backend-service>:<PORT>`** (internal) — chat→backend calls go over Render's private network to avoid Cloudflare rate-limiting (429) that happens on the public URL. This is why the backend runs on a **paid** instance: free Render web services can *send* private-network requests but can't *receive* them.
+- **Auto-deploy:** pushing to `main` redeploys automatically. There is no `render.yaml`/`Procfile` - settings live in the Render dashboard.
+- **`REACT_APP_BACKEND_URL = http://<backend-service>:<PORT>`** (internal) - chat→backend calls go over Render's private network to avoid Cloudflare rate-limiting (429) that happens on the public URL. This is why the backend runs on a **paid** instance: free Render web services can *send* private-network requests but can't *receive* them.
 - Ensure `DATABASE_URL`, `OPENAI_API_KEY`, `TAVILY_API_KEY`, and `CHAT_API_KEY` are set on the chat service.
 
 *(Actual URLs, service names, and the port are kept in the team's private ops notes.)*
@@ -332,7 +334,7 @@ Two Render services in the **same region**:
 
 If this environment ever has to be recreated, here is the full end-to-end runbook. Replace every `<…>` with your own values (kept out of this public repo). The **"gotchas"** at the end are the non-obvious things we learned the hard way.
 
-### 1. Database — Neon + pgvector
+### 1. Database - Neon + pgvector
 1. Create a Neon project (Free tier is fine to start), in the **same region** you'll deploy the app (co-locate for latency).
 2. In the Neon **SQL editor**, enable the extension and verify:
    ```sql
@@ -342,21 +344,21 @@ If this environment ever has to be recreated, here is the full end-to-end runboo
 3. Copy the **direct** connection string (Connection Details → **pooling OFF**; host **without** `-pooler`), ending in `?sslmode=require`. This is your `DATABASE_URL`.
 
 ### 2. Backend service (`../backend`)
-- Deploy the Flask backend on Render — root directory `backend/`, start command `gunicorn -b 0.0.0.0:$PORT end_points:app`.
+- Deploy the Flask backend on Render - root directory `backend/`, start command `gunicorn -b 0.0.0.0:$PORT end_points:app`.
 - ⚠️ It **must be on a paid instance** (e.g. Starter) so it can *receive* private-network traffic (free Render web services can send but not receive internal requests).
-- Its internal address is `http://<backend-service>:<PORT>` — Render's default `$PORT` is `10000` (optionally pin `PORT=10000` on the backend so it never drifts).
+- Its internal address is `http://<backend-service>:<PORT>` - Render's default `$PORT` is `10000` (optionally pin `PORT=10000` on the backend so it never drifts).
 
 ### 3. Chat service (this RAG app)
-- Deploy on Render — root directory `RAG/`, start command `chainlit run chat_ultrasound_chroma.py --host 0.0.0.0 --port $PORT -h`. Can stay on **Free** (it only *sends* internal requests).
+- Deploy on Render - root directory `RAG/`, start command `chainlit run chat_ultrasound_chroma.py --host 0.0.0.0 --port $PORT -h`. Can stay on **Free** (it only *sends* internal requests).
 - Must be in the **same region** as the backend for private networking to resolve.
 
 ### 4. Environment variables (chat service)
 Set on the chat service:
-- `OPENAI_API_KEY` — an **active** key
-- `DATABASE_URL` — the Neon direct string from step 1
-- `TAVILY_API_KEY` — required at boot
-- `CHAT_API_KEY` — generate a random token, e.g. `python -c "import secrets; print(secrets.token_urlsafe(32))"`; share it with API consumers privately
-- `REACT_APP_BACKEND_URL` = `http://<backend-service>:<PORT>` — **internal, `http` not `https`**
+- `OPENAI_API_KEY` - an **active** key
+- `DATABASE_URL` - the Neon direct string from step 1
+- `TAVILY_API_KEY` - required at boot
+- `CHAT_API_KEY` - generate a random token, e.g. `python -c "import secrets; print(secrets.token_urlsafe(32))"`; share it with API consumers privately
+- `REACT_APP_BACKEND_URL` = `http://<backend-service>:<PORT>` - **internal, `http` not `https`**
 - (optional) `MRI_MODAL_ENDPOINT`, `MRI_MODAL_TOKEN`, and the `DEVICE_*` / `CUSTOMER_ID` tags
 
 ### 5. Seed the database (once)
@@ -368,16 +370,16 @@ Verify the counts (see [Seeding](#seeding-the-vector-store)).
 
 ### 6. Deploy & verify
 - Push to `main` (auto-deploys the chat service).
-- Boot logs should show **no** `Processing PDFs` / `Created and populated new collection` — the app connects only.
+- Boot logs should show **no** `Processing PDFs` / `Created and populated new collection` - the app connects only.
 - Test the chat UI and `POST /chat`.
 - Confirm `device_history` **persists across a redeploy** (retrieve logs, redeploy, ask about them).
 
 ### Gotchas we hit (so a future rebuild doesn't repeat them)
 - **Cloudflare 429 on chat→backend calls.** The public `*.onrender.com` URL is behind Cloudflare, which rate-limits automated calls coming from Render's **shared outbound IPs**. Fix = call the backend over its **internal** URL (step 4). Internal traffic is **plain http** (no TLS), and the receiver **must be on a paid instance**.
-- **Ephemeral filesystem.** Never rely on local files for state on Render — they're wiped on every restart *and* deploy. That's the whole reason the vector store is external (Neon).
+- **Ephemeral filesystem.** Never rely on local files for state on Render - they're wiped on every restart *and* deploy. That's the whole reason the vector store is external (Neon).
 - **Neon direct vs pooled.** Use the **direct** connection string with psycopg (the `-pooler` host can break prepared statements).
 - **OpenAI 300k-token/request cap.** The seeder batches embeddings at `chunk_size=200`; lower it further if you ever get `max_tokens_per_request`.
-- **App boot requirements.** The app needs `TAVILY_API_KEY` (tool built at import), a valid `OPENAI_API_KEY`, and a reachable `DATABASE_URL` — any missing one fails startup.
+- **App boot requirements.** The app needs `TAVILY_API_KEY` (tool built at import), a valid `OPENAI_API_KEY`, and a reachable `DATABASE_URL` - any missing one fails startup.
 - **Workspace plan ≠ instance size.** On Render, upgrading the *workspace* (Professional) does **not** resize services; each service's compute is its own **instance type** (Free / Starter / …). The private-networking "receiver must be paid" rule is about the **instance type**, not the workspace plan.
 
 ---
@@ -386,7 +388,7 @@ Verify the counts (see [Seeding](#seeding-the-vector-store)).
 
 `device_history` is the agent's long-term memory. Whenever a user retrieves logs, runs a self-test, or looks up an error code, the result is written (with metadata) to the `device_history` collection.
 
-Previously (with local Chroma) this was stored on the container's **ephemeral disk**, which Render wipes on **every restart and redeploy** — so the memory reset constantly. It now lives in **Neon Postgres**, so device history **persists across restarts, deploys, and cold starts**.
+Previously (with local Chroma) this was stored on the container's **ephemeral disk**, which Render wipes on **every restart and redeploy** - so the memory reset constantly. It now lives in **Neon Postgres**, so device history **persists across restarts, deploys, and cold starts**.
 
 ---
 
