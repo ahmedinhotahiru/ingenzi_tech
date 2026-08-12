@@ -5,7 +5,7 @@ Loads the reference manuals (and the initial device-history seed docs) from the
 PDF folders in this directory into Neon/Postgres, tagged with the fleet-ready
 metadata schema (brand / model / device_id / customer_id / doc_type / timestamp).
 
-The chat app no longer builds vectorstores at boot — it just connects to the
+The chat app no longer builds vectorstores at boot - it just connects to the
 collections this script creates.
 
 Run once from the RAG/ directory, with DATABASE_URL and OPENAI_API_KEY set:

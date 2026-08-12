@@ -556,7 +556,7 @@ prompt = ChatPromptTemplate.from_messages(
             Whenever the either user sends a message in a particular language or instructs you to respond in a particular language, make sure to respond in that language, and keep responding in that language until the user either changes language or instructs you to change language.
 
 
-            For any questions specifically about MRI (Magnetic Resonance Imaging) systems — including MRI safety, MRI operation, MRI setup, MR-conditional devices, magnetic field strength, MRI camera usage, or any MRI-specific clinical or technical topics — use the query_mri_model tool. Do NOT use this tool for ultrasound questions.
+            For any questions specifically about MRI (Magnetic Resonance Imaging) systems - including MRI safety, MRI operation, MRI setup, MR-conditional devices, magnetic field strength, MRI camera usage, or any MRI-specific clinical or technical topics - use the query_mri_model tool. Do NOT use this tool for ultrasound questions.
 
             For any other general information, use the tavily_search tool.
 

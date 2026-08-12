@@ -308,7 +308,7 @@ r = requests.post(
 print(r.json()["response"])
 ```
 
-> ⚠️ **Cold start & latency:** on a free instance the service sleeps when idle, so the **first request after a quiet period can take 30–60s**. Agent answers that use tools can also take 10–30s. Use a generous client timeout (≥120s). Session history is kept **in memory**, so it resets when the service restarts.
+> ⚠️ **Cold start & latency:** on a free instance the service sleeps when idle, so the **first request after a quiet period can take 30-60s**. Agent answers that use tools can also take 10-30s. Use a generous client timeout (≥120s). Session history is kept **in memory**, so it resets when the service restarts.
 
 ---
 
